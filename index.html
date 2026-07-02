@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis XV Años - Camila Shaddai</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cement: { 50: '#f4f7f5', 100: '#e4ebe6', 200: '#cbdad1', 300: '#a7c1b5', 400: '#7fa392', 500: '#61846c', 600: '#4c6955', 700: '#3e5445', 800: '#334338', 900: '#2b372f',
+                        },
+                        blush: { 50: '#fdf3f4', 100: '#fbe4e6', 200: '#f7cdd1', 300: '#f1abb3', 400: '#e87c8a', 500: '#db5164', 600: '#c53449', 700: '#a52637' }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        cursive: ['Alex Brush', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Animación para el destello brillante en el nombre */
+        @keyframes shine {
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .organic-sparkle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 40;
+            animation: floatDown linear infinite, sway ease-in-out infinite alternate;
+            opacity: 0.7;
+        }
+        @keyframes floatDown {
+            0% { transform: translateY(-5vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes sway {
+            0% { margin-left: -20px; }
+            100% { margin-left: 20px; }
+        }
+        /* Ecualizador de música animado */
+        @keyframes eqBar {
+            0% { height: 4px; }
+            50% { height: 16px; }
+            80% { height: 4px; }
+        }
+        .bar-1 { animation: eqBar 1.2s ease-in-out infinite alternate; }
+        .bar-2 { animation: eqBar 0.9s ease-in-out infinite alternate 0.15s; }
+        .bar-3 { animation: eqBar 1.1s ease-in-out infinite alternate 0.3s; }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased overflow-x-hidden">
+
+    <!-- Audio Elemento de Música (Por defecto lee el archivo local de la carpeta music/) -->
+    <audio id="bg-music" loop src="music/musica.mp3"></audio>
+
+    <!-- REPRODUCTOR DE MÚSICA FLOTANTE -->
+    <div class="fixed bottom-6 left-6 z-50 flex items-center space-x-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-full shadow-xl border border-cement-200/65">
+        <button id="music-toggle-btn" onclick="toggleMúsica()" class="w-10 h-10 rounded-full bg-cement-600 hover:bg-cement-700 text-white flex items-center justify-center transition-all duration-300 shadow-md shadow-cement-600/20">
+            <i id="music-btn-icon" class="fa-solid fa-play translate-x-0.5"></i>
+        </button>
+        <div class="flex flex-col pr-1">
+            <span class="text-[10px] uppercase tracking-widest text-stone-400 font-bold leading-none">Música</span>
+            <span class="text-xs font-serif italic text-cement-800 leading-normal" id="music-status-text">Pausada</span>
+        </div>
+        <div id="soundwave-animation" class="flex items-end space-x-0.5 h-4 w-5 hidden">
+            <div class="w-1 bg-cement-500 rounded-full bar-1"></div>
+            <div class="w-1 bg-cement-500 rounded-full bar-2"></div>
+            <div class="w-1 bg-cement-500 rounded-full bar-3"></div>
+        </div>
+    </div>
+
+    <!-- Efecto de Destellos -->
+    <div id="petals-container" class="fixed inset-0 pointer-events-none overflow-hidden z-40"></div>
+
+    <!-- NOTIFICACIÓN FLOTANTE -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-stone-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-sm md:text-base">
+        <span id="toast-icon" class="text-cement-400"></span>
+        <span id="toast-message">Mensaje de notificación</span>
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-stone-200/50 py-3 px-4 z-40 flex justify-between items-center shadow-sm">
+        <span class="font-serif italic font-semibold text-stone-700 tracking-wider">Mis XV Años</span>
+        <div class="flex space-x-2">
+           <!-- <button onclick="toggleModal('admin-modal')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5">
+                <i class="fa-solid fa-gear"></i>
+                <span class="hidden sm:inline">Configurar</span>
+            </button> -->
+            <button onclick="toggleModal('dashboard-modal')" class="px-3 py-1.5 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-cement-600/20">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Invitados (<span id="count-badge">0</span>)</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- PORTADA DE LA INVITACIÓN -->
+    <header class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgba(244, 247, 245, 0.94), rgba(244, 247, 245, 0.98)), url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=1200');">
+        <div class="absolute top-16 left-0 w-32 md:w-56 opacity-20 pointer-events-none">
+            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=400" class="rounded-full w-full object-cover aspect-square" alt="Fondo floral" onerror="this.style.display='none'">
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-6 relative z-10 px-4">
+            <p class="text-xs md:text-sm tracking-[0.25em] text-stone-500 uppercase font-semibold mt-8">¡Estás Cordialmente Invitado!</p>
+            
+            <div class="relative inline-block my-4">
+                <div class="w-72 h-72 md:w-[32rem] md:h-[32rem] rounded-full mx-auto p-3.5 bg-gradient-to-r from-cement-400 via-white to-cement-600 shadow-2xl relative transition-all duration-500">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-stone-100 border-4 border-white relative group">
+                        <img id="festejada-foto-0" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100 group-hover:scale-105" alt="Quinceañera Foto 1">
+                        <img id="festejada-foto-1" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 2">
+                        <img id="festejada-foto-2" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 3">
+                    </div>
+                </div>
+                <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-5 py-1.5 rounded-full shadow-md border border-cement-200 z-10 whitespace-nowrap">
+                    <span class="text-sm md:text-base font-serif italic text-cement-700">Mis XV Años</span>
+                </div>
+            </div>
+
+            <h1 id="festejada-nombre" class="font-cursive text-6xl md:text-8xl cement-gradient-text py-2">Camila Shaddai</h1>
+
+            <div class="max-w-xl mx-auto">
+                <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
+                </p>
+            </div>
+
+            <div class="flex items-center justify-center space-x-4 my-6">
+                <div class="h-[1px] w-12 bg-cement-300"></div>
+                <i class="fa-solid fa-leaf text-cement-500 text-sm animate-pulse"></i>
+                <div class="h-[1px] w-12 bg-cement-300"></div>
+            </div>
+
+            <div class="space-y-1 pb-10 md:pb-0">
+                <p id="display-fecha-larga" class="font-serif text-lg md:text-2xl text-stone-800 tracking-wider font-semibold">Sábado, 29 de Agosto de 2026</p>
+                <p id="display-hora-principal" class="text-xs md:text-sm text-stone-500 uppercase tracking-widest font-semibold">A partir de las 17:00 Horas</p>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#cuenta-regresiva-section" class="text-cement-600 hover:text-cement-700 transition-colors">
+                <i class="fa-solid fa-chevron-down text-2xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- CUENTA REGRESIVA -->
+    <section id="cuenta-regresiva-section" class="py-16 bg-gradient-to-b from-stone-50 to-cement-50/50 text-center px-4 border-t border-b border-stone-200/40 relative">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <div class="space-y-2">
+                <span class="text-xs uppercase tracking-[0.25em] text-cement-600 font-semibold">Falta muy poco</span>
+                <h2 class="font-serif text-3xl md:text-4xl text-stone-800">Cuenta Regresiva</h2>
+                <div class="w-16 h-[2px] bg-cement-400 mx-auto mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 md:gap-6 max-w-2xl mx-auto">
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-days" class="block font-serif text-2xl md:text-5xl font-bold text-stone-800">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Días</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-hours" class="block font-serif text-2xl md:text-5xl font-bold text-stone-800">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Horas</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-minutes" class="block font-serif text-2xl md:text-5xl font-bold text-stone-800">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Min</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-seconds" class="block font-serif text-2xl md:text-5xl font-bold text-cement-600">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Seg</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETALLES Y UBICACIÓN -->
+    <section class="py-20 px-4 bg-white relative">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
+            
+            <!-- CEREMONIA -->
+            <div class="bg-stone-50 border border-stone-200/50 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col justify-between space-y-8 relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-cement-100 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="space-y-6">
+                    <div class="w-14 h-14 bg-cement-100 text-cement-600 rounded-full flex items-center justify-center text-2xl mx-auto shadow-inner">
+                        <i class="fa-solid fa-hands-praying"></i>
+                    </div>
+                    <div class="text-center space-y-2">
+                        <h3 class="font-serif text-2xl text-stone-800 font-semibold">Celebración</h3>
+                        <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">Momento de Bendición</p>
+                    </div>
+                    <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
+                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-ceremonia-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-ceremonia-hora">17:00 Hrs</span></p>
+                    </div>
+                </div>
+                <div class="text-center pt-4">
+                    <a id="btn-mapa-ceremonia" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Ver Ubicación en Mapa</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- RECEPCIÓN -->
+            <div class="bg-stone-50 border border-stone-200/50 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col justify-between space-y-8 relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-cement-100/40 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="space-y-6">
+                    <div class="w-14 h-14 bg-stone-100 text-cement-500 rounded-full flex items-center justify-center text-2xl mx-auto shadow-inner">
+                        <i class="fa-solid fa-cake-candles"></i>
+                    </div>
+                    <div class="text-center space-y-2">
+                        <h3 class="font-serif text-2xl text-stone-800 font-semibold">Gran Recepción</h3>
+                        <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">¡A Celebrar en Grande!</p>
+                    </div>
+                    <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
+                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-recepcion-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-recepcion-hora">18:30 Hrs</span></p>
+                    </div>
+                </div>
+                <div class="text-center pt-4">
+                    <a id="btn-mapa-recepcion" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Ver Ubicación en Mapa</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- COMPARTIR ENLACE -->
+    <!--<section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
+        <div class="max-w-2xl mx-auto space-y-4">
+            <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
+            <p class="text-sm text-stone-500">Copia el enlace de abajo o envíalo directamente a tus contactos por WhatsApp.</p>
+            <div class="flex flex-col sm:flex-row items-center gap-3 justify-center pt-2">
+                <input type="text" id="share-link-input" readonly value="" class="w-full sm:w-80 px-4 py-2.5 rounded-lg border border-stone-300 text-sm bg-white focus:outline-none text-stone-600 font-mono">
+                <button onclick="copiarEnlace()" class="w-full sm:w-auto px-5 py-2.5 bg-stone-800 hover:bg-stone-900 text-white font-semibold rounded-lg text-sm transition-all flex items-center justify-center space-x-2 shadow-sm">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copiar Enlace</span>
+                </button>
+                <button onclick="compartirWhatsApp()" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-sm transition-all flex items-center justify-center space-x-2 shadow-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Enviar por WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
+    <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
+        <div class="max-w-xl mx-auto bg-white border border-cement-100 rounded-3xl p-6 md:p-12 shadow-2xl relative z-10">
+            <div class="text-center space-y-3 mb-8">
+                <span class="text-xs uppercase tracking-[0.2em] text-cement-600 font-semibold">Pases de Entrada</span>
+                <h2 class="font-serif text-3xl text-stone-800">Confirmación de Asistencia</h2>
+                <div class="w-12 h-[2px] bg-cement-400 mx-auto"></div>
+                <p class="text-sm text-stone-500">Acompáñanos a celebrar este gran sueño confirmando tu asistencia.</p>
+            </div>
+
+            <form id="rsvp-form" onsubmit="guardarConfirmacion(event)" class="space-y-6">
+                <div class="space-y-1.5">
+                    <label for="rsvp-name" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Nombre Completo del Invitado</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+                        <input type="text" id="rsvp-name" required placeholder="Ej. Familia Martínez Pérez" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label for="rsvp-phone" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Número de Contacto (Tel/WhatsApp)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+                        <input type="tel" id="rsvp-phone" required placeholder="Ej. +52 55 1234 5678" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">¿Asistirás al Evento?</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 hover:bg-stone-100/50 transition-all text-sm font-medium text-stone-700" id="label-asistire">
+                            <input type="radio" name="rsvp-status" value="asistire" required class="hidden" onchange="actualizarEstadoAsistencia('asistire')">
+                            <i class="fa-regular fa-circle-check mr-2 text-stone-400"></i>
+                            Sí, asistiré
+                        </label>
+                        <label class="flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 hover:bg-stone-100/50 transition-all text-sm font-medium text-stone-700" id="label-no-asistire">
+                            <input type="radio" name="rsvp-status" value="no-asistire" required class="hidden" onchange="actualizarEstadoAsistencia('no-asistire')">
+                            <i class="fa-regular fa-circle-xmark mr-2 text-stone-400"></i>
+                            No asistiré
+                        </label>
+                    </div>
+                </div>
+
+                <div id="seccion-acompanantes" class="space-y-4 transition-all duration-300" style="display: none;">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Cantidad de pases requeridos</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                                <i class="fa-solid fa-users"></i>
+                            </span>
+                            <select id="rsvp-guests" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                                <option value="1">1 Pase de entrada</option>
+                                <option value="2">2 Pases de entrada</option>
+                                <option value="3">3 Pases de entrada</option>
+                                <option value="4">4 Pases de entrada</option>
+                                <option value="5">5 Pases de entrada</option>
+                                <option value="6">6 Pases de entrada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="rsvp-message" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Mensaje especial o dedicatoria</label>
+                        <textarea id="rsvp-message" rows="4" placeholder="Escribe tus hermosos deseos para la quinceañera..." class="w-full p-4 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-enviar-rsvp" class="w-full py-4 bg-gradient-to-r from-cement-600 to-cement-500 hover:from-cement-700 hover:to-cement-600 text-white font-bold rounded-xl text-sm uppercase tracking-wider transition-all shadow-lg shadow-cement-600/30">
+                    <i class="fa-regular fa-paper-plane mr-2"></i>
+                    Confirmar Mi Asistencia
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-12 bg-stone-900 text-stone-400 text-center px-4">
+        <div class="max-w-4xl mx-auto space-y-4">
+            <h2 class="font-cursive text-4xl text-cement-300" id="footer-nombre">Camila Shaddai</h2>
+            <p class="font-serif italic text-sm text-stone-500">Mis XV Años Camila Shaddai</p>
+            <div class="h-[1px] w-12 bg-stone-800 mx-auto"></div>
+            <p class="text-xs text-stone-600">Invitación interactiva premium.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE CONFIGURACIÓN -->
+    <div id="admin-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-4 md:p-6 border-b border-stone-200 flex justify-between items-center bg-stone-50">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-full bg-cement-100 text-cement-600 flex items-center justify-center"><i class="fa-solid fa-gears text-sm"></i></span>
+                    <h3 class="font-semibold text-lg text-stone-800">Configuración</h3>
+                </div>
+                <button onclick="toggleModal('admin-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="admin-form" onsubmit="guardarConfiguracion(event)" class="p-4 md:p-6 overflow-y-auto space-y-5 flex-1">
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Festejada</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Nombre de la Festejada</label>
+                        <input type="text" id="cfg-nombre" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">URL Foto 1 del Carrusel</label>
+                        <input type="text" id="cfg-foto-0" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">URL Foto 2 del Carrusel</label>
+                        <input type="text" id="cfg-foto-1" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">URL Foto 3 del Carrusel</label>
+                        <input type="text" id="cfg-foto-2" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Mensaje de Dedicatoria</label>
+                        <textarea id="cfg-mensaje" rows="2" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Música de Fondo</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Seleccionar Melodía</label>
+                        <select id="cfg-musica-select" onchange="toggleCustomMusicInput()" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                            <option value="music/musica.mp3">Archivo de Audio Local (music/musica.mp3)</option>
+                            <option value="synthesized">Sintetizador Offline (Balada Romántica de Piano)</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/e/e5/Gymnop%C3%A9die_No._1.ogg">Erik Satie - Gymnopédie No.1</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/b/b4/Frederic_Chopin_-_Nocturne_in_E-flat_major%2C_Op._9_no._2.ogg">Chopin - Nocturne Op.9 (Balada Clásica)</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/2/24/Claude_Debussy_-_Clair_de_lune.ogg">Debussy - Claro de Luna</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/d/d0/Beethoven_-_Piano_Sonata_No._14_in_C-sharp_minor_%22Moonlight%22%2C_Op._27_No._2_-_I._Adagio_sostenuto.ogg">Beethoven - Moonlight Sonata</option>
+                            <option value="custom">Otro enlace MP3 / OGG (Personalizado)</option>
+                        </select>
+                    </div>
+                    <div id="cfg-musica-custom-container" class="space-y-1.5 hidden">
+                        <label class="block text-xs font-semibold text-stone-600">Enlace directo a archivo multimedia</label>
+                        <input type="text" id="cfg-musica-custom" placeholder="https://ejemplo.com/cancion.mp3" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Fecha y Horario</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Fecha del Evento</label>
+                            <input type="date" id="cfg-fecha" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-xs">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Hora Principal</label>
+                            <input type="text" id="cfg-hora" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Ceremonia</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Lugar</label>
+                        <input type="text" id="cfg-ceremonia-lugar" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Dirección</label>
+                        <input type="text" id="cfg-ceremonia-dir" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Hora</label>
+                            <input type="text" id="cfg-ceremonia-hora" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Mapa URL</label>
+                            <input type="text" id="cfg-ceremonia-mapa" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Recepción</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Lugar</label>
+                        <input type="text" id="cfg-recepcion-lugar" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Dirección</label>
+                        <input type="text" id="cfg-recepcion-dir" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Hora</label>
+                            <input type="text" id="cfg-recepcion-hora" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Mapa URL</label>
+                            <input type="text" id="cfg-recepcion-mapa" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex space-x-3">
+                    <button type="button" onclick="restablecerPreestablecido()" class="w-1/2 py-2.5 border border-stone-300 text-stone-700 hover:bg-slate-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">
+                        Valores Demo
+                    </button>
+                    <button type="submit" class="w-1/2 py-2.5 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
+                        Guardar Todo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TABLERO DE INVITADOS -->
+    <div id="dashboard-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+            <div class="p-4 md:p-6 border-b border-stone-200 flex justify-between items-center bg-stone-50">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-full bg-cement-600 text-white flex items-center justify-center"><i class="fa-solid fa-list-check text-xs"></i></span>
+                    <div>
+                        <h3 class="font-semibold text-lg text-stone-800">Invitados</h3>
+                        <p class="text-xs text-stone-500 hidden sm:block">Métricas de confirmaciones registradas.</p>
+                    </div>
+                </div>
+                <button onclick="toggleModal('dashboard-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Confirmados</span>
+                    <span id="dash-total-confirmados" class="text-xl sm:text-2xl font-bold text-stone-800">0</span>
+                </div>
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Total Pases</span>
+                    <span id="dash-total-pases" class="text-xl sm:text-2xl font-bold text-cement-600">0</span>
+                </div>
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Declinaron</span>
+                    <span id="dash-total-declinaron" class="text-xl sm:text-2xl font-bold text-stone-400">0</span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-6">
+                <div class="overflow-x-auto rounded-lg border border-stone-200">
+                    <table class="min-w-full divide-y divide-stone-200 text-left text-xs md:text-sm">
+                        <thead class="bg-stone-50 text-stone-500 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3">Nombre</th>
+                                <th class="px-4 py-3">Teléfono</th>
+                                <th class="px-4 py-3">Estado</th>
+                                <th class="px-4 py-3">Pases</th>
+                                <th class="px-4 py-3">Dedicatoria</th>
+                                <th class="px-4 py-3 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guest-table-body" class="divide-y divide-stone-100 text-stone-700 bg-white">
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">Cargando invitados...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyD-EXAMPLE-URL/exec";
+
+        const DEFAULT_CONFIG = {
+            nombre: "Camila Shaddai",
+            fotos: [
+                "images/foto1.jpg",
+                "images/foto2.jpg",
+                "images/foto3.jpg"
+            ],
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
+            fecha: "2026-08-29",
+            hora: "17:00 Horas",
+            ceremoniaLugar: "Salón de Eventos \"Isssss Club\"",
+            ceremoniaDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
+            ceremoniaHora: "17:00 Hrs",
+            ceremoniaMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
+            recepcionLugar: "Salón de Eventos \"Isssss Club\"",
+            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
+            recepcionHora: "18:30 Hrs",
+            recepcionMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
+            musicaUrl: "music/musica.mp3" // Archivo local por defecto
+        };
+
+        let appConfig = { ...DEFAULT_CONFIG };
+        let countdownTimerId = null;
+        let carouselIntervalId = null;
+        let currentSlide = 0;
+        let musicPlaying = false;
+
+        // Variables de control para el Sintetizador Web Audio API
+        let audioCtx = null;
+        let synthInterval = null;
+        let synthStep = 0;
+
+        // Acordes de estilo Gymnopédie No.1 de Satie
+        const chords = [
+            { bass: 146.83, trebles: [369.99, 440.00, 554.37] }, // Acorde Dmaj7
+            { bass: 196.00, trebles: [493.88, 587.33, 739.99] }  // Acorde Gmaj7
+        ];
+
+        if (localStorage.getItem('xv_config')) {
+            try { appConfig = JSON.parse(localStorage.getItem('xv_config')); } catch (e) { appConfig = { ...DEFAULT_CONFIG }; }
+        }
+
+        window.onload = function() {
+            crearPetalosDecorativos();
+            aplicarConfiguracionEnVista();
+            document.getElementById('share-link-input').value = window.location.href;
+            document.addEventListener('click', iniciarMusicaAutomaticamente, { once: true });
+            document.addEventListener('touchstart', iniciarMusicaAutomaticamente, { once: true });
+            cargarInvitadosSimulados();
+            verificarAsistenciaPrevia();
+
+            // Detectar errores en el tag de audio si el usuario usa una URL personalizada que falle
+            document.getElementById('bg-music').addEventListener('error', function(e) {
+                const music = document.getElementById('bg-music');
+                // Ignorar si el src está vacío, no existe, o apunta a la URL de la página actual (bug común de src vacío)
+                if (!music.src || music.src === window.location.href || appConfig.musicaUrl === "synthesized") {
+                    return;
+                }
+                console.error("Error cargando el audio externo:", e);
+                // Si falla el audio externo, cambiamos automáticamente al sintetizador offline seguro
+                if (appConfig.musicaUrl !== "synthesized") {
+                    mostrarToast("Error de carga. Activando piano offline seguro.", "fa-solid fa-music text-amber-500");
+                    appConfig.musicaUrl = "synthesized";
+                    aplicarConfiguracionEnVista();
+                }
+            });
+        };
+
+        // --- SISTEMA DE SINTETIZADOR WEB AUDIO API ---
+        function playSynthNote(freq, startTime, duration, volume) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                osc.type = 'triangle'; // Sonido suave, tipo flauta/piano eléctrico
+                osc.frequency.setValueAtTime(freq, startTime);
+                
+                // Envolvente de volumen para simular un golpe de tecla de piano suave
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.15); // Ataque suave
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Caída natural
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            } catch (err) {
+                console.error("Error al sintetizar nota:", err);
+            }
+        }
+
+        function playSynthStep() {
+            if (!audioCtx || audioCtx.state === 'suspended') return;
+            const now = audioCtx.currentTime;
+            const chordIndex = Math.floor(synthStep / 4) % chords.length;
+            const noteIndex = synthStep % 4;
+            const chord = chords[chordIndex];
+            
+            if (noteIndex === 0) {
+                // Toca la nota baja del bajo (larga y profunda)
+                playSynthNote(chord.bass, now, 3.8, 0.22);
+            } else {
+                // Toca las notas del arpegio agudo paulatinamente
+                const trebleFreq = chord.trebles[noteIndex - 1];
+                if (trebleFreq) {
+                    playSynthNote(trebleFreq, now, 2.8, 0.10);
+                }
+            }
+            synthStep++;
+        }
+
+        // Inicia el generador de piano offline
+        function iniciarSintetizador() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                stopSintetizador();
+                synthStep = 0;
+                playSynthStep();
+                synthInterval = setInterval(playSynthStep, 1100); // Ritmo lento y pausado
+            } catch (e) {
+                console.error("No se pudo iniciar el sintetizador de audio:", e);
+            }
+        }
+
+        function stopSintetizador() {
+            if (synthInterval) {
+                clearInterval(synthInterval);
+                synthInterval = null;
+            }
+        }
+
+        function iniciarMusicaAutomaticamente() {
+            if (appConfig.musicaUrl === "synthesized") {
+                if (!musicPlaying) {
+                    musicPlaying = true;
+                    iniciarSintetizador();
+                    actualizarInterfazMusica(true);
+                }
+            } else {
+                const music = document.getElementById('bg-music');
+                if (music && music.src && !musicPlaying) {
+                    music.play().then(() => {
+                        musicPlaying = true;
+                        actualizarInterfazMusica(true);
+                    }).catch(err => {
+                        console.log("Autoplay de audio bloqueado por el navegador.");
+                    });
+                }
+            }
+        }
+
+        function toggleMúsica() {
+            if (appConfig.musicaUrl === "synthesized") {
+                if (musicPlaying) {
+                    musicPlaying = false;
+                    stopSintetizador();
+                    actualizarInterfazMusica(false);
+                } else {
+                    musicPlaying = true;
+                    iniciarSintetizador();
+                    actualizarInterfazMusica(true);
+                }
+            } else {
+                const music = document.getElementById('bg-music');
+                if (!music) return;
+
+                if (musicPlaying) {
+                    music.pause();
+                    musicPlaying = false;
+                    actualizarInterfazMusica(false);
+                } else {
+                    music.play().then(() => {
+                        musicPlaying = true;
+                        actualizarInterfazMusica(true);
+                    }).catch(err => {
+                        console.error("Error al reproducir audio:", err);
+                    });
+                }
+            }
+        }
+
+        function actualizarInterfazMusica(reproduciendo) {
+            const btnIcon = document.getElementById('music-btn-icon');
+            const statusText = document.getElementById('music-status-text');
+            const soundwave = document.getElementById('soundwave-animation');
+
+            if (reproduciendo) {
+                btnIcon.className = "fa-solid fa-pause";
+                statusText.innerText = "Reproduciendo";
+                soundwave.classList.remove('hidden');
+            } else {
+                btnIcon.className = "fa-solid fa-play translate-x-0.5";
+                statusText.innerText = "Pausada";
+                soundwave.classList.add('hidden');
+            }
+        }
+
+        function toggleCustomMusicInput() {
+            const select = document.getElementById('cfg-musica-select');
+            const customContainer = document.getElementById('cfg-musica-custom-container');
+            select.value === 'custom' ? customContainer.classList.remove('hidden') : customContainer.classList.add('hidden');
+        }
+
+        function iniciarCuentaRegresiva(fechaDestinoStr) {
+            if (countdownTimerId) clearInterval(countdownTimerId);
+            const targetDate = new Date(`${fechaDestinoStr}T18:00:00`).getTime();
+
+            function actualizarContador() {
+                const now = new Date().getTime();
+                const difference = targetDate - now;
+
+                if (difference <= 0) {
+                    document.getElementById('countdown-days').innerText = "00";
+                    document.getElementById('countdown-hours').innerText = "00";
+                    document.getElementById('countdown-minutes').innerText = "00";
+                    document.getElementById('countdown-seconds').innerText = "00";
+                    clearInterval(countdownTimerId);
+                    return;
+                }
+
+                document.getElementById('countdown-days').innerText = String(Math.floor(difference / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                document.getElementById('countdown-hours').innerText = String(Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                document.getElementById('countdown-minutes').innerText = String(Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                document.getElementById('countdown-seconds').innerText = String(Math.floor((difference % (1000 * 60)) / 1000)).padStart(2, '0');
+            }
+            actualizarContador();
+            countdownTimerId = setInterval(actualizarContador, 1000);
+        }
+
+        function crearPetalosDecorativos() {
+            const container = document.getElementById('petals-container');
+            const numPetals = window.innerWidth < 768 ? 10 : 20; 
+            for (let i = 0; i < numPetals; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'organic-sparkle';
+                const shapes = ['🌿', '🍃', '✨', '🤍'];
+                petal.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.top = `-${10 + Math.random() * 20}px`;
+                petal.style.fontSize = `${14 + Math.random() * 12}px`;
+                petal.style.animationDelay = `${Math.random() * 10}s`;
+                petal.style.animationDuration = `${10 + Math.random() * 12}s`;
+                container.appendChild(petal);
+            }
+        }
+
+        function aplicarConfiguracionEnVista() {
+            document.getElementById('festejada-nombre').innerText = appConfig.nombre;
+            document.getElementById('footer-nombre').innerText = appConfig.nombre;
+            document.getElementById('festejada-mensaje').innerText = appConfig.mensaje;
+
+            document.getElementById('festejada-foto-0').src = appConfig.fotos[0] || '';
+            document.getElementById('festejada-foto-1').src = appConfig.fotos[1] || '';
+            document.getElementById('festejada-foto-2').src = appConfig.fotos[2] || '';
+            
+            const music = document.getElementById('bg-music');
+            const targetSrc = appConfig.musicaUrl || DEFAULT_CONFIG.musicaUrl;
+
+            if (targetSrc === "synthesized") {
+                // Detener el tag de audio y remover atributo src para evitar errores de carga
+                music.pause();
+                music.removeAttribute('src');
+                try { music.load(); } catch(e) {}
+                if (musicPlaying) {
+                    iniciarSintetizador();
+                }
+            } else {
+                // Usar elemento de audio normal
+                stopSintetizador();
+                if (targetSrc && music.src !== targetSrc && !music.src.endsWith(targetSrc)) {
+                    music.src = targetSrc;
+                    music.load();
+                    if (musicPlaying) {
+                        const playPromise = music.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(e => {
+                                console.warn("Error de auto-reproducción:", e);
+                                musicPlaying = false;
+                                actualizarInterfazMusica(false);
+                            });
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('cfg-nombre').value = appConfig.nombre;
+            document.getElementById('cfg-foto-0').value = appConfig.fotos[0] || '';
+            document.getElementById('cfg-foto-1').value = appConfig.fotos[1] || '';
+            document.getElementById('cfg-foto-2').value = appConfig.fotos[2] || '';
+            document.getElementById('cfg-mensaje').value = appConfig.mensaje;
+            document.getElementById('cfg-fecha').value = appConfig.fecha;
+            document.getElementById('cfg-hora').value = appConfig.hora;
+            document.getElementById('cfg-ceremonia-lugar').value = appConfig.ceremoniaLugar;
+            document.getElementById('cfg-ceremonia-dir').value = appConfig.ceremoniaDir;
+            document.getElementById('cfg-ceremonia-hora').value = appConfig.ceremoniaHora;
+            document.getElementById('cfg-ceremonia-mapa').value = appConfig.ceremoniaMapa;
+            document.getElementById('cfg-recepcion-lugar').value = appConfig.recepcionLugar;
+            document.getElementById('cfg-recepcion-dir').value = appConfig.recepcionDir;
+            document.getElementById('cfg-recepcion-hora').value = appConfig.recepcionHora;
+            document.getElementById('cfg-recepcion-mapa').value = appConfig.recepcionMapa;
+
+            const preconfiguredUrls = [
+                "music/musica.mp3",
+                "synthesized",
+                "https://upload.wikimedia.org/wikipedia/commons/e/e5/Gymnop%C3%A9die_No._1.ogg",
+                "https://upload.wikimedia.org/wikipedia/commons/b/b4/Frederic_Chopin_-_Nocturne_in_E-flat_major%2C_Op._9_no._2.ogg",
+                "https://upload.wikimedia.org/wikipedia/commons/2/24/Claude_Debussy_-_Clair_de_lune.ogg",
+                "https://upload.wikimedia.org/wikipedia/commons/d/d0/Beethoven_-_Piano_Sonata_No._14_in_C-sharp_minor_%22Moonlight%22%2C_Op._27_No._2_-_I._Adagio_sostenuto.ogg"
+            ];
+            
+            const selectMusica = document.getElementById('cfg-musica-select');
+            const customInputMusica = document.getElementById('cfg-musica-custom');
+            const customContainerMusica = document.getElementById('cfg-musica-custom-container');
+            
+            if (preconfiguredUrls.includes(targetSrc)) {
+                selectMusica.value = targetSrc;
+                customContainerMusica.classList.add('hidden');
+                customInputMusica.value = "";
+            } else {
+                selectMusica.value = "custom";
+                customContainerMusica.classList.remove('hidden');
+                customInputMusica.value = targetSrc;
+            }
+
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+            document.getElementById('display-fecha-larga').innerText = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1);
+            document.getElementById('display-hora-principal').innerText = `A partir de las ${appConfig.hora}`;
+
+            document.getElementById('display-ceremonia-lugar').innerText = appConfig.ceremoniaLugar;
+            document.getElementById('display-ceremonia-dir').innerText = appConfig.ceremoniaDir;
+            document.getElementById('display-ceremonia-hora').innerText = appConfig.ceremoniaHora;
+            document.getElementById('btn-mapa-ceremonia').href = appConfig.ceremoniaMapa;
+
+            document.getElementById('display-recepcion-lugar').innerText = appConfig.recepcionLugar;
+            document.getElementById('display-recepcion-dir').innerText = appConfig.recepcionDir;
+            document.getElementById('display-recepcion-hora').innerText = appConfig.recepcionHora;
+            document.getElementById('btn-mapa-recepcion').href = appConfig.recepcionMapa;
+
+            iniciarCuentaRegresiva(appConfig.fecha);
+            iniciarCarrusel();
+        }
+
+        function iniciarCarrusel() {
+            if (carouselIntervalId) clearInterval(carouselIntervalId);
+            document.getElementById('festejada-foto-0').className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100";
+            document.getElementById('festejada-foto-1').className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0";
+            document.getElementById('festejada-foto-2').className = "absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0";
+            
+            currentSlide = 0;
+            carouselIntervalId = setInterval(() => {
+                const nextSlide = (currentSlide + 1) % 3;
+                const currentImg = document.getElementById(`festejada-foto-${currentSlide}`);
+                const nextImg = document.getElementById(`festejada-foto-${nextSlide}`);
+                if (currentImg && nextImg) {
+                    currentImg.classList.replace('opacity-100', 'opacity-0');
+                    nextImg.classList.replace('opacity-0', 'opacity-100');
+                }
+                currentSlide = nextSlide;
+            }, 3500);
+        }
+
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.contains('hidden') ? modal.classList.remove('hidden') : modal.classList.add('hidden');
+        }
+
+        function cargarInvitadosSimulados() {
+            let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
+            if (!invitados) {
+                invitados = [
+                    { nombre: "Tío Carlos Martínez y Fam.", telefono: "+52 55 1234 5678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString() },
+                    { nombre: "Adriana Solís", telefono: "+52 55 8765 4321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString() }
+                ];
+                localStorage.setItem('xv_invitados', JSON.stringify(invitados));
+            }
+            procesarYMostrarInvitados(invitados);
+        }
+
+        function verificarAsistenciaPrevia() {
+            const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
+            if (miConfirmacionStr) {
+                try {
+                    const miConfirmacion = JSON.parse(miConfirmacionStr);
+                    
+                    // Formatear fecha del evento
+                    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+                    const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+                    const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+
+                    // Ocultar el formulario de RSVP y mostrar la tarjeta de estado de confirmación
+                    const rsvpSection = document.getElementById('rsvp-section');
+                    if (rsvpSection) {
+                        rsvpSection.innerHTML = `
+                            <div class="max-w-xl mx-auto bg-white border border-cement-100 rounded-3xl p-8 md:p-12 shadow-2xl relative z-10 text-center space-y-6">
+                                <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <div class="space-y-2">
+                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Todo listo!</span>
+                                    <h2 class="font-serif text-3xl text-stone-800">Asistencia Confirmada</h2>
+                                    <div class="w-12 h-[2px] bg-cement-400 mx-auto"></div>
+                                </div>
+                                <p class="text-stone-600 text-sm md:text-base leading-relaxed">
+                                    Hola <strong class="text-stone-800">${miConfirmacion.nombre}</strong>, tu asistencia ha sido confirmada con éxito.
+                                    ${miConfirmacion.asiste ? `Reservamos <strong class="text-cement-600">${miConfirmacion.pases} pase(s)</strong> para ti.` : 'Hemos registrado que no podrás asistir.'}
+                                </p>
+                                <div class="bg-stone-50 rounded-2xl p-4 border border-stone-100">
+                                    <p class="text-xs text-stone-400 uppercase tracking-widest font-bold">Te esperamos el</p>
+                                    <p class="font-serif text-lg text-cement-700 font-semibold mt-1">${fechaLarga}</p>
+                                </div>
+                                <button onclick="cancelarAsistencia()" class="text-xs text-stone-400 hover:text-rose-500 underline transition-colors">
+                                    ¿Necesitas modificar o cambiar tu confirmación? Haz clic aquí
+                                </button>
+                            </div>
+                        `;
+                    }
+                    
+                    // Enviar toast notificando que su asistencia fue confirmada
+                    setTimeout(() => {
+                        mostrarToast(`Tu asistencia ha sido confirmada, ¡te esperamos el ${fechaLarga}!`, "fa-solid fa-heart text-pink-500");
+                    }, 1200);
+
+                } catch (e) {
+                    console.error("Error al procesar confirmación previa:", e);
+                }
+            }
+        }
+
+        function cancelarAsistencia() {
+            if (confirm("¿Deseas modificar o rehacer tu confirmación de asistencia?")) {
+                localStorage.removeItem('xv_mi_confirmacion');
+                location.reload(); // Recargar para volver a mostrar el formulario limpio
+            }
+        }
+
+        function actualizarEstadoAsistencia(estado) {
+            const lAsistire = document.getElementById('label-asistire');
+            const lNoAsistire = document.getElementById('label-no-asistire');
+            const secAcompanantes = document.getElementById('seccion-acompanantes');
+            
+            if (estado === 'asistire') {
+                lAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-cement-500 cursor-pointer bg-cement-50/50 transition-all text-sm font-semibold text-cement-700";
+                lNoAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 transition-all text-sm font-medium text-stone-700";
+                secAcompanantes.style.display = 'block';
+            } else {
+                lNoAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-blush-400 cursor-pointer bg-blush-50/50 transition-all text-sm font-semibold text-blush-500";
+                lAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 transition-all text-sm font-medium text-stone-700";
+                secAcompanantes.style.display = 'none';
+            }
+        }
+
+        function guardarConfirmacion(event) {
+            event.preventDefault();
+            const asisteCheck = document.querySelector('input[name="rsvp-status"]:checked').value === 'asistire';
+            const mensajeInput = document.getElementById('rsvp-message');
+            const mensaje = mensajeInput.value.trim();
+
+            // Requisito: Si asiste y no se ha agregado un mensaje, solicitarle que lo deje
+            if (asisteCheck && !mensaje) {
+                mostrarToast("Por favor, déjanos un lindo mensaje de dedicatoria especial ✨", "fa-solid fa-pen-nib text-amber-500");
+                mensajeInput.focus();
+                return;
+            }
+            
+            const invData = {
+                nombre: document.getElementById('rsvp-name').value.trim(),
+                telefono: document.getElementById('rsvp-phone').value.trim(),
+                asiste: asisteCheck,
+                pases: asisteCheck ? parseInt(document.getElementById('rsvp-guests').value) : 0,
+                mensaje: asisteCheck ? mensaje : "",
+                fechaRegistro: new Date().toLocaleString()
+            };
+
+            const btnEnviar = document.getElementById('btn-enviar-rsvp');
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Procesando...';
+
+            // Formatear fecha para el mensaje de éxito personalizado
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+            const mensajeExito = `Tu asistencia ha sido confirmada, ¡te esperamos el ${fechaLarga}!`;
+
+            // Guardar confirmación en localStorage del navegador del invitado
+            localStorage.setItem('xv_mi_confirmacion', JSON.stringify(invData));
+
+            if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("EXAMPLE-URL")) {
+                // Se envía la petición usando el tipo simple 'text/plain;charset=utf-8'
+                // Esto evita que el navegador realice una consulta OPTIONS (Preflight de CORS)
+                // que las Web Apps de Google Apps Script no pueden responder, fallando localmente.
+                fetch(GOOGLE_SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    }, 
+                    body: JSON.stringify(invData) 
+                })
+                .then(() => { 
+                    guardarLocalSimulado(invData); 
+                    exitoRegistro(mensajeExito); 
+                    setTimeout(() => location.reload(), 1500); // Recargar para activar la vista de confirmado
+                })
+                .catch(err => { 
+                    console.error("Error en red al enviar a Google Sheets:", err);
+                    mostrarToast("Error de red. Guardado local de respaldo.", "fa-solid fa-triangle-exclamation text-rose-500"); 
+                    guardarLocalSimulado(invData); 
+                    exitoRegistro(mensajeExito); 
+                    setTimeout(() => location.reload(), 1500); // Recargar para activar la vista de confirmado
+                });
+            } else {
+                guardarLocalSimulado(invData);
+                exitoRegistro(mensajeExito);
+                setTimeout(() => location.reload(), 1500); // Recargar para activar la vista de confirmado
+            }
+        }
+
+        function guardarLocalSimulado(data) {
+            let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            invs = invs.filter(i => i.nombre.toLowerCase() !== data.nombre.toLowerCase());
+            invs.push(data);
+            localStorage.setItem('xv_invitados', JSON.stringify(invs));
+            cargarInvitadosSimulados();
+        }
+
+        function exitoRegistro(mensajePersonalizado) {
+            const btn = document.getElementById('btn-enviar-rsvp');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-regular fa-paper-plane mr-2"></i> Confirmar Mi Asistencia';
+            document.getElementById('rsvp-form').reset();
+            actualizarEstadoAsistencia('');
+            mostrarToast(mensajePersonalizado || "¡Confirmación recibida!", "fa-solid fa-heart text-pink-500");
+        }
+
+        function procesarYMostrarInvitados(lista) {
+            const tb = document.getElementById('guest-table-body');
+            if (!lista || lista.length === 0) {
+                tb.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">No hay registros aún.</td></tr>`;
+                document.getElementById('dash-total-confirmados').innerText = "0";
+                document.getElementById('dash-total-pases').innerText = "0";
+                document.getElementById('dash-total-declinaron').innerText = "0";
+                document.getElementById('count-badge').innerText = "0";
+                return;
+            }
+
+            lista.sort((a, b) => new Date(b.fechaRegistro) - new Date(a.fechaRegistro));
+            let tAsisten = 0, tDeclinan = 0, tPases = 0;
+            tb.innerHTML = "";
+
+            lista.forEach(i => {
+                if (i.asiste) { tAsisten++; tPases += (i.pases || 0); } else { tDeclinan++; }
+                const status = i.asiste ? `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span>` : `<span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-xmark mr-1"></i> No asistirá</span>`;
+                tb.innerHTML += `<tr class="hover:bg-stone-50">
+                    <td class="px-4 py-3 font-semibold text-stone-800">${i.nombre}</td>
+                    <td class="px-4 py-3 text-stone-500 font-mono text-xs">${i.telefono}</td>
+                    <td class="px-4 py-3">${status}</td>
+                    <td class="px-4 py-3 font-semibold">${i.asiste ? i.pases : '-'}</td>
+                    <td class="px-4 py-3 text-stone-500 italic max-w-[120px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
+                    <td class="px-4 py-4 text-right"><button onclick="eliminarInvitado('${i.nombre}')" class="text-stone-400 hover:text-rose-600 transition-colors"><i class="fa-regular fa-trash-can"></i></button></td>
+                </tr>`;
+            });
+
+            document.getElementById('dash-total-confirmados').innerText = tAsisten;
+            document.getElementById('dash-total-pases').innerText = tPases;
+            document.getElementById('dash-total-declinaron').innerText = tDeclinan;
+            document.getElementById('count-badge').innerText = lista.length;
+        }
+
+        function eliminarInvitado(nombre) {
+            if (!confirm(`¿Eliminar a "${nombre}"?`)) return;
+            let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            localStorage.setItem('xv_invitados', JSON.stringify(invs.filter(i => i.nombre.toLowerCase() !== nombre.toLowerCase())));
+            cargarInvitadosSimulados();
+        }
+
+        // Convertidor automático inteligente para enlaces directos
+        function sanitizeUrl(url, type = 'image') {
+            if (!url) return '';
+            
+            // Si el enlace ya es una ruta relativa local (no empieza con http o https), lo dejamos tal cual
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                return url;
+            }
+
+            let fileId = null;
+
+            // Extraer ID de enlaces tipo /file/d/ID/view
+            const match1 = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
+            if (match1) fileId = match1[1];
+
+            // Extraer ID de enlaces tipo /uc?id=ID o /open?id=ID
+            const match2 = url.match(/[?&]id=([^&]+)/);
+            if (match2 && (url.includes('drive.google.com') || url.includes('docs.google.com'))) fileId = match2[1];
+
+            if (fileId) {
+                // Formatos especiales de Google Drive para incrustar archivos correctamente
+                if (type === 'image') {
+                    // Endpoint más de Drive para mostrar imágenes en HTML
+                    return `https://lh3.googleusercontent.com/d/${fileId}`;
+                } else {
+                    // Endpoint estable para reproducir audios de Drive
+                    return `https://drive.google.com/uc?export=download&id=${fileId}`;
+                }
+            }
+
+            // Convertir enlaces de Dropbox a enlaces directos
+            if (url.includes('dropbox.com') && url.includes('dl=0')) {
+                return url.replace('dl=0', 'raw=1');
+            }
+            return url;
+        }
+
+        function guardarConfiguracion(event) {
+            event.preventDefault();
+            appConfig.nombre = document.getElementById('cfg-nombre').value.trim();
+            
+            appConfig.fotos = [
+                sanitizeUrl(document.getElementById('cfg-foto-0').value.trim(), 'image'), 
+                sanitizeUrl(document.getElementById('cfg-foto-1').value.trim(), 'image'), 
+                sanitizeUrl(document.getElementById('cfg-foto-2').value.trim(), 'image')
+            ];
+            
+            appConfig.mensaje = document.getElementById('cfg-mensaje').value.trim();
+            appConfig.fecha = document.getElementById('cfg-fecha').value;
+            appConfig.hora = document.getElementById('cfg-hora').value.trim();
+            appConfig.ceremoniaLugar = document.getElementById('cfg-ceremonia-lugar').value.trim();
+            appConfig.ceremoniaDir = document.getElementById('cfg-ceremonia-dir').value.trim();
+            appConfig.ceremoniaHora = document.getElementById('cfg-ceremonia-hora').value.trim();
+            appConfig.ceremoniaMapa = document.getElementById('cfg-ceremonia-mapa').value.trim();
+            appConfig.recepcionLugar = document.getElementById('cfg-recepcion-lugar').value.trim();
+            appConfig.recepcionDir = document.getElementById('cfg-recepcion-dir').value.trim();
+            appConfig.recepcionHora = document.getElementById('cfg-recepcion-hora').value.trim();
+            appConfig.recepcionMapa = document.getElementById('cfg-recepcion-mapa').value.trim();
+
+            const musSel = document.getElementById('cfg-musica-select').value;
+            let customMusicUrl = document.getElementById('cfg-musica-custom').value.trim();
+            appConfig.musicaUrl = musSel === 'custom' ? sanitizeUrl(customMusicUrl, 'audio') : musSel;
+
+            localStorage.setItem('xv_config', JSON.stringify(appConfig));
+            aplicarConfiguracionEnVista();
+            toggleModal('admin-modal');
+            mostrarToast("¡Invitación actualizada!", "fa-solid fa-cloud-arrow-up text-cement-500");
+        }
+
+        function restablecerPreestablecido() {
+            appConfig = { ...DEFAULT_CONFIG };
+            localStorage.setItem('xv_config', JSON.stringify(appConfig));
+            aplicarConfiguracionEnVista();
+            mostrarToast("Restaurado.", "fa-solid fa-arrow-rotate-left text-blue-500");
+        }
+
+        function copiarEnlace() {
+            const input = document.getElementById('share-link-input');
+            input.select();
+            document.execCommand('copy');
+            mostrarToast("¡Enlace copiado!", "fa-solid fa-copy text-emerald-500");
+        }
+
+        // Enviar invitación estructurada por WhatsApp
+        function compartirWhatsApp() {
+            const url = window.location.href;
+            const textoInvitacion = `✨ ¡Estás cordialmente invitado a mis XV Años! 🌸\n\nTe comparto mi invitación interactiva donde podrás escuchar mi música favorita, ver fotos, ubicar el salón en el mapa y confirmar tu asistencia directamente:\n👉 ${url}`;
+            const enlaceUrl = "https://api.whatsapp.com/send?text=" + encodeURIComponent(textoInvitacion);
+            window.open(enlaceUrl, '_blank');
+        }
+
+        function mostrarToast(msg, icon) {
+            const t = document.getElementById('toast-notification');
+            document.getElementById('toast-icon').className = icon || "fa-solid fa-info-circle";
+            document.getElementById('toast-message').innerText = msg;
+            t.classList.remove('translate-y-20', 'opacity-0');
+            t.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { t.classList.remove('translate-y-0', 'opacity-100'); t.classList.add('translate-y-20', 'opacity-0'); }, 4000);
+        }
+    </script>
+</body>
+</html>

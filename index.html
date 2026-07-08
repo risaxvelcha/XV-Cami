@@ -16,9 +16,28 @@
             theme: {
                 extend: {
                     colors: {
-                        cement: { 50: '#f4f7f5', 100: '#e4ebe6', 200: '#cbdad1', 300: '#a7c1b5', 400: '#7fa392', 500: '#61846c', 600: '#4c6955', 700: '#3e5445', 800: '#334338', 900: '#2b372f',
+                        cement: { 
+                            50: '#f4f7f5', 
+                            100: '#e4ebe6', 
+                            200: '#cbdad1', 
+                            300: '#a7c1b5', 
+                            400: '#7fa392', 
+                            500: '#61846c', 
+                            600: '#4c6955', 
+                            700: '#3e5445', 
+                            800: '#334338', 
+                            900: '#2b372f',
                         },
-                        blush: { 50: '#fdf3f4', 100: '#fbe4e6', 200: '#f7cdd1', 300: '#f1abb3', 400: '#e87c8a', 500: '#db5164', 600: '#c53449', 700: '#a52637' }
+                        blush: { 
+                            50: '#fdf3f4', 
+                            100: '#fbe4e6', 
+                            200: '#f7cdd1', 
+                            300: '#f1abb3', 
+                            400: '#e87c8a', 
+                            500: '#db5164', 
+                            600: '#c53449', 
+                            700: '#a52637' 
+                        }
                     },
                     fontFamily: {
                         sans: ['Montserrat', 'sans-serif'],
@@ -66,8 +85,8 @@
 </head>
 <body class="bg-stone-50 font-sans text-stone-800 antialiased overflow-x-hidden">
 
-    <!-- Audio Elemento de Música (Por defecto lee el archivo local de la carpeta music/) -->
-    <audio id="bg-music" loop src="music/musica.mp3"></audio>
+    <!-- Audio Elemento de Música -->
+    <audio id="bg-music" loop></audio>
 
     <!-- REPRODUCTOR DE MÚSICA FLOTANTE -->
     <div class="fixed bottom-6 left-6 z-50 flex items-center space-x-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-full shadow-xl border border-cement-200/65">
@@ -97,11 +116,12 @@
     <!-- BARRA DE NAVEGACIÓN -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-stone-200/50 py-3 px-4 z-40 flex justify-between items-center shadow-sm">
         <span class="font-serif italic font-semibold text-stone-700 tracking-wider">Mis XV Años</span>
-        <div class="flex space-x-2">
-           <!-- <button onclick="toggleModal('admin-modal')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5">
+        <!-- Botones de administración protegidos por rol de url o trigger oculto -->
+        <div id="admin-controls-nav" class="flex space-x-2 hidden">
+            <button onclick="toggleModal('admin-modal')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5">
                 <i class="fa-solid fa-gear"></i>
                 <span class="hidden sm:inline">Configurar</span>
-            </button> -->
+            </button>
             <button onclick="toggleModal('dashboard-modal')" class="px-3 py-1.5 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-cement-600/20">
                 <i class="fa-solid fa-list-check"></i>
                 <span>Invitados (<span id="count-badge">0</span>)</span>
@@ -204,13 +224,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">Momento de Bendición</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "El Campanario"</p>
-                        <p id="display-ceremonia-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "Isssss CLub"</p>
+                        <p id="display-ceremonia-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-ceremonia-hora">17:00 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-ceremonia" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-ceremonia" href="https://maps.app.goo.gl/xgdu3UjkorYShJ8n8" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -229,13 +249,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">¡A Celebrar en Grande!</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "El Campanario"</p>
-                        <p id="display-recepcion-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "Isssss CLub"</p>
+                        <p id="display-recepcion-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-recepcion-hora">18:30 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-recepcion" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-recepcion" href="https://maps.app.goo.gl/xgdu3UjkorYShJ8n8" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -245,8 +265,8 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE -->
-    <!--<section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
+    <!-- COMPARTIR ENLACE 
+    <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
             <p class="text-sm text-stone-500">Copia el enlace de abajo o envíalo directamente a tus contactos por WhatsApp.</p>
@@ -275,16 +295,25 @@
             </div>
 
             <form id="rsvp-form" onsubmit="guardarConfirmacion(event)" class="space-y-6">
+                <!-- Nombre del Invitado (Campo desplegable dinámico alfabético) -->
                 <div class="space-y-1.5">
-                    <label for="rsvp-name" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Nombre Completo del Invitado</label>
+                    <label for="rsvp-name" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Busca tu Nombre en la Lista</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
                             <i class="fa-regular fa-user"></i>
                         </span>
-                        <input type="text" id="rsvp-name" required placeholder="Ej. Familia Martínez Pérez" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                        <select id="rsvp-name" required onchange="seleccionarInvitadoDesplegable()" class="w-full pl-10 pr-10 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm appearance-none cursor-pointer">
+                            <option value="">Selecciona tu nombre de la lista...</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
                     </div>
+                    <!-- Mensaje de Feedback de búsqueda de pases -->
+                    <div id="rsvp-lookup-feedback" class="text-xs transition-all duration-300 font-semibold hidden"></div>
                 </div>
 
+                <!-- Número de Contacto -->
                 <div class="space-y-1.5">
                     <label for="rsvp-phone" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Número de Contacto (Tel/WhatsApp)</label>
                     <div class="relative">
@@ -346,10 +375,11 @@
     <!-- FOOTER -->
     <footer class="py-12 bg-stone-900 text-stone-400 text-center px-4">
         <div class="max-w-4xl mx-auto space-y-4">
-            <h2 class="font-cursive text-4xl text-cement-300" id="footer-nombre">Camila Shaddai</h2>
-            <p class="font-serif italic text-sm text-stone-500">Mis XV Años Camila Shaddai</p>
+            <!-- Disparador Easter Egg: Hacer clic 5 veces en el título del footer activa el panel de administración -->
+            <h2 class="font-cursive text-4xl text-cement-300 cursor-pointer select-none" id="footer-nombre" onclick="footerAdminTrigger()">Camila Shaddai</h2>
+            <p class="font-serif italic text-sm text-stone-500">Mis XV Años</p>
             <div class="h-[1px] w-12 bg-stone-800 mx-auto"></div>
-            <p class="text-xs text-stone-600">Invitación interactiva premium.</p>
+            <p class="text-xs text-stone-600">Invitación interactiva premium con seguridad privada.</p>
         </div>
     </footer>
 
@@ -365,6 +395,23 @@
             </div>
             
             <form id="admin-form" onsubmit="guardarConfiguracion(event)" class="p-4 md:p-6 overflow-y-auto space-y-5 flex-1">
+                
+                <!-- SECCIÓN AGREGADA: ENLACE PRIVADO DE ADMINISTRADOR -->
+                <div class="bg-amber-50 border border-amber-200/60 rounded-2xl p-4 space-y-2">
+                    <h5 class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-shield"></i> Enlace de Administrador Privado
+                    </h5>
+                    <p class="text-[10px] text-amber-700 leading-normal">
+                        Guarda y comparte este enlace únicamente contigo mismo. Te dará acceso directo a editar el contenido y monitorear la lista de invitados sin restricciones.
+                    </p>
+                    <div class="flex gap-2">
+                        <input type="text" id="admin-link-input" readonly class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-amber-300 bg-white font-mono text-stone-600 focus:outline-none">
+                        <button type="button" onclick="copiarEnlaceAdmin()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold whitespace-nowrap transition-all shadow-sm">
+                            Copiar Enlace
+                        </button>
+                    </div>
+                </div>
+
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Festejada</h4>
                     <div class="space-y-1.5">
@@ -386,6 +433,16 @@
                     <div class="space-y-1.5">
                         <label class="block text-xs font-semibold text-stone-600">Mensaje de Dedicatoria</label>
                         <textarea id="cfg-mensaje" rows="2" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: Base de datos de pases asignados -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Pases de Invitados Asignados</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Base de Datos de Invitados (Escribir: Nombre, Pases)</label>
+                        <textarea id="cfg-lista-pases" rows="4" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-xs font-mono resize-y" placeholder="Ejemplo:&#10;Tío Carlos Martínez, 4&#10;Adriana Solís, 1&#10;Familia Ruiz Gómez, 3"></textarea>
+                        <p class="text-[10px] text-stone-400">Introduce un invitado por línea. Al seleccionarlo en el menú RSVP, el selector de pases de entrada se ajustará de forma estricta.</p>
                     </div>
                 </div>
 
@@ -469,7 +526,7 @@
 
                 <div class="pt-4 flex space-x-3">
                     <button type="button" onclick="restablecerPreestablecido()" class="w-1/2 py-2.5 border border-stone-300 text-stone-700 hover:bg-slate-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">
-                        Valores Demo
+                        Valores 
                     </button>
                     <button type="submit" class="w-1/2 py-2.5 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
                         Guardar Todo
@@ -548,12 +605,14 @@
             ceremoniaLugar: "Salón de Eventos \"Isssss Club\"",
             ceremoniaDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
             ceremoniaHora: "17:00 Hrs",
-            ceremoniaMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
+            ceremoniaMapa: "https://maps.app.goo.gl/xgdu3UjkorYShJ8n8",
             recepcionLugar: "Salón de Eventos \"Isssss Club\"",
             recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
-            recepcionHora: "18:30 Hrs",
-            recepcionMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
-            musicaUrl: "music/musica.mp3" // Archivo local por defecto
+            recepcionHora: "17:30 Hrs",
+            recepcionMapa: "https://maps.app.goo.gl/xgdu3UjkorYShJ8n8",
+            musicaUrl: "music/musica.mp3",
+            // Base de datos de invitados y sus pases asignados por defecto
+            listaPasesInvitados: "Tío Carlos Martínez y Fam., 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -561,6 +620,9 @@
         let carouselIntervalId = null;
         let currentSlide = 0;
         let musicPlaying = false;
+
+        // Base de datos de invitados analizada en memoria
+        let parsedGuestDatabase = {};
 
         // Variables de control para el Sintetizador Web Audio API
         let audioCtx = null;
@@ -585,16 +647,15 @@
             document.addEventListener('touchstart', iniciarMusicaAutomaticamente, { once: true });
             cargarInvitadosSimulados();
             verificarAsistenciaPrevia();
+            verificarRolAdministrador();
 
             // Detectar errores en el tag de audio si el usuario usa una URL personalizada que falle
             document.getElementById('bg-music').addEventListener('error', function(e) {
                 const music = document.getElementById('bg-music');
-                // Ignorar si el src está vacío, no existe, o apunta a la URL de la página actual (bug común de src vacío)
                 if (!music.src || music.src === window.location.href || appConfig.musicaUrl === "synthesized") {
                     return;
                 }
                 console.error("Error cargando el audio externo:", e);
-                // Si falla el audio externo, cambiamos automáticamente al sintetizador offline seguro
                 if (appConfig.musicaUrl !== "synthesized") {
                     mostrarToast("Error de carga. Activando piano offline seguro.", "fa-solid fa-music text-amber-500");
                     appConfig.musicaUrl = "synthesized";
@@ -603,6 +664,143 @@
             });
         };
 
+        // --- SISTEMA DE CONTROL DE ACCESO DE ADMINISTRACIÓN ---
+        function verificarRolAdministrador() {
+            // Evaluamos la URL para ver si cuenta con permisos de administrador en query parameters o se encuentra en un editor/iframe local
+            const urlParams = new URLSearchParams(window.location.search);
+            const isLocalOrIframe = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.ancestorOrigins.length > 0;
+            const hasAdminParam = urlParams.get('admin') === 'true';
+
+            const adminControls = document.getElementById('admin-controls-nav');
+            if (hasAdminParam || isLocalOrIframe) {
+                adminControls.classList.remove('hidden');
+            } else {
+                adminControls.classList.add('hidden');
+            }
+        }
+
+        // --- EASTER EGG: ACTIVACIÓN SECRETA DE ADMINISTRADOR ---
+        let footerClicks = 0;
+        function footerAdminTrigger() {
+            footerClicks++;
+            if (footerClicks >= 5) {
+                footerClicks = 0;
+                const pass = prompt("Introduce el código de acceso rápido (Por defecto: 15Anos):");
+                if (pass === "15Anos" || pass === "15anos") {
+                    document.getElementById('admin-controls-nav').classList.remove('hidden');
+                    mostrarToast("¡Modo Administrador activado!", "fa-solid fa-unlock text-emerald-500");
+                } else if (pass !== null) {
+                    mostrarToast("Código incorrecto.", "fa-solid fa-lock text-rose-500");
+                }
+            }
+        }
+
+        function copiarEnlaceAdmin() {
+            const input = document.getElementById('admin-link-input');
+            input.select();
+            document.execCommand('copy');
+            mostrarToast("¡Enlace de admin copiado!", "fa-solid fa-user-shield text-amber-500");
+        }
+
+        // --- HELPER: NORMALIZAR TEXTO ---
+        function normalizarTexto(txt) {
+            return txt.toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "") // Quitar acentos
+                      .replace(/[^a-z0-9 ]/g, '')     // Quitar caracteres especiales
+                      .trim();
+        }
+
+        // --- PARSER PARA LA BASE DE DATOS DE INVITADOS ---
+        function parseGuestDatabase(rawText) {
+            parsedGuestDatabase = {};
+            if (!rawText) return;
+            const lines = rawText.split('\n');
+            lines.forEach(line => {
+                const parts = line.split(',');
+                if (parts.length >= 2) {
+                    const originalName = parts[0].trim();
+                    const cleanKey = normalizarTexto(originalName);
+                    const passes = parseInt(parts[1].trim()) || 1;
+                    if (cleanKey) {
+                        parsedGuestDatabase[cleanKey] = {
+                            nombre: originalName,
+                            pases: passes
+                        };
+                    }
+                }
+            });
+        }
+
+        // --- CARGA DINÁMICA DE LA LISTA EN EL DESPLEGABLE ---
+        function cargarListaNombresDesplegable() {
+            const selectNombre = document.getElementById('rsvp-name');
+            if (!selectNombre) return;
+
+            selectNombre.innerHTML = '<option value="">Selecciona tu nombre de la lista...</option>';
+
+            const sortedKeys = Object.keys(parsedGuestDatabase).sort((a, b) => {
+                return parsedGuestDatabase[a].nombre.localeCompare(parsedGuestDatabase[b].nombre);
+            });
+
+            sortedKeys.forEach(key => {
+                const guest = parsedGuestDatabase[key];
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.textContent = guest.nombre;
+                selectNombre.appendChild(opt);
+            });
+        }
+
+        // --- DETECTOR AL SELECCIONAR UN NOMBRE ---
+        function seleccionarInvitadoDesplegable() {
+            const selectNombre = document.getElementById('rsvp-name');
+            const feedback = document.getElementById('rsvp-lookup-feedback');
+            const selectedKey = selectNombre.value;
+
+            if (!selectedKey) {
+                feedback.className = "text-xs mt-1 text-stone-400 italic hidden";
+                feedback.innerHTML = "";
+                reconstruirSelectPases(6);
+                return;
+            }
+
+            const match = parsedGuestDatabase[selectedKey];
+
+            if (match) {
+                feedback.className = "text-xs mt-1 font-semibold text-emerald-600 block animate-pulse";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Hola, ${match.nombre}! Reservamos <strong>${match.pases} pase${match.pases > 1 ? 's' : ''}</strong> para ti y tu familia.`;
+                reconstruirSelectPases(match.pases);
+                
+                const statusChecked = document.querySelector('input[name="rsvp-status"]:checked');
+                if (statusChecked && statusChecked.value === 'asistire') {
+                    document.getElementById('seccion-acompanantes').style.display = 'block';
+                }
+            } else {
+                feedback.className = "text-xs mt-1 font-semibold text-stone-500 block";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-info mr-1"></i> Por favor selecciona una opción válida.`;
+                reconstruirSelectPases(6);
+            }
+        }
+
+        function reconstruirSelectPases(numMaximo) {
+            const select = document.getElementById('rsvp-guests');
+            if (!select) return;
+            const preselectedVal = select.value;
+            select.innerHTML = "";
+            for (let i = 1; i <= numMaximo; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `${i} Pase${i > 1 ? 's' : ''} de entrada`;
+                select.appendChild(opt);
+            }
+            if (preselectedVal && parseInt(preselectedVal) <= numMaximo) {
+                select.value = preselectedVal;
+            } else {
+                select.value = numMaximo;
+            }
+        }
+
         // --- SISTEMA DE SINTETIZADOR WEB AUDIO API ---
         function playSynthNote(freq, startTime, duration, volume) {
             if (!audioCtx) return;
@@ -610,13 +808,12 @@
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
                 
-                osc.type = 'triangle'; // Sonido suave, tipo flauta/piano eléctrico
+                osc.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, startTime);
                 
-                // Envolvente de volumen para simular un golpe de tecla de piano suave
                 gainNode.gain.setValueAtTime(0, startTime);
-                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.15); // Ataque suave
-                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Caída natural
+                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.15);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
                 
                 osc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
@@ -636,10 +833,8 @@
             const chord = chords[chordIndex];
             
             if (noteIndex === 0) {
-                // Toca la nota baja del bajo (larga y profunda)
                 playSynthNote(chord.bass, now, 3.8, 0.22);
             } else {
-                // Toca las notas del arpegio agudo paulatinamente
                 const trebleFreq = chord.trebles[noteIndex - 1];
                 if (trebleFreq) {
                     playSynthNote(trebleFreq, now, 2.8, 0.10);
@@ -648,7 +843,6 @@
             synthStep++;
         }
 
-        // Inicia el generador de piano offline
         function iniciarSintetizador() {
             try {
                 if (!audioCtx) {
@@ -660,7 +854,7 @@
                 stopSintetizador();
                 synthStep = 0;
                 playSynthStep();
-                synthInterval = setInterval(playSynthStep, 1100); // Ritmo lento y pausado
+                synthInterval = setInterval(playSynthStep, 1100);
             } catch (e) {
                 console.error("No se pudo iniciar el sintetizador de audio:", e);
             }
@@ -788,6 +982,14 @@
             }
         }
 
+        // --- HELPER: FORMATEAR FECHA DE MANERA ELEGANTE ---
+        function formatearFechaLarga(fechaStr) {
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const fechaParseada = new Date(fechaStr + 'T00:00:00');
+            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+            return fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1);
+        }
+
         function aplicarConfiguracionEnVista() {
             document.getElementById('festejada-nombre').innerText = appConfig.nombre;
             document.getElementById('footer-nombre').innerText = appConfig.nombre;
@@ -801,7 +1003,6 @@
             const targetSrc = appConfig.musicaUrl || DEFAULT_CONFIG.musicaUrl;
 
             if (targetSrc === "synthesized") {
-                // Detener el tag de audio y remover atributo src para evitar errores de carga
                 music.pause();
                 music.removeAttribute('src');
                 try { music.load(); } catch(e) {}
@@ -809,7 +1010,6 @@
                     iniciarSintetizador();
                 }
             } else {
-                // Usar elemento de audio normal
                 stopSintetizador();
                 if (targetSrc && music.src !== targetSrc && !music.src.endsWith(targetSrc)) {
                     music.src = targetSrc;
@@ -843,33 +1043,20 @@
             document.getElementById('cfg-recepcion-hora').value = appConfig.recepcionHora;
             document.getElementById('cfg-recepcion-mapa').value = appConfig.recepcionMapa;
 
-            const preconfiguredUrls = [
-                "music/musica.mp3",
-                "synthesized",
-                "https://upload.wikimedia.org/wikipedia/commons/e/e5/Gymnop%C3%A9die_No._1.ogg",
-                "https://upload.wikimedia.org/wikipedia/commons/b/b4/Frederic_Chopin_-_Nocturne_in_E-flat_major%2C_Op._9_no._2.ogg",
-                "https://upload.wikimedia.org/wikipedia/commons/2/24/Claude_Debussy_-_Clair_de_lune.ogg",
-                "https://upload.wikimedia.org/wikipedia/commons/d/d0/Beethoven_-_Piano_Sonata_No._14_in_C-sharp_minor_%22Moonlight%22%2C_Op._27_No._2_-_I._Adagio_sostenuto.ogg"
-            ];
-            
-            const selectMusica = document.getElementById('cfg-musica-select');
-            const customInputMusica = document.getElementById('cfg-musica-custom');
-            const customContainerMusica = document.getElementById('cfg-musica-custom-container');
-            
-            if (preconfiguredUrls.includes(targetSrc)) {
-                selectMusica.value = targetSrc;
-                customContainerMusica.classList.add('hidden');
-                customInputMusica.value = "";
-            } else {
-                selectMusica.value = "custom";
-                customContainerMusica.classList.remove('hidden');
-                customInputMusica.value = targetSrc;
+            // Enlace de administrador con query parameters
+            const adminLinkInput = document.getElementById('admin-link-input');
+            if (adminLinkInput) {
+                adminLinkInput.value = window.location.origin + window.location.pathname + "?admin=true";
             }
 
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
-            document.getElementById('display-fecha-larga').innerText = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1);
+            const rawPasesList = appConfig.listaPasesInvitados || DEFAULT_CONFIG.listaPasesInvitados;
+            document.getElementById('cfg-lista-pases').value = rawPasesList;
+            
+            parseGuestDatabase(rawPasesList);
+            cargarListaNombresDesplegable();
+
+            const fechaLarga = formatearFechaLarga(appConfig.fecha);
+            document.getElementById('display-fecha-larga').innerText = fechaLarga;
             document.getElementById('display-hora-principal').innerText = `A partir de las ${appConfig.hora}`;
 
             document.getElementById('display-ceremonia-lugar').innerText = appConfig.ceremoniaLugar;
@@ -927,44 +1114,97 @@
             if (miConfirmacionStr) {
                 try {
                     const miConfirmacion = JSON.parse(miConfirmacionStr);
-                    
-                    // Formatear fecha del evento
-                    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-                    const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-                    const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+                    const fechaLarga = formatearFechaLarga(appConfig.fecha);
 
-                    // Ocultar el formulario de RSVP y mostrar la tarjeta de estado de confirmación
                     const rsvpSection = document.getElementById('rsvp-section');
                     if (rsvpSection) {
                         rsvpSection.innerHTML = `
-                            <div class="max-w-xl mx-auto bg-white border border-cement-100 rounded-3xl p-8 md:p-12 shadow-2xl relative z-10 text-center space-y-6">
-                                <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                            <div class="max-w-xl mx-auto bg-stone-50 border-2 border-stone-200/50 rounded-3xl p-6 md:p-10 shadow-2xl relative z-10 text-center space-y-6 animate-fade-in">
+                                <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
                                     <i class="fa-solid fa-circle-check"></i>
                                 </div>
-                                <div class="space-y-2">
-                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Todo listo!</span>
-                                    <h2 class="font-serif text-3xl text-stone-800">Asistencia Confirmada</h2>
-                                    <div class="w-12 h-[2px] bg-cement-400 mx-auto"></div>
+                                
+                                <div class="space-y-1">
+                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Asistencia Registrada!</span>
+                                    <h2 class="font-serif text-2xl text-stone-800">¡Gracias por Confirmar!</h2>
+                                    <div class="w-12 h-[1px] bg-stone-300 mx-auto"></div>
                                 </div>
-                                <p class="text-stone-600 text-sm md:text-base leading-relaxed">
-                                    Hola <strong class="text-stone-800">${miConfirmacion.nombre}</strong>, tu asistencia ha sido confirmada con éxito.
-                                    ${miConfirmacion.asiste ? `Reservamos <strong class="text-cement-600">${miConfirmacion.pases} pase(s)</strong> para ti.` : 'Hemos registrado que no podrás asistir.'}
-                                </p>
-                                <div class="bg-stone-50 rounded-2xl p-4 border border-stone-100">
-                                    <p class="text-xs text-stone-400 uppercase tracking-widest font-bold">Te esperamos el</p>
-                                    <p class="font-serif text-lg text-cement-700 font-semibold mt-1">${fechaLarga}</p>
+
+                                <!-- BOLETO DIGITAL DE ACCESO (Pase en Pantalla) -->
+                                <div id="digital-ticket" class="bg-white border-2 border-dashed border-stone-300 rounded-2xl p-6 relative overflow-hidden shadow-md max-w-sm mx-auto text-left space-y-4">
+                                    <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-50 border-r-2 border-dashed border-stone-300"></div>
+                                    <div class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-50 border-l-2 border-dashed border-stone-300"></div>
+                                    
+                                    <div class="text-center pb-2 border-b border-stone-100">
+                                        <p class="font-cursive text-3xl text-cement-600">Camila Shaddai</p>
+                                        <p class="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Pase de Acceso Digital</p>
+                                    </div>
+                                    
+                                    <div class="space-y-2 text-stone-700 text-sm">
+                                        <div>
+                                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Invitado</span>
+                                            <span class="font-semibold text-stone-800 text-base">${miConfirmacion.nombre}</span>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Pases Asignados</span>
+                                                <span class="font-bold text-cement-600 text-lg">${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Estatus</span>
+                                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold inline-block border border-emerald-100">
+                                                    <i class="fa-solid fa-check mr-1"></i>Confirmado
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Fecha</span>
+                                            <span class="text-xs font-semibold">${fechaLarga}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Recepción</span>
+                                            <span class="text-xs text-stone-500">${appConfig.recepcionLugar}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-3 border-t border-stone-100 text-center space-y-1">
+                                        <div class="inline-block p-1 bg-stone-100 rounded">
+                                            <div class="flex space-x-0.5 h-6 items-center px-2">
+                                                <div class="w-1 bg-stone-800 h-full"></div>
+                                                <div class="w-0.5 bg-stone-800 h-full"></div>
+                                                <div class="w-1.5 bg-stone-800 h-full"></div>
+                                                <div class="w-0.5 bg-stone-800 h-full"></div>
+                                                <div class="w-1 bg-stone-800 h-full"></div>
+                                                <div class="w-2 bg-stone-800 h-full"></div>
+                                                <div class="w-0.5 bg-stone-800 h-full"></div>
+                                                <div class="w-1 bg-stone-800 h-full"></div>
+                                                <div class="w-1.5 bg-stone-800 h-full"></div>
+                                                <div class="w-1 bg-stone-800 h-full"></div>
+                                            </div>
+                                        </div>
+                                        <p class="text-[9px] font-mono text-stone-400">TICKET-ID: ${Math.floor(100000 + Math.random() * 900000)}</p>
+                                    </div>
                                 </div>
-                                <button onclick="cancelarAsistencia()" class="text-xs text-stone-400 hover:text-rose-500 underline transition-colors">
-                                    ¿Necesitas modificar o cambiar tu confirmación? Haz clic aquí
-                                </button>
+
+                                <div class="space-y-3 pt-2">
+                                    <p class="text-xs text-stone-500 max-w-sm mx-auto">
+                                        Tu boleto ya está registrado. Te sugerimos guardarlo con una captura de pantalla para presentarlo en la entrada del salón.
+                                    </p>
+                                    
+                                    <button onclick="enviarBoletoWhatsApp('${miConfirmacion.nombre}', ${miConfirmacion.pases}, '${miConfirmacion.telefono}', '${fechaLarga}')" class="inline-flex items-center space-x-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow-md">
+                                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                                        <span>Reenviar Pase por WhatsApp</span>
+                                    </button>
+                                </div>
+
+                                <div class="pt-4 border-t border-stone-200">
+                                    <button onclick="cancelarAsistencia()" class="text-xs text-stone-400 hover:text-rose-500 underline transition-colors">
+                                        ¿Necesitas modificar o corregir tus pases? Haz clic aquí
+                                    </button>
+                                </div>
                             </div>
                         `;
                     }
-                    
-                    // Enviar toast notificando que su asistencia fue confirmada
-                    setTimeout(() => {
-                        mostrarToast(`Tu asistencia ha sido confirmada, ¡te esperamos el ${fechaLarga}!`, "fa-solid fa-heart text-pink-500");
-                    }, 1200);
 
                 } catch (e) {
                     console.error("Error al procesar confirmación previa:", e);
@@ -972,10 +1212,79 @@
             }
         }
 
+        // --- ENVIAR BOLETO DIGITAL AL INVITADO POR WHATSAPP ---
+        function enviarBoletoWhatsApp(nombreInvitado, pases, numeroTelefono, fechaEvento) {
+            let telefonoLimpio = numeroTelefono.replace(/[^0-9]/g, '');
+            if (telefonoLimpio.length === 10) {
+                telefonoLimpio = "52" + telefonoLimpio;
+            }
+
+            const textoBoleto = `✨ *GRACIAS POR CONFIRMAR TU ASISTENCIA* 🌸
+
+Hola *${nombreNombre(nombreInvitado)}*, te confirmamos que tu pase de entrada digital ha sido generado con éxito.
+
+🎟️ *BOLETO DE ACCESO DIGITAL*
+•------------------------------------------•
+  🌸 *XV Años de Camila Shaddai* 🌸
+  
+  👤 *Invitado:* ${nombreInvitado}
+  🎟️ *Pases Reservados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  📅 *Fecha:* ${fechaEvento}
+  📍 *Lugar:* ${appConfig.recepcionLugar}
+  📌 *Estatus:* Confirmado ✓
+•------------------------------------------•
+
+⚠️ _Presenta este mensaje en la recepción para agilizar tu acceso al salón._ 
+
+¡Nos dará una alegría inmensa compartir esta mágica e inolvidable noche contigo! ✨`;
+
+            const enlaceWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoLimpio + "&text=" + encodeURIComponent(textoBoleto);
+            window.open(enlaceWhatsApp, '_blank');
+        }
+
+        // --- SISTEMA AGREGADO: RECORDATORIO DE ASISTENCIA (1 SEMANA ANTES) ---
+        function enviarRecordatorioWhatsApp(nombreInvitado, pases, numeroTelefono) {
+            let telefonoLimpio = numeroTelefono.replace(/[^0-9]/g, '');
+            if (telefonoLimpio.length === 10) {
+                telefonoLimpio = "52" + telefonoLimpio;
+            }
+
+            const fechaLarga = formatearFechaLarga(appConfig.fecha);
+
+            const textoRecordatorio = `🌸 *RECORDATORIO ESPECIAL: MIS XV AÑOS* 🌸
+
+Hola *${nombreNombre(nombreInvitado)}*, ¡esperamos que te encuentres de lo mejor! 
+
+Te escribimos con muchísima emoción porque *¡estamos a solo una semana de celebrar este gran día!* 🎉✨
+
+Queremos agradecerte de corazón por haber confirmado tu asistencia en su momento. Te recordamos con cariño los datos de tu pase digital de acceso:
+
+🎟️ *DATOS DE TU ACCESO:*
+•------------------------------------------•
+  🌸 *Quinceañera:* Camila Shaddai
+  👤 *Invitado:* ${nombreInvitado}
+  🎟️ *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  📅 *Fecha:* ${fechaLarga}
+  📍 *Recepción:* ${appConfig.recepcionLugar}
+  📌 *Dirección:* ${appConfig.recepcionDir}
+•------------------------------------------•
+
+⚠️ _Recuerda tener a la mano este mensaje para presentarlo en la recepción del salón._ 
+
+¡Nos vemos muy pronto para compartir una noche inolvidable y llena de magia! 🌿✨`;
+
+            const enlaceWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoLimpio + "&text=" + encodeURIComponent(textoRecordatorio);
+            window.open(enlaceWhatsApp, '_blank');
+        }
+
+        function nombreNombre(str) {
+            return str.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+        }
+
         function cancelarAsistencia() {
             if (confirm("¿Deseas modificar o rehacer tu confirmación de asistencia?")) {
                 localStorage.removeItem('xv_mi_confirmacion');
-                location.reload(); // Recargar para volver a mostrar el formulario limpio
+                location.reload();
             }
         }
 
@@ -987,7 +1296,11 @@
             if (estado === 'asistire') {
                 lAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-cement-500 cursor-pointer bg-cement-50/50 transition-all text-sm font-semibold text-cement-700";
                 lNoAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 transition-all text-sm font-medium text-stone-700";
-                secAcompanantes.style.display = 'block';
+                
+                const selectNombre = document.getElementById('rsvp-name');
+                if (selectNombre && selectNombre.value) {
+                    secAcompanantes.style.display = 'block';
+                }
             } else {
                 lNoAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-blush-400 cursor-pointer bg-blush-50/50 transition-all text-sm font-semibold text-blush-500";
                 lAsistire.className = "flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 transition-all text-sm font-medium text-stone-700";
@@ -997,20 +1310,32 @@
 
         function guardarConfirmacion(event) {
             event.preventDefault();
+            
+            const selectNombre = document.getElementById('rsvp-name');
+            const selectedKey = selectNombre.value;
+
+            if (!selectedKey) {
+                mostrarToast("Por favor, busca y selecciona tu nombre de la lista desplegable.", "fa-solid fa-user-tag text-amber-500");
+                selectNombre.focus();
+                return;
+            }
+
+            const match = parsedGuestDatabase[selectedKey];
             const asisteCheck = document.querySelector('input[name="rsvp-status"]:checked').value === 'asistire';
             const mensajeInput = document.getElementById('rsvp-message');
             const mensaje = mensajeInput.value.trim();
 
-            // Requisito: Si asiste y no se ha agregado un mensaje, solicitarle que lo deje
             if (asisteCheck && !mensaje) {
                 mostrarToast("Por favor, déjanos un lindo mensaje de dedicatoria especial ✨", "fa-solid fa-pen-nib text-amber-500");
                 mensajeInput.focus();
                 return;
             }
             
+            const numeroTelefono = document.getElementById('rsvp-phone').value.trim();
+
             const invData = {
-                nombre: document.getElementById('rsvp-name').value.trim(),
-                telefono: document.getElementById('rsvp-phone').value.trim(),
+                nombre: match ? match.nombre : selectNombre.options[selectNombre.selectedIndex].text,
+                telefono: numeroTelefono,
                 asiste: asisteCheck,
                 pases: asisteCheck ? parseInt(document.getElementById('rsvp-guests').value) : 0,
                 mensaje: asisteCheck ? mensaje : "",
@@ -1021,19 +1346,16 @@
             btnEnviar.disabled = true;
             btnEnviar.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Procesando...';
 
-            // Formatear fecha para el mensaje de éxito personalizado
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+            const fechaLarga = formatearFechaLarga(appConfig.fecha);
             const mensajeExito = `Tu asistencia ha sido confirmada, ¡te esperamos el ${fechaLarga}!`;
 
-            // Guardar confirmación en localStorage del navegador del invitado
             localStorage.setItem('xv_mi_confirmacion', JSON.stringify(invData));
 
+            setTimeout(() => {
+                enviarBoletoWhatsApp(invData.nombre, invData.pases, invData.telefono, fechaLarga);
+            }, 1000);
+
             if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("EXAMPLE-URL")) {
-                // Se envía la petición usando el tipo simple 'text/plain;charset=utf-8'
-                // Esto evita que el navegador realice una consulta OPTIONS (Preflight de CORS)
-                // que las Web Apps de Google Apps Script no pueden responder, fallando localmente.
                 fetch(GOOGLE_SCRIPT_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
@@ -1045,19 +1367,18 @@
                 .then(() => { 
                     guardarLocalSimulado(invData); 
                     exitoRegistro(mensajeExito); 
-                    setTimeout(() => location.reload(), 1500); // Recargar para activar la vista de confirmado
+                    setTimeout(() => location.reload(), 1500);
                 })
                 .catch(err => { 
-                    console.error("Error en red al enviar a Google Sheets:", err);
                     mostrarToast("Error de red. Guardado local de respaldo.", "fa-solid fa-triangle-exclamation text-rose-500"); 
                     guardarLocalSimulado(invData); 
                     exitoRegistro(mensajeExito); 
-                    setTimeout(() => location.reload(), 1500); // Recargar para activar la vista de confirmado
+                    setTimeout(() => location.reload(), 1500);
                 });
             } else {
                 guardarLocalSimulado(invData);
                 exitoRegistro(mensajeExito);
-                setTimeout(() => location.reload(), 1500); // Recargar para activar la vista de confirmado
+                setTimeout(() => location.reload(), 1500);
             }
         }
 
@@ -1080,6 +1401,8 @@
 
         function procesarYMostrarInvitados(lista) {
             const tb = document.getElementById('guest-table-body');
+            if (!tb) return;
+            
             if (!lista || lista.length === 0) {
                 tb.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">No hay registros aún.</td></tr>`;
                 document.getElementById('dash-total-confirmados').innerText = "0";
@@ -1096,13 +1419,22 @@
             lista.forEach(i => {
                 if (i.asiste) { tAsisten++; tPases += (i.pases || 0); } else { tDeclinan++; }
                 const status = i.asiste ? `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span>` : `<span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-xmark mr-1"></i> No asistirá</span>`;
+                
+                // Acción combinada: Enviar recordatorio vía WhatsApp y el clásico botón de eliminar
+                const rsvpActions = i.asiste ? `
+                    <button onclick="enviarRecordatorioWhatsApp('${i.nombre}', ${i.pases}, '${i.telefono}')" title="Enviar Recordatorio (1 Semana)" class="text-emerald-500 hover:text-emerald-700 mr-3.5 transition-colors"><i class="fa-brands fa-whatsapp text-base"></i></button>
+                ` : '';
+
                 tb.innerHTML += `<tr class="hover:bg-stone-50">
                     <td class="px-4 py-3 font-semibold text-stone-800">${i.nombre}</td>
                     <td class="px-4 py-3 text-stone-500 font-mono text-xs">${i.telefono}</td>
                     <td class="px-4 py-3">${status}</td>
                     <td class="px-4 py-3 font-semibold">${i.asiste ? i.pases : '-'}</td>
                     <td class="px-4 py-3 text-stone-500 italic max-w-[120px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
-                    <td class="px-4 py-4 text-right"><button onclick="eliminarInvitado('${i.nombre}')" class="text-stone-400 hover:text-rose-600 transition-colors"><i class="fa-regular fa-trash-can"></i></button></td>
+                    <td class="px-4 py-4 text-right flex items-center justify-end">
+                        ${rsvpActions}
+                        <button onclick="eliminarInvitado('${i.nombre}')" title="Eliminar" class="text-stone-400 hover:text-rose-600 transition-colors"><i class="fa-regular fa-trash-can"></i></button>
+                    </td>
                 </tr>`;
             });
 
@@ -1119,37 +1451,28 @@
             cargarInvitadosSimulados();
         }
 
-        // Convertidor automático inteligente para enlaces directos
         function sanitizeUrl(url, type = 'image') {
             if (!url) return '';
-            
-            // Si el enlace ya es una ruta relativa local (no empieza con http o https), lo dejamos tal cual
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 return url;
             }
 
             let fileId = null;
 
-            // Extraer ID de enlaces tipo /file/d/ID/view
             const match1 = url.match(/drive\.google\.com\/file\/d\/([^\/]+)/);
             if (match1) fileId = match1[1];
 
-            // Extraer ID de enlaces tipo /uc?id=ID o /open?id=ID
             const match2 = url.match(/[?&]id=([^&]+)/);
             if (match2 && (url.includes('drive.google.com') || url.includes('docs.google.com'))) fileId = match2[1];
 
             if (fileId) {
-                // Formatos especiales de Google Drive para incrustar archivos correctamente
                 if (type === 'image') {
-                    // Endpoint más de Drive para mostrar imágenes en HTML
                     return `https://lh3.googleusercontent.com/d/${fileId}`;
                 } else {
-                    // Endpoint estable para reproducir audios de Drive
                     return `https://drive.google.com/uc?export=download&id=${fileId}`;
                 }
             }
 
-            // Convertir enlaces de Dropbox a enlaces directos
             if (url.includes('dropbox.com') && url.includes('dl=0')) {
                 return url.replace('dl=0', 'raw=1');
             }
@@ -1178,6 +1501,8 @@
             appConfig.recepcionHora = document.getElementById('cfg-recepcion-hora').value.trim();
             appConfig.recepcionMapa = document.getElementById('cfg-recepcion-mapa').value.trim();
 
+            appConfig.listaPasesInvitados = document.getElementById('cfg-lista-pases').value;
+
             const musSel = document.getElementById('cfg-musica-select').value;
             let customMusicUrl = document.getElementById('cfg-musica-custom').value.trim();
             appConfig.musicaUrl = musSel === 'custom' ? sanitizeUrl(customMusicUrl, 'audio') : musSel;
@@ -1202,7 +1527,6 @@
             mostrarToast("¡Enlace copiado!", "fa-solid fa-copy text-emerald-500");
         }
 
-        // Enviar invitación estructurada por WhatsApp
         function compartirWhatsApp() {
             const url = window.location.href;
             const textoInvitacion = `✨ ¡Estás cordialmente invitado a mis XV Años! 🌸\n\nTe comparto mi invitación interactiva donde podrás escuchar mi música favorita, ver fotos, ubicar el salón en el mapa y confirmar tu asistencia directamente:\n👉 ${url}`;

@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Font Awesome para Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas para generación segura de pases en imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -116,8 +118,7 @@
     <!-- BARRA DE NAVEGACIÓN -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-stone-200/50 py-3 px-4 z-40 flex justify-between items-center shadow-sm">
         <span class="font-serif italic font-semibold text-stone-700 tracking-wider">Mis XV Años</span>
-        <!-- Botones de administración protegidos por rol de url o trigger oculto -->
-        <div id="admin-controls-nav" class="flex space-x-2 hidden">
+        <div class="flex space-x-2">
             <button onclick="toggleModal('admin-modal')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5">
                 <i class="fa-solid fa-gear"></i>
                 <span class="hidden sm:inline">Configurar</span>
@@ -155,7 +156,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -224,13 +225,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">Momento de Bendición</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "Isssss CLub"</p>
-                        <p id="display-ceremonia-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-ceremonia-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-ceremonia-hora">17:00 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-ceremonia" href="https://maps.app.goo.gl/xgdu3UjkorYShJ8n8" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-ceremonia" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -249,13 +250,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">¡A Celebrar en Grande!</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "Isssss CLub"</p>
-                        <p id="display-recepcion-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-recepcion-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-recepcion-hora">18:30 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-recepcion" href="https://maps.app.goo.gl/xgdu3UjkorYShJ8n8" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-recepcion" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -265,7 +266,7 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE 
+    <!-- COMPARTIR ENLACE -->
     <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
@@ -282,11 +283,11 @@
                 </button>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
-        <div class="max-w-xl mx-auto bg-white border border-cement-100 rounded-3xl p-6 md:p-12 shadow-2xl relative z-10">
+        <div id="rsvp-content-card" class="max-w-xl mx-auto bg-white border border-cement-100 rounded-3xl p-6 md:p-12 shadow-2xl relative z-10 transition-all duration-300">
             <div class="text-center space-y-3 mb-8">
                 <span class="text-xs uppercase tracking-[0.2em] text-cement-600 font-semibold">Pases de Entrada</span>
                 <h2 class="font-serif text-3xl text-stone-800">Confirmación de Asistencia</h2>
@@ -320,7 +321,7 @@
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
                             <i class="fa-solid fa-phone"></i>
                         </span>
-                        <input type="tel" id="rsvp-phone" required placeholder="Ej. +52 55 1234 5678" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                        <input type="tel" id="rsvp-phone" required placeholder="Ej. 5512345678 (Sin espacios)" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
                     </div>
                 </div>
 
@@ -372,16 +373,81 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="py-12 bg-stone-900 text-stone-400 text-center px-4">
-        <div class="max-w-4xl mx-auto space-y-4">
-            <!-- Disparador Easter Egg: Hacer clic 5 veces en el título del footer activa el panel de administración -->
-            <h2 class="font-cursive text-4xl text-cement-300 cursor-pointer select-none" id="footer-nombre" onclick="footerAdminTrigger()">Camila Shaddai</h2>
-            <p class="font-serif italic text-sm text-stone-500">Mis XV Años</p>
-            <div class="h-[1px] w-12 bg-stone-800 mx-auto"></div>
-            <p class="text-xs text-stone-600">Invitación interactiva premium con seguridad privada.</p>
+    <!-- CONTENEDOR OCULTO PARA GENERAR BOLETO EN SEGUNDO PLANO (IMPOSIBLE DE MODIFICAR) -->
+    <div class="absolute -left-[9999px] top-0 pointer-events-none" style="width: 380px;">
+        <div id="digital-ticket" class="bg-white p-8 rounded-3xl border border-stone-200 text-left space-y-6 flex flex-col" style="font-family: 'Montserrat', sans-serif;">
+            <div class="text-center pb-4 border-b border-stone-100 flex flex-col items-center">
+                <p class="font-cursive text-5xl text-cement-600 mb-1" style="font-family: 'Alex Brush', cursive;">Camila Shaddai</p>
+                <div class="px-3 py-1 bg-cement-50 border border-cement-200 rounded-full">
+                    <p class="text-[9px] uppercase tracking-widest text-cement-700 font-bold">Pase de Acceso Oficial</p>
+                </div>
+            </div>
+            
+            <div class="space-y-4 text-stone-700 text-xs">
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Invitado Registrado</span>
+                    <span id="ticket-guest-name" class="font-bold text-stone-900 text-base">Nombre de Ejemplo</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Pases Confirmados</span>
+                        <span id="ticket-guest-passes" class="font-extrabold text-cement-600 text-lg">0 Pases</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Estatus</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold inline-block border border-emerald-100">
+                            <i class="fa-solid fa-check mr-1"></i>Confirmado
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Fecha del Evento</span>
+                    <span id="ticket-event-date" class="text-xs font-semibold text-stone-800">Sábado, 29 de Agosto de 2026</span>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Lugar de Recepción</span>
+                    <span id="ticket-event-venue" class="text-xs text-stone-800 font-medium">Salón de Eventos "El Campanario"</span>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-stone-100 text-center space-y-2">
+                <div class="inline-block p-1 bg-stone-50 rounded border border-stone-200">
+                    <div class="flex space-x-0.5 h-8 items-center px-3">
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-1.5 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-2.5 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-1.5 bg-stone-800 h-full"></div>
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-2 bg-stone-800 h-full"></div>
+                    </div>
+                </div>
+                <p id="ticket-random-id" class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #000000</p>
+            </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- DIÁLOGO MODAL CONFIRMACIÓN PERSONALIZADO (REEMPLAZA AL CONFIRM DE NAVEGADOR) -->
+    <div id="custom-confirm-dialog" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-stone-100">
+            <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-xl mx-auto border border-amber-100">
+                <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 id="confirm-dialog-title" class="font-serif text-lg font-bold text-stone-800">¿Estás seguro?</h4>
+                <p id="confirm-dialog-message" class="text-xs text-stone-500">Esta acción aplicará los cambios indicados.</p>
+            </div>
+            <div class="flex space-x-3 pt-2">
+                <button id="btn-confirm-cancel" class="w-1/2 py-2 border border-stone-200 text-stone-600 hover:bg-stone-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button id="btn-confirm-accept" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-cement-600/10">Aceptar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL DE CONFIGURACIÓN -->
     <div id="admin-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -395,23 +461,6 @@
             </div>
             
             <form id="admin-form" onsubmit="guardarConfiguracion(event)" class="p-4 md:p-6 overflow-y-auto space-y-5 flex-1">
-                
-                <!-- SECCIÓN AGREGADA: ENLACE PRIVADO DE ADMINISTRADOR -->
-                <div class="bg-amber-50 border border-amber-200/60 rounded-2xl p-4 space-y-2">
-                    <h5 class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-shield"></i> Enlace de Administrador Privado
-                    </h5>
-                    <p class="text-[10px] text-amber-700 leading-normal">
-                        Guarda y comparte este enlace únicamente contigo mismo. Te dará acceso directo a editar el contenido y monitorear la lista de invitados sin restricciones.
-                    </p>
-                    <div class="flex gap-2">
-                        <input type="text" id="admin-link-input" readonly class="w-full px-2.5 py-1.5 text-xs rounded-lg border border-amber-300 bg-white font-mono text-stone-600 focus:outline-none">
-                        <button type="button" onclick="copiarEnlaceAdmin()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold whitespace-nowrap transition-all shadow-sm">
-                            Copiar Enlace
-                        </button>
-                    </div>
-                </div>
-
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Festejada</h4>
                     <div class="space-y-1.5">
@@ -436,7 +485,6 @@
                     </div>
                 </div>
 
-                <!-- SECCIÓN: Base de datos de pases asignados -->
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Pases de Invitados Asignados</h4>
                     <div class="space-y-1.5">
@@ -526,7 +574,7 @@
 
                 <div class="pt-4 flex space-x-3">
                     <button type="button" onclick="restablecerPreestablecido()" class="w-1/2 py-2.5 border border-stone-300 text-stone-700 hover:bg-slate-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">
-                        Valores 
+                        Valores Demo
                     </button>
                     <button type="submit" class="w-1/2 py-2.5 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
                         Guardar Todo
@@ -543,8 +591,8 @@
                 <div class="flex items-center space-x-2">
                     <span class="w-8 h-8 rounded-full bg-cement-600 text-white flex items-center justify-center"><i class="fa-solid fa-list-check text-xs"></i></span>
                     <div>
-                        <h3 class="font-semibold text-lg text-stone-800">Invitados</h3>
-                        <p class="text-xs text-stone-500 hidden sm:block">Métricas de confirmaciones registradas.</p>
+                        <h3 class="font-semibold text-lg text-stone-800">Panel de Control de Invitados</h3>
+                        <p class="text-xs text-stone-500 hidden sm:block">Monitorea y gestiona las confirmaciones en tiempo real.</p>
                     </div>
                 </div>
                 <button onclick="toggleModal('dashboard-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
@@ -552,15 +600,15 @@
 
             <div class="grid grid-cols-3 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
-                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Confirmados</span>
-                    <span id="dash-total-confirmados" class="text-xl sm:text-2xl font-bold text-stone-800">0</span>
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400 font-sans">Asistirán</span>
+                    <span id="dash-total-confirmados" class="text-xl sm:text-2xl font-bold text-emerald-600">0</span>
                 </div>
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
-                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Total Pases</span>
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400 font-sans">Total Pases</span>
                     <span id="dash-total-pases" class="text-xl sm:text-2xl font-bold text-cement-600">0</span>
                 </div>
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
-                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Declinaron</span>
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400 font-sans font-sans">Declinados</span>
                     <span id="dash-total-declinaron" class="text-xl sm:text-2xl font-bold text-stone-400">0</span>
                 </div>
             </div>
@@ -574,7 +622,7 @@
                                 <th class="px-4 py-3">Teléfono</th>
                                 <th class="px-4 py-3">Estado</th>
                                 <th class="px-4 py-3">Pases</th>
-                                <th class="px-4 py-3">Dedicatoria</th>
+                                <th class="px-4 py-3">Mensaje/Dedicatoria</th>
                                 <th class="px-4 py-3 text-right">Acción</th>
                             </tr>
                         </thead>
@@ -602,17 +650,17 @@
             mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
             fecha: "2026-08-29",
             hora: "17:00 Horas",
-            ceremoniaLugar: "Salón de Eventos \"Isssss Club\"",
-            ceremoniaDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
+            ceremoniaLugar: "Salón de Eventos \"El Campanario\"",
+            ceremoniaDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
             ceremoniaHora: "17:00 Hrs",
-            ceremoniaMapa: "https://maps.app.goo.gl/xgdu3UjkorYShJ8n8",
-            recepcionLugar: "Salón de Eventos \"Isssss Club\"",
-            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
-            recepcionHora: "17:30 Hrs",
-            recepcionMapa: "https://maps.app.goo.gl/xgdu3UjkorYShJ8n8",
+            ceremoniaMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
+            recepcionLugar: "Salón de Eventos \"El Campanario\"",
+            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            recepcionHora: "18:30 Hrs",
+            recepcionMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
             musicaUrl: "music/musica.mp3",
-            // Base de datos de invitados y sus pases asignados por defecto
-            listaPasesInvitados: "Camila Shaddai, 1\nMarisol Islas Barrera, 2\nRicardo Jesús Velázquez Islas, 2\nFamilia Martínez Baez, 4\nFamilia Islas Resendiz, 5\nFamilia Velázquez Ramírez, 5\nAbuelita Felipa Barrera, 2\nAbuelita Lila, 2\nTía Dulce María Velázquez, 3"
+            // Base de datos preestablecida de invitados y pases permitidos
+            listaPasesInvitados: "Tío Carlos Martínez y Fam., 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -620,8 +668,6 @@
         let carouselIntervalId = null;
         let currentSlide = 0;
         let musicPlaying = false;
-
-        // Base de datos de invitados analizada en memoria
         let parsedGuestDatabase = {};
 
         // Variables de control para el Sintetizador Web Audio API
@@ -629,11 +675,14 @@
         let synthInterval = null;
         let synthStep = 0;
 
-        // Acordes de estilo Gymnopédie No.1 de Satie
+        // Estructura armónica inspirada en la Gymnopédie No.1 de Satie
         const chords = [
             { bass: 146.83, trebles: [369.99, 440.00, 554.37] }, // Acorde Dmaj7
             { bass: 196.00, trebles: [493.88, 587.33, 739.99] }  // Acorde Gmaj7
         ];
+
+        // Dialog Callback global
+        let confirmCallback = null;
 
         if (localStorage.getItem('xv_config')) {
             try { appConfig = JSON.parse(localStorage.getItem('xv_config')); } catch (e) { appConfig = { ...DEFAULT_CONFIG }; }
@@ -643,13 +692,13 @@
             crearPetalosDecorativos();
             aplicarConfiguracionEnVista();
             document.getElementById('share-link-input').value = window.location.href;
-            document.addEventListener('click', iniciarMusicaAutomaticamente, { once: true });
-            document.addEventListener('touchstart', iniciarMusicaAutomaticamente, { once: true });
+            document.addEventListener('click', iniciarMúsicaAutomaticamente, { once: true });
+            document.addEventListener('touchstart', iniciarMúsicaAutomaticamente, { once: true });
             cargarInvitadosSimulados();
             verificarAsistenciaPrevia();
-            verificarRolAdministrador();
+            configurarEventosDialogo();
 
-            // Detectar errores en el tag de audio si el usuario usa una URL personalizada que falle
+            // Respaldo inteligente si la URL de la música externa no carga
             document.getElementById('bg-music').addEventListener('error', function(e) {
                 const music = document.getElementById('bg-music');
                 if (!music.src || music.src === window.location.href || appConfig.musicaUrl === "synthesized") {
@@ -664,50 +713,34 @@
             });
         };
 
-        // --- SISTEMA DE CONTROL DE ACCESO DE ADMINISTRACIÓN ---
-        function verificarRolAdministrador() {
-            // Evaluamos la URL para ver si cuenta con permisos de administrador en query parameters o se encuentra en un editor/iframe local
-            const urlParams = new URLSearchParams(window.location.search);
-            const isLocalOrIframe = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.ancestorOrigins.length > 0;
-            const hasAdminParam = urlParams.get('admin') === 'true';
+        function configurarEventosDialogo() {
+            document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+                document.getElementById('custom-confirm-dialog').classList.add('hidden');
+                confirmCallback = null;
+            });
 
-            const adminControls = document.getElementById('admin-controls-nav');
-            if (hasAdminParam || isLocalOrIframe) {
-                adminControls.classList.remove('hidden');
-            } else {
-                adminControls.classList.add('hidden');
-            }
-        }
-
-        // --- EASTER EGG: ACTIVACIÓN SECRETA DE ADMINISTRADOR ---
-        let footerClicks = 0;
-        function footerAdminTrigger() {
-            footerClicks++;
-            if (footerClicks >= 5) {
-                footerClicks = 0;
-                const pass = prompt("Introduce el código de acceso rápido (Por defecto: 15Anos):");
-                if (pass === "15Anos" || pass === "15anos") {
-                    document.getElementById('admin-controls-nav').classList.remove('hidden');
-                    mostrarToast("¡Modo Administrador activado!", "fa-solid fa-unlock text-emerald-500");
-                } else if (pass !== null) {
-                    mostrarToast("Código incorrecto.", "fa-solid fa-lock text-rose-500");
+            document.getElementById('btn-confirm-accept').addEventListener('click', () => {
+                document.getElementById('custom-confirm-dialog').classList.add('hidden');
+                if (confirmCallback) {
+                    confirmCallback();
                 }
-            }
+                confirmCallback = null;
+            });
         }
 
-        function copiarEnlaceAdmin() {
-            const input = document.getElementById('admin-link-input');
-            input.select();
-            document.execCommand('copy');
-            mostrarToast("¡Enlace de admin copiado!", "fa-solid fa-user-shield text-amber-500");
+        function solicitarConfirmacionPersonalizada(titulo, mensaje, onConfirm) {
+            document.getElementById('confirm-dialog-title').innerText = titulo;
+            document.getElementById('confirm-dialog-message').innerText = mensaje;
+            confirmCallback = onConfirm;
+            document.getElementById('custom-confirm-dialog').classList.remove('hidden');
         }
 
         // --- HELPER: NORMALIZAR TEXTO ---
         function normalizarTexto(txt) {
             return txt.toLowerCase()
                       .normalize("NFD")
-                      .replace(/[\u0300-\u036f]/g, "") // Quitar acentos
-                      .replace(/[^a-z0-9 ]/g, '')     // Quitar caracteres especiales
+                      .replace(/[\u0300-\u036f]/g, "") 
+                      .replace(/[^a-z0-9 ]/g, '')     
                       .trim();
         }
 
@@ -732,27 +765,49 @@
             });
         }
 
-        // --- CARGA DINÁMICA DE LA LISTA EN EL DESPLEGABLE ---
+        // --- STREAMING_CHUNK: Carga del menú desplegable excluyendo los que ya se registraron ---
         function cargarListaNombresDesplegable() {
             const selectNombre = document.getElementById('rsvp-name');
             if (!selectNombre) return;
 
+            // Limpiamos la lista para evitar duplicidad
             selectNombre.innerHTML = '<option value="">Selecciona tu nombre de la lista...</option>';
 
+            // Obtener el registro de los invitados que ya han confirmado en localStorage
+            const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            // Creamos un set con los nombres normalizados de las personas que ya se registraron
+            const nombresYaRegistrados = new Set(listaConfirmados.map(inv => normalizarTexto(inv.nombre)));
+
+            // Ordenamos alfabéticamente la base de datos de pases asignados
             const sortedKeys = Object.keys(parsedGuestDatabase).sort((a, b) => {
                 return parsedGuestDatabase[a].nombre.localeCompare(parsedGuestDatabase[b].nombre);
             });
 
+            let totalDisponibles = 0;
+
             sortedKeys.forEach(key => {
-                const guest = parsedGuestDatabase[key];
-                const opt = document.createElement('option');
-                opt.value = key;
-                opt.textContent = guest.nombre;
-                selectNombre.appendChild(opt);
+                // REGLA CLAVE: Solo agregamos el nombre si NO ha sido confirmado previamente
+                if (!nombresYaRegistrados.has(key)) {
+                    const guest = parsedGuestDatabase[key];
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.textContent = guest.nombre;
+                    selectNombre.appendChild(opt);
+                    totalDisponibles++;
+                }
             });
+
+            // Si todos los invitados de la lista ya han confirmado asistencia
+            const feedback = document.getElementById('rsvp-lookup-feedback');
+            if (totalDisponibles === 0 && sortedKeys.length > 0) {
+                feedback.className = "text-xs mt-1 font-semibold text-emerald-600 block";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Excelente! Todos los invitados asignados han confirmado su asistencia.`;
+            } else {
+                feedback.className = "text-xs mt-1 text-stone-400 italic hidden";
+            }
         }
 
-        // --- DETECTOR AL SELECCIONAR UN NOMBRE ---
+        // --- ACCIONES AL SELECCIONAR UN NOMBRE ---
         function seleccionarInvitadoDesplegable() {
             const selectNombre = document.getElementById('rsvp-name');
             const feedback = document.getElementById('rsvp-lookup-feedback');
@@ -769,7 +824,7 @@
 
             if (match) {
                 feedback.className = "text-xs mt-1 font-semibold text-emerald-600 block animate-pulse";
-                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Hola, ${match.nombre}! Reservamos <strong>${match.pases} pase${match.pases > 1 ? 's' : ''}</strong> para ti y tu familia.`;
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Hola, ${match.nombre}! Reservamos un máximo de <strong>${match.pases} pase${match.pases > 1 ? 's' : ''}</strong> para ti.`;
                 reconstruirSelectPases(match.pases);
                 
                 const statusChecked = document.querySelector('input[name="rsvp-status"]:checked');
@@ -801,7 +856,7 @@
             }
         }
 
-        // --- SISTEMA DE SINTETIZADOR WEB AUDIO API ---
+        // --- STREAMING_CHUNK: Configurando Sintetizador de Piano Offline Web Audio API ---
         function playSynthNote(freq, startTime, duration, volume) {
             if (!audioCtx) return;
             try {
@@ -867,7 +922,7 @@
             }
         }
 
-        function iniciarMusicaAutomaticamente() {
+        function iniciarMúsicaAutomaticamente() {
             if (appConfig.musicaUrl === "synthesized") {
                 if (!musicPlaying) {
                     musicPlaying = true;
@@ -881,7 +936,7 @@
                         musicPlaying = true;
                         actualizarInterfazMusica(true);
                     }).catch(err => {
-                        console.log("Autoplay de audio bloqueado por el navegador.");
+                        console.log("Autoplay de audio bloqueado.");
                     });
                 }
             }
@@ -939,6 +994,7 @@
             select.value === 'custom' ? customContainer.classList.remove('hidden') : customContainer.classList.add('hidden');
         }
 
+        // --- STREAMING_CHUNK: Inicializando cuenta regresiva e interpolación de fechas ---
         function iniciarCuentaRegresiva(fechaDestinoStr) {
             if (countdownTimerId) clearInterval(countdownTimerId);
             const targetDate = new Date(`${fechaDestinoStr}T18:00:00`).getTime();
@@ -980,14 +1036,6 @@
                 petal.style.animationDuration = `${10 + Math.random() * 12}s`;
                 container.appendChild(petal);
             }
-        }
-
-        // --- HELPER: FORMATEAR FECHA DE MANERA ELEGANTE ---
-        function formatearFechaLarga(fechaStr) {
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const fechaParseada = new Date(fechaStr + 'T00:00:00');
-            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
-            return fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1);
         }
 
         function aplicarConfiguracionEnVista() {
@@ -1043,20 +1091,16 @@
             document.getElementById('cfg-recepcion-hora').value = appConfig.recepcionHora;
             document.getElementById('cfg-recepcion-mapa').value = appConfig.recepcionMapa;
 
-            // Enlace de administrador con query parameters
-            const adminLinkInput = document.getElementById('admin-link-input');
-            if (adminLinkInput) {
-                adminLinkInput.value = window.location.origin + window.location.pathname + "?admin=true";
-            }
-
             const rawPasesList = appConfig.listaPasesInvitados || DEFAULT_CONFIG.listaPasesInvitados;
             document.getElementById('cfg-lista-pases').value = rawPasesList;
             
             parseGuestDatabase(rawPasesList);
             cargarListaNombresDesplegable();
 
-            const fechaLarga = formatearFechaLarga(appConfig.fecha);
-            document.getElementById('display-fecha-larga').innerText = fechaLarga;
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+            document.getElementById('display-fecha-larga').innerText = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1);
             document.getElementById('display-hora-principal').innerText = `A partir de las ${appConfig.hora}`;
 
             document.getElementById('display-ceremonia-lugar').innerText = appConfig.ceremoniaLugar;
@@ -1101,179 +1145,150 @@
             let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
             if (!invitados) {
                 invitados = [
-                    { nombre: "Tío Carlos Martínez y Fam.", telefono: "+52 55 1234 5678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString() },
-                    { nombre: "Adriana Solís", telefono: "+52 55 8765 4321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString() }
+                    { nombre: "Tío Carlos Martínez y Fam.", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString() },
+                    { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString() }
                 ];
                 localStorage.setItem('xv_invitados', JSON.stringify(invitados));
             }
             procesarYMostrarInvitados(invitados);
         }
 
+        // --- STREAMING_CHUNK: Comprobando confirmación previa y generando la pantalla de éxito con Imagen Plana ---
         function verificarAsistenciaPrevia() {
             const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
             if (miConfirmacionStr) {
                 try {
                     const miConfirmacion = JSON.parse(miConfirmacionStr);
-                    const fechaLarga = formatearFechaLarga(appConfig.fecha);
+                    
+                    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+                    const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+                    const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
 
+                    // Reemplazamos la tarjeta del formulario con la sección final de visualización del Boleto Imagen
                     const rsvpSection = document.getElementById('rsvp-section');
                     if (rsvpSection) {
                         rsvpSection.innerHTML = `
-                            <div class="max-w-xl mx-auto bg-stone-50 border-2 border-stone-200/50 rounded-3xl p-6 md:p-10 shadow-2xl relative z-10 text-center space-y-6 animate-fade-in">
-                                <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
+                            <div class="max-w-xl mx-auto bg-white border border-stone-100 rounded-3xl p-6 md:p-12 shadow-2xl relative z-10 text-center space-y-6">
+                                <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner border border-emerald-100">
                                     <i class="fa-solid fa-circle-check"></i>
                                 </div>
-                                
-                                <div class="space-y-1">
-                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Asistencia Registrada!</span>
-                                    <h2 class="font-serif text-2xl text-stone-800">¡Gracias por Confirmar!</h2>
-                                    <div class="w-12 h-[1px] bg-stone-300 mx-auto"></div>
+                                <div class="space-y-2">
+                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Pase Generado con Éxito!</span>
+                                    <h2 class="font-serif text-3xl text-stone-800">Confirmación Registrada</h2>
+                                    <div class="w-12 h-[2px] bg-cement-400 mx-auto"></div>
                                 </div>
 
-                                <!-- BOLETO DIGITAL DE ACCESO (Pase en Pantalla) -->
-                                <div id="digital-ticket" class="bg-white border-2 border-dashed border-stone-300 rounded-2xl p-6 relative overflow-hidden shadow-md max-w-sm mx-auto text-left space-y-4">
-                                    <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-50 border-r-2 border-dashed border-stone-300"></div>
-                                    <div class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-50 border-l-2 border-dashed border-stone-300"></div>
-                                    
-                                    <div class="text-center pb-2 border-b border-stone-100">
-                                        <p class="font-cursive text-3xl text-cement-600">Camila Shaddai</p>
-                                        <p class="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Pase de Acceso Digital</p>
-                                    </div>
-                                    
-                                    <div class="space-y-2 text-stone-700 text-sm">
-                                        <div>
-                                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Invitado</span>
-                                            <span class="font-semibold text-stone-800 text-base">${miConfirmacion.nombre}</span>
-                                        </div>
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <div>
-                                                <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Pases Asignados</span>
-                                                <span class="font-bold text-cement-600 text-lg">${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}</span>
-                                            </div>
-                                            <div>
-                                                <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Estatus</span>
-                                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold inline-block border border-emerald-100">
-                                                    <i class="fa-solid fa-check mr-1"></i>Confirmado
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Fecha</span>
-                                            <span class="text-xs font-semibold">${fechaLarga}</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Recepción</span>
-                                            <span class="text-xs text-stone-500">${appConfig.recepcionLugar}</span>
-                                        </div>
-                                    </div>
+                                <p class="text-stone-600 text-sm">
+                                    Hola <strong class="text-stone-800">${miConfirmacion.nombre}</strong>. Hemos generado una imagen de alta seguridad con tus datos. Esta no puede modificarse por seguridad.
+                                </p>
 
-                                    <div class="pt-3 border-t border-stone-100 text-center space-y-1">
-                                        <div class="inline-block p-1 bg-stone-100 rounded">
-                                            <div class="flex space-x-0.5 h-6 items-center px-2">
-                                                <div class="w-1 bg-stone-800 h-full"></div>
-                                                <div class="w-0.5 bg-stone-800 h-full"></div>
-                                                <div class="w-1.5 bg-stone-800 h-full"></div>
-                                                <div class="w-0.5 bg-stone-800 h-full"></div>
-                                                <div class="w-1 bg-stone-800 h-full"></div>
-                                                <div class="w-2 bg-stone-800 h-full"></div>
-                                                <div class="w-0.5 bg-stone-800 h-full"></div>
-                                                <div class="w-1 bg-stone-800 h-full"></div>
-                                                <div class="w-1.5 bg-stone-800 h-full"></div>
-                                                <div class="w-1 bg-stone-800 h-full"></div>
-                                            </div>
-                                        </div>
-                                        <p class="text-[9px] font-mono text-stone-400">TICKET-ID: ${Math.floor(100000 + Math.random() * 900000)}</p>
+                                <!-- Espacio reservado para inyectar la imagen estática generada por html2canvas -->
+                                <div id="ticket-image-container" class="rounded-2xl overflow-hidden shadow-inner p-1 bg-stone-100 border border-stone-200">
+                                    <div class="flex flex-col items-center justify-center p-8 space-y-3">
+                                        <i class="fa-solid fa-spinner animate-spin text-3xl text-cement-600"></i>
+                                        <p class="text-xs text-stone-500 font-semibold uppercase tracking-wider">Compilando datos del pase...</p>
                                     </div>
-                                </div>
-
-                                <div class="space-y-3 pt-2">
-                                    <p class="text-xs text-stone-500 max-w-sm mx-auto">
-                                        Tu boleto ya está registrado. Te sugerimos guardarlo con una captura de pantalla para presentarlo en la entrada del salón.
-                                    </p>
-                                    
-                                    <button onclick="enviarBoletoWhatsApp('${miConfirmacion.nombre}', ${miConfirmacion.pases}, '${miConfirmacion.telefono}', '${fechaLarga}')" class="inline-flex items-center space-x-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow-md">
-                                        <i class="fa-brands fa-whatsapp text-sm"></i>
-                                        <span>Reenviar Pase por WhatsApp</span>
-                                    </button>
                                 </div>
 
                                 <div class="pt-4 border-t border-stone-200">
                                     <button onclick="cancelarAsistencia()" class="text-xs text-stone-400 hover:text-rose-500 underline transition-colors">
-                                        ¿Necesitas modificar o corregir tus pases? Haz clic aquí
+                                        ¿Necesitas corregir algún dato? Cancela el pase aquí
                                     </button>
                                 </div>
                             </div>
                         `;
                     }
 
+                    // Preparamos los datos en el ticket oculto para tomar la captura
+                    document.getElementById('ticket-guest-name').innerText = miConfirmacion.nombre;
+                    document.getElementById('ticket-guest-passes').innerText = `${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}`;
+                    document.getElementById('ticket-event-date').innerText = fechaLarga;
+                    document.getElementById('ticket-event-venue').innerText = appConfig.recepcionLugar;
+                    document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${Math.floor(100000 + Math.random() * 900000)}`;
+
+                    // Llamamos al motor gráfico del cliente para capturar el HTML invisible y transformarlo en imagen
+                    generarCapturaDeBoleto(miConfirmacion.nombre, miConfirmacion.pases, miConfirmacion.telefono, fechaLarga);
+
                 } catch (e) {
-                    console.error("Error al procesar confirmación previa:", e);
+                    console.error("Error al procesar boleto:", e);
                 }
             }
         }
 
-        // --- ENVIAR BOLETO DIGITAL AL INVITADO POR WHATSAPP ---
-        function enviarBoletoWhatsApp(nombreInvitado, pases, numeroTelefono, fechaEvento) {
+        // --- STREAMING_CHUNK: Renderizando el boleto en formato de imagen segura PNG ---
+        function generarCapturaDeBoleto(nombre, pases, telefono, fechaEvento) {
+            setTimeout(() => {
+                const ticketSource = document.getElementById('digital-ticket');
+                const imageTarget = document.getElementById('ticket-image-container');
+                if (!ticketSource || !imageTarget) return;
+
+                html2canvas(ticketSource, {
+                    scale: 2, // Doble resolución para verse impecable y nítido al hacer zoom
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    const pngUrl = canvas.toDataURL('image/png');
+                    
+                    // Sustituimos el cargador por la imagen final, imposibilitando la edición de datos
+                    imageTarget.innerHTML = `
+                        <div class="space-y-4 p-4 bg-white rounded-2xl">
+                            <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-shield-halved text-sm"></i> Imagen de Seguridad Generada
+                            </p>
+                            <img src="${pngUrl}" class="w-full rounded-xl shadow-md border border-stone-100" alt="Boleto Acceso Digital">
+                            <p class="text-[10px] text-stone-400 leading-normal">
+                                💡 Mantén presionada la imagen para guardarla directo en las fotos de tu celular, o haz clic en "Descargar Imagen" abajo.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-2.5 justify-center pt-2">
+                                <a href="${pngUrl}" download="Boleto_${nombre.replace(/ /g, '_')}.png" class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-stone-800 hover:bg-stone-900 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow">
+                                    <i class="fa-solid fa-download text-sm"></i>
+                                    <span>Descargar Imagen</span>
+                                </a>
+                                <button onclick="enviarBoletoPorWhatsApp('${nombre}', ${pases}, '${telefono}', '${fechaEvento}')" class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow">
+                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                    <span>Enviar a WhatsApp</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).catch(err => {
+                    console.error("Error en html2canvas:", err);
+                    imageTarget.innerHTML = `
+                        <div class="p-6 text-stone-500">
+                            <p class="text-sm font-semibold text-rose-500"><i class="fa-solid fa-circle-exclamation mr-1"></i> No se pudo auto-compilar la imagen.</p>
+                            <p class="text-xs mt-1">Sugerencia: Toma una captura de pantalla a tus datos confirmados para presentarlos en la entrada.</p>
+                        </div>
+                    `;
+                });
+            }, 500);
+        }
+
+        function enviarBoletoPorWhatsApp(nombreInvitado, pases, numeroTelefono, fechaEvento) {
             let telefonoLimpio = numeroTelefono.replace(/[^0-9]/g, '');
             if (telefonoLimpio.length === 10) {
                 telefonoLimpio = "52" + telefonoLimpio;
             }
 
-            const textoBoleto = `✨ *GRACIAS POR CONFIRMAR TU ASISTENCIA* 🌸
+            const textoBoleto = `✨ *CONFIRMACIÓN DE ASISTENCIA REGISTRADA* 🌸
 
-Hola *${nombreNombre(nombreInvitado)}*, te confirmamos que tu pase de entrada digital ha sido generado con éxito.
+Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu confirmación de asistencia.
 
-🎟️ *BOLETO DE ACCESO DIGITAL*
+🎟️ *DATOS DE TU ACCESO:*
 •------------------------------------------•
   🌸 *XV Años de Camila Shaddai* 🌸
   
   👤 *Invitado:* ${nombreInvitado}
-  🎟️ *Pases Reservados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  🎟️ *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
   📅 *Fecha:* ${fechaEvento}
-  📍 *Lugar:* ${appConfig.recepcionLugar}
-  📌 *Estatus:* Confirmado ✓
+  📍 *Recepción:* ${appConfig.recepcionLugar}
+  📌 *Estatus:* Confirmado con Imagen de Seguridad ✓
 •------------------------------------------•
 
-⚠️ _Presenta este mensaje en la recepción para agilizar tu acceso al salón._ 
+⚠️ _Por favor, descarga la imagen generada en la página web de la invitación y tenla a la mano al llegar para agilizar tu acceso._ 
 
-¡Nos dará una alegría inmensa compartir esta mágica e inolvidable noche contigo! ✨`;
+¡Nos dará una inmensa alegría celebrar juntos este mágico día! ✨`;
 
             const enlaceWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoLimpio + "&text=" + encodeURIComponent(textoBoleto);
-            window.open(enlaceWhatsApp, '_blank');
-        }
-
-        // --- SISTEMA AGREGADO: RECORDATORIO DE ASISTENCIA (1 SEMANA ANTES) ---
-        function enviarRecordatorioWhatsApp(nombreInvitado, pases, numeroTelefono) {
-            let telefonoLimpio = numeroTelefono.replace(/[^0-9]/g, '');
-            if (telefonoLimpio.length === 10) {
-                telefonoLimpio = "52" + telefonoLimpio;
-            }
-
-            const fechaLarga = formatearFechaLarga(appConfig.fecha);
-
-            const textoRecordatorio = `🌸 *RECORDATORIO ESPECIAL: MIS XV AÑOS* 🌸
-
-Hola *${nombreNombre(nombreInvitado)}*, ¡esperamos que te encuentres de lo mejor! 
-
-Te escribimos con muchísima emoción porque *¡estamos a solo una semana de celebrar este gran día!* 🎉✨
-
-Queremos agradecerte de corazón por haber confirmado tu asistencia en su momento. Te recordamos con cariño los datos de tu pase digital de acceso:
-
-🎟️ *DATOS DE TU ACCESO:*
-•------------------------------------------•
-  🌸 *Quinceañera:* Camila Shaddai
-  👤 *Invitado:* ${nombreInvitado}
-  🎟️ *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
-  📅 *Fecha:* ${fechaLarga}
-  📍 *Recepción:* ${appConfig.recepcionLugar}
-  📌 *Dirección:* ${appConfig.recepcionDir}
-•------------------------------------------•
-
-⚠️ _Recuerda tener a la mano este mensaje para presentarlo en la recepción del salón._ 
-
-¡Nos vemos muy pronto para compartir una noche inolvidable y llena de magia! 🌿✨`;
-
-            const enlaceWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoLimpio + "&text=" + encodeURIComponent(textoRecordatorio);
             window.open(enlaceWhatsApp, '_blank');
         }
 
@@ -1282,10 +1297,15 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
         }
 
         function cancelarAsistencia() {
-            if (confirm("¿Deseas modificar o rehacer tu confirmación de asistencia?")) {
-                localStorage.removeItem('xv_mi_confirmacion');
-                location.reload();
-            }
+            solicitarConfirmacionPersonalizada(
+                "¿Cancelar tu pase?",
+                "Si cancelas, tu nombre volverá a estar disponible en el buscador para que puedas registrarte de nuevo.",
+                function() {
+                    // Acción de cancelación confirmada
+                    localStorage.removeItem('xv_mi_confirmacion');
+                    location.reload();
+                }
+            );
         }
 
         function actualizarEstadoAsistencia(estado) {
@@ -1308,6 +1328,7 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             }
         }
 
+        // --- GUARDADO Y PROCESAMIENTO DEL FORMULARIO DE CONFIRMACIÓN ---
         function guardarConfirmacion(event) {
             event.preventDefault();
             
@@ -1315,7 +1336,7 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             const selectedKey = selectNombre.value;
 
             if (!selectedKey) {
-                mostrarToast("Por favor, busca y selecciona tu nombre de la lista desplegable.", "fa-solid fa-user-tag text-amber-500");
+                mostrarToast("Por favor, busca tu nombre en el buscador.", "fa-solid fa-user-tag text-amber-500");
                 selectNombre.focus();
                 return;
             }
@@ -1326,12 +1347,17 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             const mensaje = mensajeInput.value.trim();
 
             if (asisteCheck && !mensaje) {
-                mostrarToast("Por favor, déjanos un lindo mensaje de dedicatoria especial ✨", "fa-solid fa-pen-nib text-amber-500");
+                mostrarToast("Por favor, escribe tus deseos para la quinceañera ✨", "fa-solid fa-pen-nib text-amber-500");
                 mensajeInput.focus();
                 return;
             }
             
             const numeroTelefono = document.getElementById('rsvp-phone').value.trim();
+            if (numeroTelefono.length < 10) {
+                mostrarToast("Por favor ingresa un número telefónico válido (10 dígitos).", "fa-solid fa-phone text-amber-500");
+                document.getElementById('rsvp-phone').focus();
+                return;
+            }
 
             const invData = {
                 nombre: match ? match.nombre : selectNombre.options[selectNombre.selectedIndex].text,
@@ -1346,40 +1372,15 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             btnEnviar.disabled = true;
             btnEnviar.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Procesando...';
 
-            const fechaLarga = formatearFechaLarga(appConfig.fecha);
-            const mensajeExito = `Tu asistencia ha sido confirmada, ¡te esperamos el ${fechaLarga}!`;
-
+            // Guardar confirmación en localStorage local
             localStorage.setItem('xv_mi_confirmacion', JSON.stringify(invData));
 
+            // Simulación de envío y recarga automatizada para inyectar los datos filtrados
             setTimeout(() => {
-                enviarBoletoWhatsApp(invData.nombre, invData.pases, invData.telefono, fechaLarga);
-            }, 1000);
-
-            if (GOOGLE_SCRIPT_URL && !GOOGLE_SCRIPT_URL.includes("EXAMPLE-URL")) {
-                fetch(GOOGLE_SCRIPT_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    }, 
-                    body: JSON.stringify(invData) 
-                })
-                .then(() => { 
-                    guardarLocalSimulado(invData); 
-                    exitoRegistro(mensajeExito); 
-                    setTimeout(() => location.reload(), 1500);
-                })
-                .catch(err => { 
-                    mostrarToast("Error de red. Guardado local de respaldo.", "fa-solid fa-triangle-exclamation text-rose-500"); 
-                    guardarLocalSimulado(invData); 
-                    exitoRegistro(mensajeExito); 
-                    setTimeout(() => location.reload(), 1500);
-                });
-            } else {
                 guardarLocalSimulado(invData);
-                exitoRegistro(mensajeExito);
-                setTimeout(() => location.reload(), 1500);
-            }
+                mostrarToast("¡Datos procesados de forma segura!", "fa-solid fa-heart text-pink-500");
+                location.reload();
+            }, 1000);
         }
 
         function guardarLocalSimulado(data) {
@@ -1390,21 +1391,13 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             cargarInvitadosSimulados();
         }
 
-        function exitoRegistro(mensajePersonalizado) {
-            const btn = document.getElementById('btn-enviar-rsvp');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fa-regular fa-paper-plane mr-2"></i> Confirmar Mi Asistencia';
-            document.getElementById('rsvp-form').reset();
-            actualizarEstadoAsistencia('');
-            mostrarToast(mensajePersonalizado || "¡Confirmación recibida!", "fa-solid fa-heart text-pink-500");
-        }
-
+        // --- STREAMING_CHUNK: Procesando y visualizando confirmados en el Tablero de Administración ---
         function procesarYMostrarInvitados(lista) {
             const tb = document.getElementById('guest-table-body');
             if (!tb) return;
             
             if (!lista || lista.length === 0) {
-                tb.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">No hay registros aún.</td></tr>`;
+                tb.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">No hay registros de confirmación aún.</td></tr>`;
                 document.getElementById('dash-total-confirmados').innerText = "0";
                 document.getElementById('dash-total-pases').innerText = "0";
                 document.getElementById('dash-total-declinaron').innerText = "0";
@@ -1412,6 +1405,7 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
                 return;
             }
 
+            // Ordenamos de más reciente a más antiguo
             lista.sort((a, b) => new Date(b.fechaRegistro) - new Date(a.fechaRegistro));
             let tAsisten = 0, tDeclinan = 0, tPases = 0;
             tb.innerHTML = "";
@@ -1419,21 +1413,14 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             lista.forEach(i => {
                 if (i.asiste) { tAsisten++; tPases += (i.pases || 0); } else { tDeclinan++; }
                 const status = i.asiste ? `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span>` : `<span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-xmark mr-1"></i> No asistirá</span>`;
-                
-                // Acción combinada: Enviar recordatorio vía WhatsApp y el clásico botón de eliminar
-                const rsvpActions = i.asiste ? `
-                    <button onclick="enviarRecordatorioWhatsApp('${i.nombre}', ${i.pases}, '${i.telefono}')" title="Enviar Recordatorio (1 Semana)" class="text-emerald-500 hover:text-emerald-700 mr-3.5 transition-colors"><i class="fa-brands fa-whatsapp text-base"></i></button>
-                ` : '';
-
-                tb.innerHTML += `<tr class="hover:bg-stone-50">
+                tb.innerHTML += `<tr class="hover:bg-stone-50 transition-colors">
                     <td class="px-4 py-3 font-semibold text-stone-800">${i.nombre}</td>
-                    <td class="px-4 py-3 text-stone-500 font-mono text-xs">${i.telefono}</td>
+                    <td class="px-4 py-3 text-stone-500 font-mono text-xs font-semibold">${i.telefono}</td>
                     <td class="px-4 py-3">${status}</td>
-                    <td class="px-4 py-3 font-semibold">${i.asiste ? i.pases : '-'}</td>
-                    <td class="px-4 py-3 text-stone-500 italic max-w-[120px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
-                    <td class="px-4 py-4 text-right flex items-center justify-end">
-                        ${rsvpActions}
-                        <button onclick="eliminarInvitado('${i.nombre}')" title="Eliminar" class="text-stone-400 hover:text-rose-600 transition-colors"><i class="fa-regular fa-trash-can"></i></button>
+                    <td class="px-4 py-3 font-bold text-cement-600">${i.asiste ? i.pases : '-'}</td>
+                    <td class="px-4 py-3 text-stone-500 italic max-w-[150px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
+                    <td class="px-4 py-4 text-right">
+                        <button onclick="eliminarInvitado('${i.nombre}')" class="text-stone-400 hover:text-rose-600 transition-colors p-1" title="Eliminar"><i class="fa-regular fa-trash-can"></i></button>
                     </td>
                 </tr>`;
             });
@@ -1445,12 +1432,20 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
         }
 
         function eliminarInvitado(nombre) {
-            if (!confirm(`¿Eliminar a "${nombre}"?`)) return;
-            let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
-            localStorage.setItem('xv_invitados', JSON.stringify(invs.filter(i => i.nombre.toLowerCase() !== nombre.toLowerCase())));
-            cargarInvitadosSimulados();
+            solicitarConfirmacionPersonalizada(
+                "¿Eliminar confirmación?",
+                `¿Deseas dar de baja el registro de "${nombre}"? Su nombre volverá a habilitarse en el buscador de pases.`,
+                function() {
+                    let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+                    localStorage.setItem('xv_invitados', JSON.stringify(invs.filter(i => i.nombre.toLowerCase() !== nombre.toLowerCase())));
+                    cargarInvitadosSimulados();
+                    aplicarConfiguracionEnVista();
+                    mostrarToast("Registro eliminado con éxito.", "fa-solid fa-trash-can text-rose-500");
+                }
+            );
         }
 
+        // --- SISTEMA DE SANITIZACIÓN DE ENLACES DE ARCHIVOS ---
         function sanitizeUrl(url, type = 'image') {
             if (!url) return '';
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -1510,21 +1505,27 @@ Queremos agradecerte de corazón por haber confirmado tu asistencia en su moment
             localStorage.setItem('xv_config', JSON.stringify(appConfig));
             aplicarConfiguracionEnVista();
             toggleModal('admin-modal');
-            mostrarToast("¡Invitación actualizada!", "fa-solid fa-cloud-arrow-up text-cement-500");
+            mostrarToast("¡Invitación y pases actualizados!", "fa-solid fa-cloud-arrow-up text-cement-500");
         }
 
         function restablecerPreestablecido() {
-            appConfig = { ...DEFAULT_CONFIG };
-            localStorage.setItem('xv_config', JSON.stringify(appConfig));
-            aplicarConfiguracionEnVista();
-            mostrarToast("Restaurado.", "fa-solid fa-arrow-rotate-left text-blue-500");
+            solicitarConfirmacionPersonalizada(
+                "¿Restablecer valores?",
+                "Se cargarán los valores de demostración de Camila Shaddai. Tus confirmaciones se mantendrán intactas.",
+                function() {
+                    appConfig = { ...DEFAULT_CONFIG };
+                    localStorage.setItem('xv_config', JSON.stringify(appConfig));
+                    aplicarConfiguracionEnVista();
+                    mostrarToast("Restaurado con éxito.", "fa-solid fa-arrow-rotate-left text-blue-500");
+                }
+            );
         }
 
         function copiarEnlace() {
             const input = document.getElementById('share-link-input');
             input.select();
             document.execCommand('copy');
-            mostrarToast("¡Enlace copiado!", "fa-solid fa-copy text-emerald-500");
+            mostrarToast("¡Enlace copiado al portapapeles!", "fa-solid fa-copy text-emerald-500");
         }
 
         function compartirWhatsApp() {

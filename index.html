@@ -118,7 +118,8 @@
     <!-- BARRA DE NAVEGACIÓN -->
     <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-stone-200/50 py-3 px-4 z-40 flex justify-between items-center shadow-sm">
         <span class="font-serif italic font-semibold text-stone-700 tracking-wider">Mis XV Años</span>
-        <div class="flex space-x-2">
+        <!-- CONTENEDOR DE ADMINISTRACIÓN OCULTO POR DEFECTO -->
+        <div id="admin-controls-nav" class="flex space-x-2 hidden">
             <button onclick="toggleModal('admin-modal')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5">
                 <i class="fa-solid fa-gear"></i>
                 <span class="hidden sm:inline">Configurar</span>
@@ -142,9 +143,10 @@
             <div class="relative inline-block my-4">
                 <div class="w-72 h-72 md:w-[32rem] md:h-[32rem] rounded-full mx-auto p-3.5 bg-gradient-to-r from-cement-400 via-white to-cement-600 shadow-2xl relative transition-all duration-500">
                     <div class="w-full h-full rounded-full overflow-hidden bg-stone-100 border-4 border-white relative group">
-                        <img id="festejada-foto-0" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100 group-hover:scale-105" alt="Quinceañera Foto 1">
-                        <img id="festejada-foto-1" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 2">
-                        <img id="festejada-foto-2" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 3">
+                        <!-- Imagen carrusel con detectores robustos contra errores de carga local -->
+                        <img id="festejada-foto-0" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100 group-hover:scale-105" alt="Quinceañera Foto 1" onerror="handleImageError(this, 0)">
+                        <img id="festejada-foto-1" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 2" onerror="handleImageError(this, 1)">
+                        <img id="festejada-foto-2" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 3" onerror="handleImageError(this, 2)">
                     </div>
                 </div>
                 <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-5 py-1.5 rounded-full shadow-md border border-cement-200 z-10 whitespace-nowrap">
@@ -373,12 +375,12 @@
         </div>
     </section>
 
-    <!-- CONTENEDOR OCULTO PARA GENERAR BOLETO EN SEGUNDO PLANO (IMPOSIBLE DE MODIFICAR) -->
+    <!-- CONTENEDOR DE RENDERING PARA CAPTURA DE BOLETO PNG (OCULTO AFUERA DEL VIEWPORT) -->
     <div class="absolute -left-[9999px] top-0 pointer-events-none" style="width: 380px;">
         <div id="digital-ticket" class="bg-white p-8 rounded-3xl border border-stone-200 text-left space-y-6 flex flex-col" style="font-family: 'Montserrat', sans-serif;">
             <div class="text-center pb-4 border-b border-stone-100 flex flex-col items-center">
-                <p class="font-cursive text-5xl text-cement-600 mb-1" style="font-family: 'Alex Brush', cursive;">Camila Shaddai</p>
-                <div class="px-3 py-1 bg-cement-50 border border-cement-200 rounded-full">
+                <p class="font-cursive text-5xl text-cement-600 mb-6 pt-2 pb-1 block leading-relaxed" style="font-family: 'Alex Brush', cursive; line-height: 1.5;">Camila Shaddai</p>
+                <div class="px-3 py-1 bg-cement-50 border border-cement-200 rounded-full mt-2">
                     <p class="text-[9px] uppercase tracking-widest text-cement-700 font-bold">Pase de Acceso Oficial</p>
                 </div>
             </div>
@@ -423,8 +425,6 @@
                         <div class="w-1 bg-stone-800 h-full"></div>
                         <div class="w-1.5 bg-stone-800 h-full"></div>
                         <div class="w-1 bg-stone-800 h-full"></div>
-                        <div class="w-0.5 bg-stone-800 h-full"></div>
-                        <div class="w-2 bg-stone-800 h-full"></div>
                     </div>
                 </div>
                 <p id="ticket-random-id" class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #000000</p>
@@ -444,10 +444,42 @@
             </div>
             <div class="flex space-x-3 pt-2">
                 <button id="btn-confirm-cancel" class="w-1/2 py-2 border border-stone-200 text-stone-600 hover:bg-stone-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
-                <button id="btn-confirm-accept" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-cement-600/10">Aceptar</button>
+                <button id="btn-confirm-accept" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">Aceptar</button>
             </div>
         </div>
     </div>
+
+    <!-- MODAL DE CONTRASEÑA SECRETA ADMIN (REEMPLAZA AL PROMPT DE NAVEGADOR) -->
+    <div id="password-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-stone-100">
+            <div class="w-12 h-12 bg-cement-50 text-cement-600 rounded-full flex items-center justify-center text-xl mx-auto border border-cement-100">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 class="font-serif text-lg font-bold text-stone-800">Modo Administrador</h4>
+                <p class="text-xs text-stone-500">Ingresa la clave para habilitar los controles de configuración.</p>
+            </div>
+            <div class="space-y-3">
+                <input type="password" id="admin-password-input" placeholder="Ingresa contraseña..." class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-center focus:outline-none focus:ring-2 focus:ring-cement-400">
+                <p id="password-error-msg" class="text-xs text-rose-500 hidden font-semibold">Contraseña incorrecta. Inténtalo de nuevo.</p>
+            </div>
+            <div class="flex space-x-3 pt-2">
+                <button onclick="cerrarPasswordModal()" class="w-1/2 py-2 border border-stone-200 text-stone-600 hover:bg-stone-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="verificarPasswordAdmin()" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">Ingresar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="py-12 bg-stone-900 text-stone-400 text-center px-4 relative">
+        <div class="max-w-4xl mx-auto space-y-4">
+            <!-- Nombre de Camila con disparador secreto al hacer click 5 veces -->
+            <h2 class="font-cursive text-4xl text-cement-300 cursor-pointer select-none transition-transform active:scale-95 duration-200" id="footer-nombre">Camila Shaddai</h2>
+            <p class="font-serif italic text-sm text-stone-500">Mis XV Años</p>
+            <div class="h-[1px] w-12 bg-stone-800 mx-auto"></div>
+            <p class="text-xs text-stone-600">Invitación interactiva premium.</p>
+        </div>
+    </footer>
 
     <!-- MODAL DE CONFIGURACIÓN -->
     <div id="admin-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
@@ -461,6 +493,20 @@
             </div>
             
             <form id="admin-form" onsubmit="guardarConfiguracion(event)" class="p-4 md:p-6 overflow-y-auto space-y-5 flex-1">
+                <!-- PANEL AMARILLO: ENLACE PRIVADO ADMIN -->
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-2 text-stone-700">
+                    <p class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Enlace de acceso administrador privado
+                    </p>
+                    <p class="text-[11px] leading-relaxed">
+                        Para no tener que escribir la contraseña secreta en el futuro, puedes acceder directamente a la configuración y al panel de control guardando este enlace:
+                    </p>
+                    <div class="flex gap-2">
+                        <input type="text" id="cfg-admin-link" readonly class="w-full bg-white border border-amber-300 rounded-lg text-xs p-1.5 font-mono text-amber-900" value="">
+                        <button type="button" onclick="copiarEnlaceAdmin()" class="bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-3 py-1.5 text-xs font-bold transition-all whitespace-nowrap">Copiar</button>
+                    </div>
+                </div>
+
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Festejada</h4>
                     <div class="space-y-1.5">
@@ -584,7 +630,7 @@
         </div>
     </div>
 
-    <!-- MODAL TABLERO DE INVITADOS -->
+    <!-- MODAL TABLERO DE INVITADOS (DASHBOARD) -->
     <div id="dashboard-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden">
             <div class="p-4 md:p-6 border-b border-stone-200 flex justify-between items-center bg-stone-50">
@@ -600,15 +646,15 @@
 
             <div class="grid grid-cols-3 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
-                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400 font-sans">Asistirán</span>
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Asistirán</span>
                     <span id="dash-total-confirmados" class="text-xl sm:text-2xl font-bold text-emerald-600">0</span>
                 </div>
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
-                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400 font-sans">Total Pases</span>
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Total Pases</span>
                     <span id="dash-total-pases" class="text-xl sm:text-2xl font-bold text-cement-600">0</span>
                 </div>
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
-                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400 font-sans font-sans">Declinados</span>
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Declinaron</span>
                     <span id="dash-total-declinaron" class="text-xl sm:text-2xl font-bold text-stone-400">0</span>
                 </div>
             </div>
@@ -638,7 +684,15 @@
     </div>
 
     <script>
+        // --- STREAMING_CHUNK: Configurando variables globales de estado, constantes y fallbacks ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyD-EXAMPLE-URL/exec";
+
+        // Fotos estéticas de Unsplash con temática de quinceañera/gala como respaldo infalible
+        const FALLBACK_FOTOS = [
+            "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=600",
+            "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=600",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600"
+        ];
 
         const DEFAULT_CONFIG = {
             nombre: "Camila Shaddai",
@@ -653,14 +707,13 @@
             ceremoniaLugar: "Salón de Eventos \"El Campanario\"",
             ceremoniaDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
             ceremoniaHora: "17:00 Hrs",
-            ceremoniaMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
+            ceremoniaMapa: "https://maps.google.com",
             recepcionLugar: "Salón de Eventos \"El Campanario\"",
             recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
             recepcionHora: "18:30 Hrs",
-            recepcionMapa: "https://maps.app.goo.gl/y6bZqC6g7Wp1V1eM8",
+            recepcionMapa: "https://maps.google.com",
             musicaUrl: "music/musica.mp3",
-            // Base de datos preestablecida de invitados y pases permitidos
-            listaPasesInvitados: "Tío Carlos Martínez y Fam., 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
+            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -669,73 +722,139 @@
         let currentSlide = 0;
         let musicPlaying = false;
         let parsedGuestDatabase = {};
+        
+        let footerClicksCount = 0;
+        let customConfirmCallback = null;
 
         // Variables de control para el Sintetizador Web Audio API
         let audioCtx = null;
         let synthInterval = null;
         let synthStep = 0;
 
-        // Estructura armónica inspirada en la Gymnopédie No.1 de Satie
         const chords = [
             { bass: 146.83, trebles: [369.99, 440.00, 554.37] }, // Acorde Dmaj7
             { bass: 196.00, trebles: [493.88, 587.33, 739.99] }  // Acorde Gmaj7
         ];
 
-        // Dialog Callback global
-        let confirmCallback = null;
-
         if (localStorage.getItem('xv_config')) {
             try { appConfig = JSON.parse(localStorage.getItem('xv_config')); } catch (e) { appConfig = { ...DEFAULT_CONFIG }; }
         }
 
+        // --- STREAMING_CHUNK: Inicializando interfaz del cliente, escuchadores de eventos y modales de seguridad ---
         window.onload = function() {
             crearPetalosDecorativos();
             aplicarConfiguracionEnVista();
-            document.getElementById('share-link-input').value = window.location.href;
+            verificarUrlYGuardarEnlaceAdmin();
+            
             document.addEventListener('click', iniciarMúsicaAutomaticamente, { once: true });
             document.addEventListener('touchstart', iniciarMúsicaAutomaticamente, { once: true });
+            
             cargarInvitadosSimulados();
             verificarAsistenciaPrevia();
             configurarEventosDialogo();
-
-            // Respaldo inteligente si la URL de la música externa no carga
-            document.getElementById('bg-music').addEventListener('error', function(e) {
-                const music = document.getElementById('bg-music');
-                if (!music.src || music.src === window.location.href || appConfig.musicaUrl === "synthesized") {
-                    return;
-                }
-                console.error("Error cargando el audio externo:", e);
-                if (appConfig.musicaUrl !== "synthesized") {
-                    mostrarToast("Error de carga. Activando piano offline seguro.", "fa-solid fa-music text-amber-500");
-                    appConfig.musicaUrl = "synthesized";
-                    aplicarConfiguracionEnVista();
-                }
-            });
+            vincularIniciadorSecretoFooter();
         };
+
+        // Detector automático de fallas de carga de fotos para forzar las imágenes estéticas Unsplash
+        function handleImageError(imgElement, index) {
+            console.warn(`Error al cargar la foto index ${index}. Activando foto elegante de respaldo.`);
+            imgElement.src = FALLBACK_FOTOS[index];
+            imgElement.onerror = null; // Evita ciclos infinitos si falla Unsplash
+        }
 
         function configurarEventosDialogo() {
             document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
                 document.getElementById('custom-confirm-dialog').classList.add('hidden');
-                confirmCallback = null;
+                customConfirmCallback = null;
             });
 
             document.getElementById('btn-confirm-accept').addEventListener('click', () => {
                 document.getElementById('custom-confirm-dialog').classList.add('hidden');
-                if (confirmCallback) {
-                    confirmCallback();
+                if (customConfirmCallback) {
+                    customConfirmCallback();
                 }
-                confirmCallback = null;
+                customConfirmCallback = null;
             });
         }
 
         function solicitarConfirmacionPersonalizada(titulo, mensaje, onConfirm) {
             document.getElementById('confirm-dialog-title').innerText = titulo;
             document.getElementById('confirm-dialog-message').innerText = mensaje;
-            confirmCallback = onConfirm;
+            customConfirmCallback = onConfirm;
             document.getElementById('custom-confirm-dialog').classList.remove('hidden');
         }
 
-        // --- HELPER: NORMALIZAR TEXTO ---
+        // --- STREAMING_CHUNK: Habilitando sistema de acceso administrativo privado por URL o click secreto ---
+        function verificarUrlYGuardarEnlaceAdmin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdminByUrl = urlParams.get('admin') === 'true';
+            
+            if (isAdminByUrl) {
+                localStorage.setItem('xv_is_admin', 'true');
+            }
+
+            const isAdminSession = localStorage.getItem('xv_is_admin') === 'true';
+            const adminControlsNav = document.getElementById('admin-controls-nav');
+            
+            if (isAdminSession) {
+                adminControlsNav.classList.remove('hidden');
+            } else {
+                adminControlsNav.classList.add('hidden');
+            }
+
+            // Inyectamos el enlace administrador directo en el campo de texto del modal de configuración
+            const baseUri = window.location.origin + window.location.pathname;
+            document.getElementById('cfg-admin-link').value = `${baseUri}?admin=true`;
+            document.getElementById('share-link-input').value = baseUri;
+        }
+
+        function vincularIniciadorSecretoFooter() {
+            const footerNombre = document.getElementById('footer-nombre');
+            if (!footerNombre) return;
+
+            footerNombre.addEventListener('click', () => {
+                footerClicksCount++;
+                if (footerClicksCount >= 5) {
+                    footerClicksCount = 0;
+                    abrirPasswordModal();
+                }
+            });
+        }
+
+        function abrirPasswordModal() {
+            document.getElementById('password-modal').classList.remove('hidden');
+            document.getElementById('admin-password-input').value = "";
+            document.getElementById('password-error-msg').classList.add('hidden');
+            document.getElementById('admin-password-input').focus();
+        }
+
+        function cerrarPasswordModal() {
+            document.getElementById('password-modal').classList.add('hidden');
+        }
+
+        function verificarPasswordAdmin() {
+            const passInput = document.getElementById('admin-password-input').value.trim();
+            const errorMsg = document.getElementById('password-error-msg');
+            
+            if (passInput === "15Anos") {
+                localStorage.setItem('xv_is_admin', 'true');
+                verificarUrlYGuardarEnlaceAdmin();
+                cerrarPasswordModal();
+                mostrarToast("¡Modo administrador activado!", "fa-solid fa-circle-check text-emerald-500");
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('admin-password-input').focus();
+            }
+        }
+
+        function copiarEnlaceAdmin() {
+            const inputLink = document.getElementById('cfg-admin-link');
+            inputLink.select();
+            document.execCommand('copy');
+            mostrarToast("¡Enlace de administrador copiado!", "fa-solid fa-copy text-amber-500");
+        }
+
+        // --- STREAMING_CHUNK: Normalizando textos, analizando pases de invitados y cargando el RSVP ---
         function normalizarTexto(txt) {
             return txt.toLowerCase()
                       .normalize("NFD")
@@ -744,7 +863,6 @@
                       .trim();
         }
 
-        // --- PARSER PARA LA BASE DE DATOS DE INVITADOS ---
         function parseGuestDatabase(rawText) {
             parsedGuestDatabase = {};
             if (!rawText) return;
@@ -765,20 +883,16 @@
             });
         }
 
-        // --- STREAMING_CHUNK: Carga del menú desplegable excluyendo los que ya se registraron ---
         function cargarListaNombresDesplegable() {
             const selectNombre = document.getElementById('rsvp-name');
             if (!selectNombre) return;
 
-            // Limpiamos la lista para evitar duplicidad
             selectNombre.innerHTML = '<option value="">Selecciona tu nombre de la lista...</option>';
 
-            // Obtener el registro de los invitados que ya han confirmado en localStorage
+            // Filtrar y excluir de la lista los invitados que ya han confirmado asistencia
             const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
-            // Creamos un set con los nombres normalizados de las personas que ya se registraron
             const nombresYaRegistrados = new Set(listaConfirmados.map(inv => normalizarTexto(inv.nombre)));
 
-            // Ordenamos alfabéticamente la base de datos de pases asignados
             const sortedKeys = Object.keys(parsedGuestDatabase).sort((a, b) => {
                 return parsedGuestDatabase[a].nombre.localeCompare(parsedGuestDatabase[b].nombre);
             });
@@ -786,7 +900,6 @@
             let totalDisponibles = 0;
 
             sortedKeys.forEach(key => {
-                // REGLA CLAVE: Solo agregamos el nombre si NO ha sido confirmado previamente
                 if (!nombresYaRegistrados.has(key)) {
                     const guest = parsedGuestDatabase[key];
                     const opt = document.createElement('option');
@@ -797,7 +910,6 @@
                 }
             });
 
-            // Si todos los invitados de la lista ya han confirmado asistencia
             const feedback = document.getElementById('rsvp-lookup-feedback');
             if (totalDisponibles === 0 && sortedKeys.length > 0) {
                 feedback.className = "text-xs mt-1 font-semibold text-emerald-600 block";
@@ -807,7 +919,6 @@
             }
         }
 
-        // --- ACCIONES AL SELECCIONAR UN NOMBRE ---
         function seleccionarInvitadoDesplegable() {
             const selectNombre = document.getElementById('rsvp-name');
             const feedback = document.getElementById('rsvp-lookup-feedback');
@@ -856,7 +967,7 @@
             }
         }
 
-        // --- STREAMING_CHUNK: Configurando Sintetizador de Piano Offline Web Audio API ---
+        // --- STREAMING_CHUNK: Implementando ecualizadores, sintetizadores de piano offline y música de fondo ---
         function playSynthNote(freq, startTime, duration, volume) {
             if (!audioCtx) return;
             try {
@@ -994,7 +1105,7 @@
             select.value === 'custom' ? customContainer.classList.remove('hidden') : customContainer.classList.add('hidden');
         }
 
-        // --- STREAMING_CHUNK: Inicializando cuenta regresiva e interpolación de fechas ---
+        // --- STREAMING_CHUNK: Inicializando la cuenta regresiva, efectos visuales y aplicando configuraciones ---
         function iniciarCuentaRegresiva(fechaDestinoStr) {
             if (countdownTimerId) clearInterval(countdownTimerId);
             const targetDate = new Date(`${fechaDestinoStr}T18:00:00`).getTime();
@@ -1043,6 +1154,7 @@
             document.getElementById('footer-nombre').innerText = appConfig.nombre;
             document.getElementById('festejada-mensaje').innerText = appConfig.mensaje;
 
+            // Restablecer fuentes de foto (con los detectores de error activos para Unsplash fallback)
             document.getElementById('festejada-foto-0').src = appConfig.fotos[0] || '';
             document.getElementById('festejada-foto-1').src = appConfig.fotos[1] || '';
             document.getElementById('festejada-foto-2').src = appConfig.fotos[2] || '';
@@ -1145,7 +1257,7 @@
             let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
             if (!invitados) {
                 invitados = [
-                    { nombre: "Tío Carlos Martínez y Fam.", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString() },
+                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString() },
                     { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString() }
                 ];
                 localStorage.setItem('xv_invitados', JSON.stringify(invitados));
@@ -1153,60 +1265,59 @@
             procesarYMostrarInvitados(invitados);
         }
 
-        // --- STREAMING_CHUNK: Comprobando confirmación previa y generando la pantalla de éxito con Imagen Plana ---
+        // --- STREAMING_CHUNK: Validando confirmaciones y renderizando el Boleto de Seguridad en Imagen Plana ---
         function verificarAsistenciaPrevia() {
             const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
             if (miConfirmacionStr) {
                 try {
                     const miConfirmacion = JSON.parse(miConfirmacionStr);
                     
+                    // Formatear fecha del evento
                     const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
                     const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
                     const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
 
-                    // Reemplazamos la tarjeta del formulario con la sección final de visualización del Boleto Imagen
+                    // Ocultar el formulario de RSVP y mostrar la tarjeta de estado de confirmación
                     const rsvpSection = document.getElementById('rsvp-section');
                     if (rsvpSection) {
                         rsvpSection.innerHTML = `
-                            <div class="max-w-xl mx-auto bg-white border border-stone-100 rounded-3xl p-6 md:p-12 shadow-2xl relative z-10 text-center space-y-6">
-                                <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner border border-emerald-100">
+                            <div class="max-w-xl mx-auto bg-stone-50 border-2 border-stone-200/50 rounded-3xl p-6 md:p-10 shadow-2xl relative z-10 text-center space-y-6">
+                                <!-- Cabecera de Éxito -->
+                                <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
                                     <i class="fa-solid fa-circle-check"></i>
                                 </div>
-                                <div class="space-y-2">
-                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Pase Generado con Éxito!</span>
-                                    <h2 class="font-serif text-3xl text-stone-800">Confirmación Registrada</h2>
-                                    <div class="w-12 h-[2px] bg-cement-400 mx-auto"></div>
+                                
+                                <div class="space-y-1">
+                                    <span class="text-xs uppercase tracking-[0.2em] text-emerald-600 font-bold">¡Todo listo!</span>
+                                    <h2 class="font-serif text-2xl text-stone-800">Asistencia Confirmada</h2>
+                                    <div class="w-12 h-[1px] bg-cement-400 mx-auto"></div>
                                 </div>
 
-                                <p class="text-stone-600 text-sm">
-                                    Hola <strong class="text-stone-800">${miConfirmacion.nombre}</strong>. Hemos generado una imagen de alta seguridad con tus datos. Esta no puede modificarse por seguridad.
-                                </p>
-
-                                <!-- Espacio reservado para inyectar la imagen estática generada por html2canvas -->
-                                <div id="ticket-image-container" class="rounded-2xl overflow-hidden shadow-inner p-1 bg-stone-100 border border-stone-200">
-                                    <div class="flex flex-col items-center justify-center p-8 space-y-3">
-                                        <i class="fa-solid fa-spinner animate-spin text-3xl text-cement-600"></i>
-                                        <p class="text-xs text-stone-500 font-semibold uppercase tracking-wider">Compilando datos del pase...</p>
+                                <!-- BOLETO DIGITAL DE ACCESO (Pase en Pantalla) -->
+                                <div id="digital-ticket" class="bg-white border-2 border-dashed border-stone-300 rounded-2xl p-6 relative overflow-hidden shadow-md max-w-sm mx-auto text-left space-y-4">
+                                    <!-- Círculos de ticket clásicos en los bordes -->
+                                    <div class="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-50 border-r-2 border-dashed border-stone-300"></div>
+                                    <div class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-50 border-l-2 border-dashed border-stone-300"></div>
+                                    
+                                    <div class="text-center pb-2 border-b border-stone-100">
+                                        <p class="font-cursive text-4xl text-cement-600 mb-4 block leading-relaxed" style="font-family: 'Alex Brush', cursive; line-height: 1.4;">Camila Shaddai</p>
+                                        <p class="text-[9px] uppercase tracking-widest text-stone-400 font-bold mt-1">Pase de Acceso Digital</p>
                                     </div>
-                                </div>
-
-                                <div class="pt-4 border-t border-stone-200">
-                                    <button onclick="cancelarAsistencia()" class="text-xs text-stone-400 hover:text-rose-500 underline transition-colors">
-                                        ¿Necesitas corregir algún dato? Cancela el pase aquí
+                                    
+                                    <div class="space-y-2 text-stone-700 text-sm">
                                     </button>
                                 </div>
                             </div>
                         `;
                     }
 
-                    // Preparamos los datos en el ticket oculto para tomar la captura
+                    // Sincronizar datos con el boleto HTML invisible listo para tomar la captura
                     document.getElementById('ticket-guest-name').innerText = miConfirmacion.nombre;
                     document.getElementById('ticket-guest-passes').innerText = `${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}`;
                     document.getElementById('ticket-event-date').innerText = fechaLarga;
                     document.getElementById('ticket-event-venue').innerText = appConfig.recepcionLugar;
                     document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${Math.floor(100000 + Math.random() * 900000)}`;
 
-                    // Llamamos al motor gráfico del cliente para capturar el HTML invisible y transformarlo en imagen
                     generarCapturaDeBoleto(miConfirmacion.nombre, miConfirmacion.pases, miConfirmacion.telefono, fechaLarga);
 
                 } catch (e) {
@@ -1215,7 +1326,6 @@
             }
         }
 
-        // --- STREAMING_CHUNK: Renderizando el boleto en formato de imagen segura PNG ---
         function generarCapturaDeBoleto(nombre, pases, telefono, fechaEvento) {
             setTimeout(() => {
                 const ticketSource = document.getElementById('digital-ticket');
@@ -1223,21 +1333,20 @@
                 if (!ticketSource || !imageTarget) return;
 
                 html2canvas(ticketSource, {
-                    scale: 2, // Doble resolución para verse impecable y nítido al hacer zoom
+                    scale: 2, // Mayor densidad de pixeles para que la imagen se vea nítida en pantallas móviles
                     useCORS: true,
                     backgroundColor: '#ffffff'
                 }).then(canvas => {
                     const pngUrl = canvas.toDataURL('image/png');
                     
-                    // Sustituimos el cargador por la imagen final, imposibilitando la edición de datos
                     imageTarget.innerHTML = `
                         <div class="space-y-4 p-4 bg-white rounded-2xl">
                             <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-shield-halved text-sm"></i> Imagen de Seguridad Generada
+                                <i class="fa-solid fa-shield-halved text-sm"></i> Imagen de Seguridad Generada (No modificable)
                             </p>
                             <img src="${pngUrl}" class="w-full rounded-xl shadow-md border border-stone-100" alt="Boleto Acceso Digital">
                             <p class="text-[10px] text-stone-400 leading-normal">
-                                💡 Mantén presionada la imagen para guardarla directo en las fotos de tu celular, o haz clic en "Descargar Imagen" abajo.
+                                💡 Mantén presionada la imagen para guardarla directo en tu celular, o haz clic en "Descargar Imagen" abajo.
                             </p>
                             <div class="flex flex-col sm:flex-row gap-2.5 justify-center pt-2">
                                 <a href="${pngUrl}" download="Boleto_${nombre.replace(/ /g, '_')}.png" class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-stone-800 hover:bg-stone-900 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow">
@@ -1252,7 +1361,7 @@
                         </div>
                     `;
                 }).catch(err => {
-                    console.error("Error en html2canvas:", err);
+                    console.error("Error al renderizar el canvas:", err);
                     imageTarget.innerHTML = `
                         <div class="p-6 text-stone-500">
                             <p class="text-sm font-semibold text-rose-500"><i class="fa-solid fa-circle-exclamation mr-1"></i> No se pudo auto-compilar la imagen.</p>
@@ -1260,7 +1369,7 @@
                         </div>
                     `;
                 });
-            }, 500);
+            }, 600);
         }
 
         function enviarBoletoPorWhatsApp(nombreInvitado, pases, numeroTelefono, fechaEvento) {
@@ -1273,12 +1382,12 @@
 
 Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu confirmación de asistencia.
 
-🎟️ *DATOS DE TU ACCESO:*
+🎟 *DATOS DE TU ACCESO:*
 •------------------------------------------•
   🌸 *XV Años de Camila Shaddai* 🌸
   
   👤 *Invitado:* ${nombreInvitado}
-  🎟️ *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  🎟 *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
   📅 *Fecha:* ${fechaEvento}
   📍 *Recepción:* ${appConfig.recepcionLugar}
   📌 *Estatus:* Confirmado con Imagen de Seguridad ✓
@@ -1301,7 +1410,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 "¿Cancelar tu pase?",
                 "Si cancelas, tu nombre volverá a estar disponible en el buscador para que puedas registrarte de nuevo.",
                 function() {
-                    // Acción de cancelación confirmada
                     localStorage.removeItem('xv_mi_confirmacion');
                     location.reload();
                 }
@@ -1328,7 +1436,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             }
         }
 
-        // --- GUARDADO Y PROCESAMIENTO DEL FORMULARIO DE CONFIRMACIÓN ---
+        // --- STREAMING_CHUNK: Procesando y guardando confirmaciones de invitados RSVP ---
         function guardarConfirmacion(event) {
             event.preventDefault();
             
@@ -1354,7 +1462,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             
             const numeroTelefono = document.getElementById('rsvp-phone').value.trim();
             if (numeroTelefono.length < 10) {
-                mostrarToast("Por favor ingresa un número telefónico válido (10 dígitos).", "fa-solid fa-phone text-amber-500");
+                mostrarToast("Por favor ingresa un número telefónico de 10 dígitos.", "fa-solid fa-phone text-amber-500");
                 document.getElementById('rsvp-phone').focus();
                 return;
             }
@@ -1375,10 +1483,9 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             // Guardar confirmación en localStorage local
             localStorage.setItem('xv_mi_confirmacion', JSON.stringify(invData));
 
-            // Simulación de envío y recarga automatizada para inyectar los datos filtrados
             setTimeout(() => {
                 guardarLocalSimulado(invData);
-                mostrarToast("¡Datos procesados de forma segura!", "fa-solid fa-heart text-pink-500");
+                mostrarToast("¡Asistencia confirmada de forma segura!", "fa-solid fa-heart text-pink-500");
                 location.reload();
             }, 1000);
         }
@@ -1391,7 +1498,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             cargarInvitadosSimulados();
         }
 
-        // --- STREAMING_CHUNK: Procesando y visualizando confirmados en el Tablero de Administración ---
+        // --- STREAMING_CHUNK: Procesando y visualizando el Panel de Control y Tablero de Administración ---
         function procesarYMostrarInvitados(lista) {
             const tb = document.getElementById('guest-table-body');
             if (!tb) return;
@@ -1405,7 +1512,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 return;
             }
 
-            // Ordenamos de más reciente a más antiguo
             lista.sort((a, b) => new Date(b.fechaRegistro) - new Date(a.fechaRegistro));
             let tAsisten = 0, tDeclinan = 0, tPases = 0;
             tb.innerHTML = "";
@@ -1419,7 +1525,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                     <td class="px-4 py-3">${status}</td>
                     <td class="px-4 py-3 font-bold text-cement-600">${i.asiste ? i.pases : '-'}</td>
                     <td class="px-4 py-3 text-stone-500 italic max-w-[150px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
-                    <td class="px-4 py-4 text-right">
+                    <td class="px-4 py-4 text-right flex gap-1.5 justify-end">
+                        <button onclick="enviarRecordatorioUnaSemana('${i.nombre}', '${i.telefono}', ${i.pases})" class="text-emerald-600 hover:text-emerald-700 transition-colors p-1" title="Enviar recordatorio de 1 semana"><i class="fa-brands fa-whatsapp text-base"></i></button>
                         <button onclick="eliminarInvitado('${i.nombre}')" class="text-stone-400 hover:text-rose-600 transition-colors p-1" title="Eliminar"><i class="fa-regular fa-trash-can"></i></button>
                     </td>
                 </tr>`;
@@ -1429,6 +1536,42 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             document.getElementById('dash-total-pases').innerText = tPases;
             document.getElementById('dash-total-declinaron').innerText = tDeclinan;
             document.getElementById('count-badge').innerText = lista.length;
+        }
+
+        // Mensaje de recordatorio dinámico enviado una semana antes del evento
+        function enviarRecordatorioUnaSemana(nombre, telefono, pases) {
+            let telLimpio = telefono.replace(/[^0-9]/g, '');
+            if (telLimpio.length === 10) {
+                telLimpio = "52" + telLimpio;
+            }
+
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+
+            const textoRecordatorio = `✨ *RECORDATORIO DE ASISTENCIA OFICIAL* 🌸
+
+Hola *${nombreNombre(nombre)}*, ¡ya falta muy poco para celebrar juntos! Te recordamos que estamos a exactamente *una semana* de mis XV Años. 
+
+Te comparto los detalles del pase que confirmaste para que los tengas a la mano:
+
+🎟 *DETALLES DE TU ACCESO:*
+•------------------------------------------•
+  🌸 *XV Años de Camila Shaddai* 🌸
+  
+  👤 *Invitado:* ${nombre}
+  🎟 *Pases Reservados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  📅 *Fecha:* ${fechaLarga}
+  🕒 *Recepción:* ${appConfig.recepcionHora}
+  📍 *Lugar:* ${appConfig.recepcionLugar}
+•------------------------------------------•
+
+⚠️ _Por favor, no olvides llevar descargada la imagen de tu pase que generaste en la página de la invitación para agilizar tu acceso en la entrada del salón._
+
+¡Te agradecemos inmensamente y esperamos con muchísima ilusión verte en esta mágica noche! ✨`;
+
+            const linkWhatsApp = "https://api.whatsapp.com/send?phone=" + telLimpio + "&text=" + encodeURIComponent(textoRecordatorio);
+            window.open(linkWhatsApp, '_blank');
         }
 
         function eliminarInvitado(nombre) {
@@ -1445,7 +1588,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             );
         }
 
-        // --- SISTEMA DE SANITIZACIÓN DE ENLACES DE ARCHIVOS ---
+        // Convertidor inteligente para sanitizar enlaces directos de Google Drive
         function sanitizeUrl(url, type = 'image') {
             if (!url) return '';
             if (!url.startsWith('http://') && !url.startsWith('https://')) {

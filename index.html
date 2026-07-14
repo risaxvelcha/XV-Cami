@@ -1,3 +1,1190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis XV Años - Camila Shaddai</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome para Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas para generación segura de pases en imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cement: { 
+                            50: '#f4f7f5', 
+                            100: '#e4ebe6', 
+                            200: '#cbdad1', 
+                            300: '#a7c1b5', 
+                            400: '#7fa392', 
+                            500: '#61846c', 
+                            600: '#4c6955', 
+                            700: '#3e5445', 
+                            800: '#334338', 
+                            900: '#2b372f',
+                        },
+                        blush: { 
+                            50: '#fdf3f4', 
+                            100: '#fbe4e6', 
+                            200: '#f7cdd1', 
+                            300: '#f1abb3', 
+                            400: '#e87c8a', 
+                            500: '#db5164', 
+                            600: '#c53449', 
+                            700: '#a52637' 
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        cursive: ['Alex Brush', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Animación para el destello brillante en el nombre */
+        @keyframes shine {
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .organic-sparkle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 40;
+            animation: floatDown linear infinite, sway ease-in-out infinite alternate;
+            opacity: 0.7;
+        }
+        @keyframes floatDown {
+            0% { transform: translateY(-5vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes sway {
+            0% { margin-left: -20px; }
+            100% { margin-left: 20px; }
+        }
+        /* Ecualizador de música animado */
+        @keyframes eqBar {
+            0% { height: 4px; }
+            50% { height: 16px; }
+            80% { height: 4px; }
+        }
+        .bar-1 { animation: eqBar 1.2s ease-in-out infinite alternate; }
+        .bar-2 { animation: eqBar 0.9s ease-in-out infinite alternate 0.15s; }
+        .bar-3 { animation: eqBar 1.1s ease-in-out infinite alternate 0.3s; }
+    </style>
+</head>
+<body class="bg-stone-50 font-sans text-stone-800 antialiased overflow-x-hidden">
+
+    <!-- Audio Elemento de Música -->
+    <audio id="bg-music" loop></audio>
+
+    <!-- REPRODUCTOR DE MÚSICA FLOTANTE -->
+    <div class="fixed bottom-6 left-6 z-50 flex items-center space-x-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-full shadow-xl border border-cement-200/65">
+        <button id="music-toggle-btn" onclick="toggleMúsica()" class="w-10 h-10 rounded-full bg-cement-600 hover:bg-cement-700 text-white flex items-center justify-center transition-all duration-300 shadow-md shadow-cement-600/20">
+            <i id="music-btn-icon" class="fa-solid fa-play translate-x-0.5"></i>
+        </button>
+        <div class="flex flex-col pr-1">
+            <span class="text-[10px] uppercase tracking-widest text-stone-400 font-bold leading-none">Música</span>
+            <span class="text-xs font-serif italic text-cement-800 leading-normal" id="music-status-text">Pausada</span>
+        </div>
+        <div id="soundwave-animation" class="flex items-end space-x-0.5 h-4 w-5 hidden">
+            <div class="w-1 bg-cement-500 rounded-full bar-1"></div>
+            <div class="w-1 bg-cement-500 rounded-full bar-2"></div>
+            <div class="w-1 bg-cement-500 rounded-full bar-3"></div>
+        </div>
+    </div>
+
+    <!-- Efecto de Destellos -->
+    <div id="petals-container" class="fixed inset-0 pointer-events-none overflow-hidden z-40"></div>
+
+    <!-- NOTIFICACIÓN FLOTANTE -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-stone-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-3 text-sm md:text-base">
+        <span id="toast-icon" class="text-cement-400"></span>
+        <span id="toast-message">Mensaje de notificación</span>
+    </div>
+
+    <!-- BARRA DE NAVEGACIÓN -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md border-b border-stone-200/50 py-3 px-4 z-40 flex justify-between items-center shadow-sm">
+        <span class="font-serif italic font-semibold text-stone-700 tracking-wider">Mis XV Años</span>
+        <!-- CONTENEDOR DE ADMINISTRACIÓN OCULTO POR DEFECTO -->
+        <div id="admin-controls-nav" class="flex space-x-2 hidden">
+            <button onclick="toggleModal('admin-modal')" class="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5">
+                <i class="fa-solid fa-gear"></i>
+                <span class="hidden sm:inline">Configurar</span>
+            </button>
+            <button onclick="toggleModal('dashboard-modal')" class="px-3 py-1.5 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-cement-600/20">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Invitados (<span id="count-badge">0</span>)</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- PORTADA DE LA INVITACIÓN -->
+    <header class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-16 pb-12 overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(to bottom, rgba(244, 247, 245, 0.94), rgba(244, 247, 245, 0.98)), url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=1200');">
+        <div class="absolute top-16 left-0 w-32 md:w-56 opacity-20 pointer-events-none">
+            <img src="https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80&w=400" class="rounded-full w-full object-cover aspect-square" alt="Fondo floral" onerror="this.style.display='none'">
+        </div>
+
+        <div class="max-w-3xl mx-auto space-y-6 relative z-10 px-4">
+            <p class="text-xs md:text-sm tracking-[0.25em] text-stone-500 uppercase font-semibold mt-8">¡Estás Cordialmente Invitado!</p>
+            
+            <div class="relative inline-block my-4">
+                <div class="w-72 h-72 md:w-[32rem] md:h-[32rem] rounded-full mx-auto p-3.5 bg-gradient-to-r from-cement-400 via-white to-cement-600 shadow-2xl relative transition-all duration-500">
+                    <div class="w-full h-full rounded-full overflow-hidden bg-stone-100 border-4 border-white relative group">
+                        <!-- Imagen carrusel con detectores robustos contra errores de carga local -->
+                        <img id="festejada-foto-0" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100 group-hover:scale-105" alt="Quinceañera Foto 1" onerror="handleImageError(this, 0)">
+                        <img id="festejada-foto-1" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 2" onerror="handleImageError(this, 1)">
+                        <img id="festejada-foto-2" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 3" onerror="handleImageError(this, 2)">
+                    </div>
+                </div>
+                <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-5 py-1.5 rounded-full shadow-md border border-cement-200 z-10 whitespace-nowrap">
+                    <span class="text-sm md:text-base font-serif italic text-cement-700">Mis XV Años</span>
+                </div>
+            </div>
+
+            <h1 id="festejada-nombre" class="font-cursive text-6xl md:text-8xl cement-gradient-text py-2">Camila Shaddai</h1>
+
+            <div class="max-w-xl mx-auto">
+                <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
+                </p>
+            </div>
+
+            <div class="flex items-center justify-center space-x-4 my-6">
+                <div class="h-[1px] w-12 bg-cement-300"></div>
+                <i class="fa-solid fa-leaf text-cement-500 text-sm animate-pulse"></i>
+                <div class="h-[1px] w-12 bg-cement-300"></div>
+            </div>
+
+            <div class="space-y-1 pb-10 md:pb-0">
+                <p id="display-fecha-larga" class="font-serif text-lg md:text-2xl text-stone-800 tracking-wider font-semibold">Sábado, 29 de Agosto de 2026</p>
+                <p id="display-hora-principal" class="text-xs md:text-sm text-stone-500 uppercase tracking-widest font-semibold">A partir de las 17:00 Horas</p>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+            <a href="#cuenta-regresiva-section" class="text-cement-600 hover:text-cement-700 transition-colors">
+                <i class="fa-solid fa-chevron-down text-2xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- CUENTA REGRESIVA -->
+    <section id="cuenta-regresiva-section" class="py-16 bg-gradient-to-b from-stone-50 to-cement-50/50 text-center px-4 border-t border-b border-stone-200/40 relative">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <div class="space-y-2">
+                <span class="text-xs uppercase tracking-[0.25em] text-cement-600 font-semibold">Falta muy poco</span>
+                <h2 class="font-serif text-3xl md:text-4xl text-stone-800">Cuenta Regresiva</h2>
+                <div class="w-16 h-[2px] bg-cement-400 mx-auto mt-2"></div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 md:gap-6 max-w-2xl mx-auto">
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-days" class="block font-serif text-2xl md:text-5xl font-bold text-stone-800">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Días</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-hours" class="block font-serif text-2xl md:text-5xl font-bold text-stone-800">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Horas</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-minutes" class="block font-serif text-2xl md:text-5xl font-bold text-stone-800">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Min</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur border border-cement-100/50 rounded-2xl p-2 md:p-6 shadow-xl shadow-stone-100">
+                    <span id="countdown-seconds" class="block font-serif text-2xl md:text-5xl font-bold text-cement-600">00</span>
+                    <span class="text-[9px] md:text-xs uppercase tracking-widest text-stone-500 font-semibold mt-1 block">Seg</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DETALLES Y UBICACIÓN -->
+    <section class="py-20 px-4 bg-white relative">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-stretch">
+            
+            <!-- CEREMONIA -->
+            <div class="bg-stone-50 border border-stone-200/50 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col justify-between space-y-8 relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-cement-100 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="space-y-6">
+                    <div class="w-14 h-14 bg-cement-100 text-cement-600 rounded-full flex items-center justify-center text-2xl mx-auto shadow-inner">
+                        <i class="fa-solid fa-hands-praying"></i>
+                    </div>
+                    <div class="text-center space-y-2">
+                        <h3 class="font-serif text-2xl text-stone-800 font-semibold">Celebración</h3>
+                        <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">Momento de Bendición</p>
+                    </div>
+                    <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
+                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-ceremonia-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-ceremonia-hora">17:00 Hrs</span></p>
+                    </div>
+                </div>
+                <div class="text-center pt-4">
+                    <a id="btn-mapa-ceremonia" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Ver Ubicación en Mapa</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- RECEPCIÓN -->
+            <div class="bg-stone-50 border border-stone-200/50 rounded-3xl p-8 md:p-10 shadow-xl flex flex-col justify-between space-y-8 relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-cement-100/40 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="space-y-6">
+                    <div class="w-14 h-14 bg-stone-100 text-cement-500 rounded-full flex items-center justify-center text-2xl mx-auto shadow-inner">
+                        <i class="fa-solid fa-cake-candles"></i>
+                    </div>
+                    <div class="text-center space-y-2">
+                        <h3 class="font-serif text-2xl text-stone-800 font-semibold">Gran Recepción</h3>
+                        <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">¡A Celebrar en Grande!</p>
+                    </div>
+                    <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
+                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-recepcion-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-recepcion-hora">18:30 Hrs</span></p>
+                    </div>
+                </div>
+                <div class="text-center pt-4">
+                    <a id="btn-mapa-recepcion" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Ver Ubicación en Mapa</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- COMPARTIR ENLACE -->
+    <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
+        <div class="max-w-2xl mx-auto space-y-4">
+            <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
+            <p class="text-sm text-stone-500">Copia el enlace de abajo o envíalo directamente a tus contactos por WhatsApp.</p>
+            <div class="flex flex-col sm:flex-row items-center gap-3 justify-center pt-2">
+                <input type="text" id="share-link-input" readonly value="" class="w-full sm:w-80 px-4 py-2.5 rounded-lg border border-stone-300 text-sm bg-white focus:outline-none text-stone-600 font-mono">
+                <button onclick="copiarEnlace()" class="w-full sm:w-auto px-5 py-2.5 bg-stone-800 hover:bg-stone-900 text-white font-semibold rounded-lg text-sm transition-all flex items-center justify-center space-x-2 shadow-sm">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copiar Enlace</span>
+                </button>
+                <button onclick="compartirWhatsApp()" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-sm transition-all flex items-center justify-center space-x-2 shadow-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Enviar por WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
+    <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
+        <div id="rsvp-content-card" class="max-w-xl mx-auto bg-white border border-cement-100 rounded-3xl p-6 md:p-12 shadow-2xl relative z-10 transition-all duration-300">
+            <div class="text-center space-y-3 mb-8">
+                <span class="text-xs uppercase tracking-[0.2em] text-cement-600 font-semibold">Pases de Entrada</span>
+                <h2 class="font-serif text-3xl text-stone-800">Confirmación de Asistencia</h2>
+                <div class="w-12 h-[2px] bg-cement-400 mx-auto"></div>
+                <p class="text-sm text-stone-500">Acompáñanos a celebrar este gran sueño confirmando tu asistencia.</p>
+            </div>
+
+            <form id="rsvp-form" onsubmit="guardarConfirmacion(event)" class="space-y-6">
+                <!-- Nombre del Invitado (Campo desplegable dinámico alfabético) -->
+                <div class="space-y-1.5">
+                    <label for="rsvp-name" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Busca tu Nombre en la Lista</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+                        <select id="rsvp-name" required onchange="seleccionarInvitadoDesplegable()" class="w-full pl-10 pr-10 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm appearance-none cursor-pointer">
+                            <option value="">Selecciona tu nombre de la lista...</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-stone-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    <!-- Mensaje de Feedback de búsqueda de pases -->
+                    <div id="rsvp-lookup-feedback" class="text-xs transition-all duration-300 font-semibold hidden"></div>
+                </div>
+
+                <!-- Número de Contacto -->
+                <div class="space-y-1.5">
+                    <label for="rsvp-phone" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Número de Contacto (Tel/WhatsApp)</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                            <i class="fa-solid fa-phone"></i>
+                        </span>
+                        <input type="tel" id="rsvp-phone" required placeholder="Ej. 5512345678 (Sin espacios)" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">¿Asistirás al Evento?</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 hover:bg-stone-100/50 transition-all text-sm font-medium text-stone-700" id="label-asistire">
+                            <input type="radio" name="rsvp-status" value="asistire" required class="hidden" onchange="actualizarEstadoAsistencia('asistire')">
+                            <i class="fa-regular fa-circle-check mr-2 text-stone-400"></i>
+                            Sí, asistiré
+                        </label>
+                        <label class="flex items-center justify-center p-3.5 rounded-xl border-2 border-stone-200 cursor-pointer bg-stone-50 hover:bg-stone-100/50 transition-all text-sm font-medium text-stone-700" id="label-no-asistire">
+                            <input type="radio" name="rsvp-status" value="no-asistire" required class="hidden" onchange="actualizarEstadoAsistencia('no-asistire')">
+                            <i class="fa-regular fa-circle-xmark mr-2 text-stone-400"></i>
+                            No asistiré
+                        </label>
+                    </div>
+                </div>
+
+                <div id="seccion-acompanantes" class="space-y-4 transition-all duration-300" style="display: none;">
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Cantidad de pases requeridos</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                                <i class="fa-solid fa-users"></i>
+                            </span>
+                            <select id="rsvp-guests" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                                <option value="1">1 Pase de entrada</option>
+                                <option value="2">2 Pases de entrada</option>
+                                <option value="3">3 Pases de entrada</option>
+                                <option value="4">4 Pases de entrada</option>
+                                <option value="5">5 Pases de entrada</option>
+                                <option value="6">6 Pases de entrada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="rsvp-message" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Mensaje especial o dedicatoria</label>
+                        <textarea id="rsvp-message" rows="4" placeholder="Escribe tus hermosos deseos para la quinceañera..." class="w-full p-4 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-enviar-rsvp" class="w-full py-4 bg-gradient-to-r from-cement-600 to-cement-500 hover:from-cement-700 hover:to-cement-600 text-white font-bold rounded-xl text-sm uppercase tracking-wider transition-all shadow-lg shadow-cement-600/30">
+                    <i class="fa-regular fa-paper-plane mr-2"></i>
+                    Confirmar Mi Asistencia
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- CONTENEDOR DE RENDERING PARA CAPTURA DE BOLETO PNG (OCULTO AFUERA DEL VIEWPORT) -->
+    <div class="absolute -left-[9999px] top-0 pointer-events-none" style="width: 380px;">
+        <div id="digital-ticket" class="bg-white p-8 rounded-3xl border border-stone-200 text-left space-y-6 flex flex-col" style="font-family: 'Montserrat', sans-serif;">
+            <div class="text-center pb-4 border-b border-stone-100 flex flex-col items-center">
+                <p class="font-cursive text-5xl text-cement-600 mb-6 pt-2 pb-1 block leading-relaxed" style="font-family: 'Alex Brush', cursive; line-height: 1.5;">Camila Shaddai</p>
+                <div class="px-3 py-1 bg-cement-50 border border-cement-200 rounded-full mt-2">
+                    <p class="text-[9px] uppercase tracking-widest text-cement-700 font-bold">Pase de Acceso Oficial</p>
+                </div>
+            </div>
+            
+            <div class="space-y-4 text-stone-700 text-xs">
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Invitado Registrado</span>
+                    <span id="ticket-guest-name" class="font-bold text-stone-900 text-base">Nombre de Ejemplo</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Pases Confirmados</span>
+                        <span id="ticket-guest-passes" class="font-extrabold text-cement-600 text-lg">0 Pases</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Estatus</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold inline-block border border-emerald-100">
+                            <i class="fa-solid fa-check mr-1"></i>Confirmado
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Fecha del Evento</span>
+                    <span id="ticket-event-date" class="text-xs font-semibold text-stone-800">Sábado, 29 de Agosto de 2026</span>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Lugar de Recepción</span>
+                    <span id="ticket-event-venue" class="text-xs text-stone-800 font-medium">Salón de Eventos "El Campanario"</span>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-stone-100 text-center space-y-2">
+                <div class="inline-block p-1 bg-stone-50 rounded border border-stone-200">
+                    <div class="flex space-x-0.5 h-8 items-center px-3">
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-1.5 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-2.5 bg-stone-800 h-full"></div>
+                        <div class="w-0.5 bg-stone-800 h-full"></div>
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                        <div class="w-1.5 bg-stone-800 h-full"></div>
+                        <div class="w-1 bg-stone-800 h-full"></div>
+                    </div>
+                </div>
+                <p id="ticket-random-id" class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #000000</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIÁLOGO MODAL CONFIRMACIÓN PERSONALIZADO (REEMPLAZA AL CONFIRM DE NAVEGADOR) -->
+    <div id="custom-confirm-dialog" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-stone-100">
+            <div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center text-xl mx-auto border border-amber-100">
+                <i class="fa-solid fa-triangle-exclamation animate-bounce"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 id="confirm-dialog-title" class="font-serif text-lg font-bold text-stone-800">¿Estás seguro?</h4>
+                <p id="confirm-dialog-message" class="text-xs text-stone-500">Esta acción aplicará los cambios indicados.</p>
+            </div>
+            <div class="flex space-x-3 pt-2">
+                <button id="btn-confirm-cancel" class="w-1/2 py-2 border border-stone-200 text-stone-600 hover:bg-stone-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button id="btn-confirm-accept" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">Aceptar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONTRASEÑA SECRETA ADMIN (REEMPLAZA AL PROMPT DE NAVEGADOR) -->
+    <div id="password-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-stone-100">
+            <div class="w-12 h-12 bg-cement-50 text-cement-600 rounded-full flex items-center justify-center text-xl mx-auto border border-cement-100">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 class="font-serif text-lg font-bold text-stone-800">Modo Administrador</h4>
+                <p class="text-xs text-stone-500">Ingresa la clave para habilitar los controles de configuración.</p>
+            </div>
+            <div class="space-y-3">
+                <input type="password" id="admin-password-input" placeholder="Ingresa contraseña..." class="w-full px-4 py-2.5 rounded-xl border border-stone-200 text-center focus:outline-none focus:ring-2 focus:ring-cement-400">
+                <p id="password-error-msg" class="text-xs text-rose-500 hidden font-semibold">Contraseña incorrecta. Inténtalo de nuevo.</p>
+            </div>
+            <div class="flex space-x-3 pt-2">
+                <button onclick="cerrarPasswordModal()" class="w-1/2 py-2 border border-stone-200 text-stone-600 hover:bg-stone-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">Cancelar</button>
+                <button onclick="verificarPasswordAdmin()" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">Ingresar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="py-12 bg-stone-900 text-stone-400 text-center px-4 relative">
+        <div class="max-w-4xl mx-auto space-y-4">
+            <!-- Nombre de Camila con disparador secreto al hacer click 5 veces -->
+            <h2 class="font-cursive text-4xl text-cement-300 cursor-pointer select-none transition-transform active:scale-95 duration-200" id="footer-nombre">Camila Shaddai</h2>
+            <p class="font-serif italic text-sm text-stone-500">Mis XV Años</p>
+            <div class="h-[1px] w-12 bg-stone-800 mx-auto"></div>
+            <p class="text-xs text-stone-600">Invitación interactiva premium.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE CONFIGURACIÓN -->
+    <div id="admin-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-4 md:p-6 border-b border-stone-200 flex justify-between items-center bg-stone-50">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-full bg-cement-100 text-cement-600 flex items-center justify-center"><i class="fa-solid fa-gears text-sm"></i></span>
+                    <h3 class="font-semibold text-lg text-stone-800">Configuración</h3>
+                </div>
+                <button onclick="toggleModal('admin-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="admin-form" onsubmit="guardarConfiguracion(event)" class="p-4 md:p-6 overflow-y-auto space-y-5 flex-1">
+                <!-- PANEL AMARILLO: ENLACE PRIVADO ADMIN -->
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-2 text-stone-700">
+                    <p class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Enlace de acceso administrador privado
+                    </p>
+                    <p class="text-[11px] leading-relaxed">
+                        Para no tener que escribir la contraseña secreta en el futuro, puedes acceder directamente a la configuración y al panel de control guardando este enlace:
+                    </p>
+                    <div class="flex gap-2">
+                        <input type="text" id="cfg-admin-link" readonly class="w-full bg-white border border-amber-300 rounded-lg text-xs p-1.5 font-mono text-amber-900" value="">
+                        <button type="button" onclick="copiarEnlaceAdmin()" class="bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-3 py-1.5 text-xs font-bold transition-all whitespace-nowrap">Copiar</button>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Festejada</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Nombre de la Festejada</label>
+                        <input type="text" id="cfg-nombre" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">URL Foto 1 del Carrusel</label>
+                        <input type="text" id="cfg-foto-0" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">URL Foto 2 del Carrusel</label>
+                        <input type="text" id="cfg-foto-1" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">URL Foto 3 del Carrusel</label>
+                        <input type="text" id="cfg-foto-2" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Mensaje de Dedicatoria</label>
+                        <textarea id="cfg-mensaje" rows="2" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Pases de Invitados Asignados</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Base de Datos de Invitados (Escribir: Nombre, Pases)</label>
+                        <textarea id="cfg-lista-pases" rows="4" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-xs font-mono resize-y" placeholder="Ejemplo:&#10;Tío Carlos Martínez, 4&#10;Adriana Solís, 1&#10;Familia Ruiz Gómez, 3"></textarea>
+                        <p class="text-[10px] text-stone-400">Introduce un invitado por línea. Al seleccionarlo en el menú RSVP, el selector de pases de entrada se ajustará de forma estricta.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Música de Fondo</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Seleccionar Melodía</label>
+                        <select id="cfg-musica-select" onchange="toggleCustomMusicInput()" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                            <option value="music/musica.mp3">Archivo de Audio Local (music/musica.mp3)</option>
+                            <option value="synthesized">Sintetizador Offline (Balada Romántica de Piano)</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/e/e5/Gymnop%C3%A9die_No._1.ogg">Erik Satie - Gymnopédie No.1</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/b/b4/Frederic_Chopin_-_Nocturne_in_E-flat_major%2C_Op._9_no._2.ogg">Chopin - Nocturne Op.9 (Balada Clásica)</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/2/24/Claude_Debussy_-_Clair_de_lune.ogg">Debussy - Claro de Luna</option>
+                            <option value="https://upload.wikimedia.org/wikipedia/commons/d/d0/Beethoven_-_Piano_Sonata_No._14_in_C-sharp_minor_%22Moonlight%22%2C_Op._27_No._2_-_I._Adagio_sostenuto.ogg">Beethoven - Moonlight Sonata</option>
+                            <option value="custom">Otro enlace MP3 / OGG (Personalizado)</option>
+                        </select>
+                    </div>
+                    <div id="cfg-musica-custom-container" class="space-y-1.5 hidden">
+                        <label class="block text-xs font-semibold text-stone-600">Enlace directo a archivo multimedia</label>
+                        <input type="text" id="cfg-musica-custom" placeholder="https://ejemplo.com/cancion.mp3" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Fecha y Horario</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Fecha del Evento</label>
+                            <input type="date" id="cfg-fecha" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-xs">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Hora Principal</label>
+                            <input type="text" id="cfg-hora" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Ceremonia</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Lugar</label>
+                        <input type="text" id="cfg-ceremonia-lugar" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Dirección</label>
+                        <input type="text" id="cfg-ceremonia-dir" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Hora</label>
+                            <input type="text" id="cfg-ceremonia-hora" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Mapa URL</label>
+                            <input type="text" id="cfg-ceremonia-mapa" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Recepción</h4>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Lugar</label>
+                        <input type="text" id="cfg-recepcion-lugar" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Dirección</label>
+                        <input type="text" id="cfg-recepcion-dir" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Hora</label>
+                            <input type="text" id="cfg-recepcion-hora" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold text-stone-600">Mapa URL</label>
+                            <input type="text" id="cfg-recepcion-mapa" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex space-x-3">
+                    <button type="button" onclick="restablecerPreestablecido()" class="w-1/2 py-2.5 border border-stone-300 text-stone-700 hover:bg-slate-50 font-semibold rounded-xl text-xs uppercase tracking-wider transition-all">
+                        Valores Demo
+                    </button>
+                    <button type="submit" class="w-1/2 py-2.5 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
+                        Guardar Todo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TABLERO DE INVITADOS (DASHBOARD COMPLETO) -->
+    <div id="dashboard-modal" class="fixed inset-0 bg-stone-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+            <div class="p-4 md:p-6 border-b border-stone-200 flex justify-between items-center bg-stone-50">
+                <div class="flex items-center space-x-2">
+                    <span class="w-8 h-8 rounded-full bg-cement-600 text-white flex items-center justify-center"><i class="fa-solid fa-list-check text-xs"></i></span>
+                    <div>
+                        <h3 class="font-semibold text-lg text-stone-800">Panel de Control de Invitados</h3>
+                        <p class="text-xs text-stone-500 hidden sm:block">Monitorea y gestiona las confirmaciones en tiempo real.</p>
+                    </div>
+                </div>
+                <button onclick="toggleModal('dashboard-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Asistirán</span>
+                    <span id="dash-total-confirmados" class="text-xl sm:text-2xl font-bold text-emerald-600">0</span>
+                </div>
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Total Pases</span>
+                    <span id="dash-total-pases" class="text-xl sm:text-2xl font-bold text-cement-600">0</span>
+                </div>
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Declinaron</span>
+                    <span id="dash-total-declinaron" class="text-xl sm:text-2xl font-bold text-stone-400">0</span>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 md:p-6">
+                <div class="overflow-x-auto rounded-lg border border-stone-200">
+                    <table class="min-w-full divide-y divide-stone-200 text-left text-xs md:text-sm">
+                        <thead class="bg-stone-50 text-stone-500 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3">Nombre</th>
+                                <th class="px-4 py-3">Teléfono</th>
+                                <th class="px-4 py-3">Estado</th>
+                                <th class="px-4 py-3">Pases</th>
+                                <th class="px-4 py-3">Mensaje/Dedicatoria</th>
+                                <th class="px-4 py-3 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guest-table-body" class="divide-y divide-stone-100 text-stone-700 bg-white">
+                            <tr>
+                                <td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">Cargando invitados...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURACIÓN GLOBAL ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyD-EXAMPLE-URL/exec";
+
+        // Fotos estéticas de Unsplash con temática de quinceañera/gala como respaldo infalible
+        const FALLBACK_FOTOS = [
+            "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=600",
+            "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=600",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600"
+        ];
+
+        const DEFAULT_CONFIG = {
+            nombre: "Camila Shaddai",
+            fotos: [
+                "images/foto1.jpg",
+                "images/foto2.jpg",
+                "images/foto3.jpg"
+            ],
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
+            fecha: "2026-08-29",
+            hora: "17:00 Horas",
+            ceremoniaLugar: "Salón de Eventos \"El Campanario\"",
+            ceremoniaDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            ceremoniaHora: "17:00 Hrs",
+            ceremoniaMapa: "https://maps.google.com",
+            recepcionLugar: "Salón de Eventos \"El Campanario\"",
+            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            recepcionHora: "18:30 Hrs",
+            recepcionMapa: "https://maps.google.com",
+            musicaUrl: "music/musica.mp3",
+            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
+        };
+
+        let appConfig = { ...DEFAULT_CONFIG };
+        let countdownTimerId = null;
+        let carouselIntervalId = null;
+        let currentSlide = 0;
+        let musicPlaying = false;
+        let parsedGuestDatabase = {};
+        
+        let footerClicksCount = 0;
+        let customConfirmCallback = null;
+
+        // Variables de control para el Sintetizador Web Audio API
+        let audioCtx = null;
+        let synthInterval = null;
+        let synthStep = 0;
+
+        const chords = [
+            { bass: 146.83, trebles: [369.99, 440.00, 554.37] }, // Acorde Dmaj7
+            { bass: 196.00, trebles: [493.88, 587.33, 739.99] }  // Acorde Gmaj7
+        ];
+
+        if (localStorage.getItem('xv_config')) {
+            try { appConfig = JSON.parse(localStorage.getItem('xv_config')); } catch (e) { appConfig = { ...DEFAULT_CONFIG }; }
+        }
+
+        // --- INICIALIZACIÓN ---
+        window.onload = function() {
+            crearPetalosDecorativos();
+            aplicarConfiguracionEnVista();
+            verificarUrlYGuardarEnlaceAdmin();
+            
+            document.addEventListener('click', iniciarMúsicaAutomaticamente, { once: true });
+            document.addEventListener('touchstart', iniciarMúsicaAutomaticamente, { once: true });
+            
+            cargarInvitadosSimulados();
+            verificarAsistenciaPrevia();
+            configurarEventosDialogo();
+            vincularIniciadorSecretoFooter();
+        };
+
+        // Detector automático de fallas de fotos
+        function handleImageError(imgElement, index) {
+            console.warn(`Error al cargar la foto index ${index}. Activando foto elegante de respaldo.`);
+            imgElement.src = FALLBACK_FOTOS[index];
+            imgElement.onerror = null; // Evita ciclos infinitos si falla Unsplash
+        }
+
+        function configurarEventosDialogo() {
+            document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+                document.getElementById('custom-confirm-dialog').classList.add('hidden');
+                customConfirmCallback = null;
+            });
+
+            document.getElementById('btn-confirm-accept').addEventListener('click', () => {
+                document.getElementById('custom-confirm-dialog').classList.add('hidden');
+                if (customConfirmCallback) {
+                    customConfirmCallback();
+                }
+                customConfirmCallback = null;
+            });
+        }
+
+        function solicitarConfirmacionPersonalizada(titulo, mensaje, onConfirm) {
+            document.getElementById('confirm-dialog-title').innerText = titulo;
+            document.getElementById('confirm-dialog-message').innerText = mensaje;
+            customConfirmCallback = onConfirm;
+            document.getElementById('custom-confirm-dialog').classList.remove('hidden');
+        }
+
+        // --- SISTEMA DE CONTROL ADMINISTRADOR PRIVADO ---
+        function verificarUrlYGuardarEnlaceAdmin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdminByUrl = urlParams.get('admin') === 'true';
+            
+            if (isAdminByUrl) {
+                localStorage.setItem('xv_is_admin', 'true');
+            }
+
+            const isAdminSession = localStorage.getItem('xv_is_admin') === 'true';
+            const adminControlsNav = document.getElementById('admin-controls-nav');
+            
+            if (isAdminSession) {
+                adminControlsNav.classList.remove('hidden');
+            } else {
+                adminControlsNav.classList.add('hidden');
+            }
+
+            // Inyectamos el enlace administrador directo en el campo de texto del modal de configuración
+            const baseUri = window.location.origin + window.location.pathname;
+            document.getElementById('cfg-admin-link').value = `${baseUri}?admin=true`;
+            document.getElementById('share-link-input').value = baseUri;
+        }
+
+        function vincularIniciadorSecretoFooter() {
+            const footerNombre = document.getElementById('footer-nombre');
+            if (!footerNombre) return;
+
+            footerNombre.addEventListener('click', () => {
+                footerClicksCount++;
+                if (footerClicksCount >= 5) {
+                    footerClicksCount = 0;
+                    abrirPasswordModal();
+                }
+            });
+        }
+
+        function abrirPasswordModal() {
+            document.getElementById('password-modal').classList.remove('hidden');
+            document.getElementById('admin-password-input').value = "";
+            document.getElementById('password-error-msg').classList.add('hidden');
+            document.getElementById('admin-password-input').focus();
+        }
+
+        function cerrarPasswordModal() {
+            document.getElementById('password-modal').classList.add('hidden');
+        }
+
+        function verificarPasswordAdmin() {
+            const passInput = document.getElementById('admin-password-input').value.trim();
+            const errorMsg = document.getElementById('password-error-msg');
+            
+            if (passInput === "15Anos") {
+                localStorage.setItem('xv_is_admin', 'true');
+                verificarUrlYGuardarEnlaceAdmin();
+                cerrarPasswordModal();
+                mostrarToast("¡Modo administrador activado!", "fa-solid fa-circle-check text-emerald-500");
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('admin-password-input').focus();
+            }
+        }
+
+        function copiarEnlaceAdmin() {
+            const inputLink = document.getElementById('cfg-admin-link');
+            inputLink.select();
+            document.execCommand('copy');
+            mostrarToast("¡Enlace de administrador copiado!", "fa-solid fa-copy text-amber-500");
+        }
+
+        // --- NORMALIZACIÓN DE TEXTOS Y PARSE DB INVITADOS ---
+        function normalizarTexto(txt) {
+            return txt.toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "") 
+                      .replace(/[^a-z0-9 ]/g, '')     
+                      .trim();
+        }
+
+        function parseGuestDatabase(rawText) {
+            parsedGuestDatabase = {};
+            if (!rawText) return;
+            const lines = rawText.split('\n');
+            lines.forEach(line => {
+                const parts = line.split(',');
+                if (parts.length >= 2) {
+                    const originalName = parts[0].trim();
+                    const cleanKey = normalizarTexto(originalName);
+                    const pases = parseInt(parts[1].trim()) || 1;
+                    if (cleanKey) {
+                        parsedGuestDatabase[cleanKey] = {
+                            nombre: originalName,
+                            pases: pases
+                        };
+                    }
+                }
+            });
+        }
+
+        function cargarListaNombresDesplegable() {
+            const selectNombre = document.getElementById('rsvp-name');
+            if (!selectNombre) return;
+
+            selectNombre.innerHTML = '<option value="">Selecciona tu nombre de la lista...</option>';
+
+            // Filtrar y excluir de la lista los invitados que ya han confirmado asistencia
+            const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            const nombresYaRegistrados = new Set(listaConfirmados.map(inv => normalizarTexto(inv.nombre)));
+
+            const sortedKeys = Object.keys(parsedGuestDatabase).sort((a, b) => {
+                return parsedGuestDatabase[a].nombre.localeCompare(parsedGuestDatabase[b].nombre);
+            });
+
+            let totalDisponibles = 0;
+
+            sortedKeys.forEach(key => {
+                if (!nombresYaRegistrados.has(key)) {
+                    const guest = parsedGuestDatabase[key];
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.textContent = guest.nombre;
+                    selectNombre.appendChild(opt);
+                    totalDisponibles++;
+                }
+            });
+
+            const feedback = document.getElementById('rsvp-lookup-feedback');
+            if (totalDisponibles === 0 && sortedKeys.length > 0) {
+                feedback.className = "text-xs mt-1 font-semibold text-emerald-600 block";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Excelente! Todos los invitados asignados han confirmado su asistencia.`;
+            } else {
+                feedback.className = "text-xs mt-1 text-stone-400 italic hidden";
+            }
+        }
+
+        function seleccionarInvitadoDesplegable() {
+            const selectNombre = document.getElementById('rsvp-name');
+            const feedback = document.getElementById('rsvp-lookup-feedback');
+            const selectedKey = selectNombre.value;
+
+            if (!selectedKey) {
+                feedback.className = "text-xs mt-1 text-stone-400 italic hidden";
+                feedback.innerHTML = "";
+                reconstruirSelectPases(6);
+                return;
+            }
+
+            const match = parsedGuestDatabase[selectedKey];
+
+            if (match) {
+                feedback.className = "text-xs mt-1 font-semibold text-emerald-600 block animate-pulse";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ¡Hola, ${match.nombre}! Reservamos un máximo de <strong>${match.pases} pase${match.pases > 1 ? 's' : ''}</strong> para ti.`;
+                reconstruirSelectPases(match.pases);
+                
+                const statusChecked = document.querySelector('input[name="rsvp-status"]:checked');
+                if (statusChecked && statusChecked.value === 'asistire') {
+                    document.getElementById('seccion-acompanantes').style.display = 'block';
+                }
+            } else {
+                feedback.className = "text-xs mt-1 font-semibold text-stone-500 block";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-info mr-1"></i> Por favor selecciona una opción válida.`;
+                reconstruirSelectPases(6);
+            }
+        }
+
+        function reconstruirSelectPases(numMaximo) {
+            const select = document.getElementById('rsvp-guests');
+            if (!select) return;
+            const preselectedVal = select.value;
+            select.innerHTML = "";
+            for (let i = 1; i <= numMaximo; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `${i} Pase${i > 1 ? 's' : ''} de entrada`;
+                select.appendChild(opt);
+            }
+            if (preselectedVal && parseInt(preselectedVal) <= numMaximo) {
+                select.value = preselectedVal;
+            } else {
+                select.value = numMaximo;
+            }
+        }
+
+        // --- REPRODUCTOR Y SINTETIZADOR DE MÚSICA ---
+        function playSynthNote(freq, startTime, duration, volume) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, startTime);
+                
+                gainNode.gain.setValueAtTime(0, startTime);
+                gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.15);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            } catch (err) {
+                console.error("Error al sintetizar nota:", err);
+            }
+        }
+
+        function playSynthStep() {
+            if (!audioCtx || audioCtx.state === 'suspended') return;
+            const now = audioCtx.currentTime;
+            const chordIndex = Math.floor(synthStep / 4) % chords.length;
+            const noteIndex = synthStep % 4;
+            const chord = chords[chordIndex];
+            
+            if (noteIndex === 0) {
+                playSynthNote(chord.bass, now, 3.8, 0.22);
+            } else {
+                const trebleFreq = chord.trebles[noteIndex - 1];
+                if (trebleFreq) {
+                    playSynthNote(trebleFreq, now, 2.8, 0.10);
+                }
+            }
+            synthStep++;
+        }
+
+        function iniciarSintetizador() {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                stopSintetizador();
+                synthStep = 0;
+                playSynthStep();
+                synthInterval = setInterval(playSynthStep, 1100);
+            } catch (e) {
+                console.error("No se pudo iniciar el sintetizador de audio:", e);
+            }
+        }
+
+        function stopSintetizador() {
+            if (synthInterval) {
+                clearInterval(synthInterval);
+                synthInterval = null;
+            }
+        }
+
+        function iniciarMúsicaAutomaticamente() {
+            if (appConfig.musicaUrl === "synthesized") {
+                if (!musicPlaying) {
+                    musicPlaying = true;
+                    iniciarSintetizador();
+                    actualizarInterfazMusica(true);
+                }
+            } else {
+                const music = document.getElementById('bg-music');
+                if (music && music.src && !musicPlaying) {
+                    music.play().then(() => {
+                        musicPlaying = true;
+                        actualizarInterfazMusica(true);
+                    }).catch(err => {
+                        console.log("Autoplay de audio bloqueado.");
+                    });
+                }
+            }
+        }
+
+        function toggleMúsica() {
+            if (appConfig.musicaUrl === "synthesized") {
+                if (musicPlaying) {
+                    musicPlaying = false;
+                    stopSintetizador();
+                    actualizarInterfazMusica(false);
+                } else {
+                    musicPlaying = true;
+                    iniciarSintetizador();
+                    actualizarInterfazMusica(true);
+                }
+            } else {
+                const music = document.getElementById('bg-music');
+                if (!music) return;
+
+                if (musicPlaying) {
+                    music.pause();
+                    musicPlaying = false;
+                    actualizarInterfazMusica(false);
+                } else {
+                    music.play().then(() => {
+                        musicPlaying = true;
+                        actualizarInterfazMusica(true);
+                    }).catch(err => {
+                        console.error("Error al reproducir audio:", err);
+                    });
+                }
+            }
+        }
+
+        function actualizarInterfazMusica(reproduciendo) {
+            const btnIcon = document.getElementById('music-btn-icon');
+            const statusText = document.getElementById('music-status-text');
+            const soundwave = document.getElementById('soundwave-animation');
+
+            if (reproduciendo) {
+                btnIcon.className = "fa-solid fa-pause";
+                statusText.innerText = "Reproduciendo";
+                soundwave.classList.remove('hidden');
+            } else {
+                btnIcon.className = "fa-solid fa-play translate-x-0.5";
+                statusText.innerText = "Pausada";
+                soundwave.classList.add('hidden');
+            }
+        }
+
+        function toggleCustomMusicInput() {
+            const select = document.getElementById('cfg-musica-select');
+            const customContainer = document.getElementById('cfg-musica-custom-container');
+            select.value === 'custom' ? customContainer.classList.remove('hidden') : customContainer.classList.add('hidden');
+        }
+
+        // --- EFECTOS VISUALES Y CONTADOR ---
+        function iniciarCuentaRegresiva(fechaDestinoStr) {
+            if (countdownTimerId) clearInterval(countdownTimerId);
+            const targetDate = new Date(`${fechaDestinoStr}T18:00:00`).getTime();
+
+            function actualizarContador() {
+                const now = new Date().getTime();
+                const difference = targetDate - now;
+
+                if (difference <= 0) {
+                    document.getElementById('countdown-days').innerText = "00";
+                    document.getElementById('countdown-hours').innerText = "00";
+                    document.getElementById('countdown-minutes').innerText = "00";
+                    document.getElementById('countdown-seconds').innerText = "00";
+                    clearInterval(countdownTimerId);
+                    return;
+                }
+
+                document.getElementById('countdown-days').innerText = String(Math.floor(difference / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                document.getElementById('countdown-hours').innerText = String(Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                document.getElementById('countdown-minutes').innerText = String(Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                document.getElementById('countdown-seconds').innerText = String(Math.floor((difference % (1000 * 60)) / 1000)).padStart(2, '0');
+            }
+            actualizarContador();
+            countdownTimerId = setInterval(actualizarContador, 1000);
+        }
+
+        function crearPetalosDecorativos() {
+            const container = document.getElementById('petals-container');
+            const numPetals = window.innerWidth < 768 ? 10 : 20; 
+            for (let i = 0; i < numPetals; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'organic-sparkle';
+                const shapes = ['🌿', '🍃', '✨', '🤍'];
+                petal.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+                petal.style.left = `${Math.random() * 100}%`;
+                petal.style.top = `-${10 + Math.random() * 20}px`;
+                petal.style.fontSize = `${14 + Math.random() * 12}px`;
+                petal.style.animationDelay = `${Math.random() * 10}s`;
+                petal.style.animationDuration = `${10 + Math.random() * 12}s`;
+                container.appendChild(petal);
+            }
+        }
+
+        function aplicarConfiguracionEnVista() {
+            document.getElementById('festejada-nombre').innerText = appConfig.nombre;
+            document.getElementById('footer-nombre').innerText = appConfig.nombre;
+            document.getElementById('festejada-mensaje').innerText = appConfig.mensaje;
+
+            document.getElementById('festejada-foto-0').src = appConfig.fotos[0] || '';
+            document.getElementById('festejada-foto-1').src = appConfig.fotos[1] || '';
+            document.getElementById('festejada-foto-2').src = appConfig.fotos[2] || '';
+            
+            const music = document.getElementById('bg-music');
+            const targetSrc = appConfig.musicaUrl || DEFAULT_CONFIG.musicaUrl;
+
+            if (targetSrc === "synthesized") {
+                music.pause();
+                music.removeAttribute('src');
+                try { music.load(); } catch(e) {}
+                if (musicPlaying) {
+                    iniciarSintetizador();
+                }
+            } else {
+                stopSintetizador();
+                if (targetSrc && music.src !== targetSrc && !music.src.endsWith(targetSrc)) {
+                    music.src = targetSrc;
+                    music.load();
+                    if (musicPlaying) {
+                        const playPromise = music.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(e => {
+                                console.warn("Error de auto-reproducción:", e);
+                                musicPlaying = false;
+                                actualizarInterfazMusica(false);
+                            });
+                        }
+                    }
+                }
+            }
 
             document.getElementById('cfg-nombre').value = appConfig.nombre;
             document.getElementById('cfg-foto-0').value = appConfig.fotos[0] || '';

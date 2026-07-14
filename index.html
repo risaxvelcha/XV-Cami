@@ -317,7 +317,7 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE 
+    <!-- COMPARTIR ENLACE -->
     <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
@@ -334,7 +334,7 @@
                 </button>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
@@ -464,18 +464,6 @@
             <!-- ESPACIO DEL CÓDIGO QR REAL -->
             <div class="pt-4 border-t border-stone-100 text-center space-y-3 flex flex-col items-center justify-center">
                 <canvas id="ticket-qr-canvas" class="p-1 bg-white border border-stone-200 rounded-xl" style="width: 120px; height: 120px;"></canvas>
-                <p id="ticket-random-id" class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #000000</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- DIÁLOGO MODAL CONFIRMACIÓN PERSONALIZADO -->
-                        <div class="w-0.5 bg-stone-800 h-full"></div>
-                        <div class="w-1 bg-stone-800 h-full"></div>
-                        <div class="w-1.5 bg-stone-800 h-full"></div>
-                        <div class="w-1 bg-stone-800 h-full"></div>
-                    </div>
-                </div>
                 <p id="ticket-random-id" class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #000000</p>
             </div>
         </div>
@@ -768,7 +756,7 @@
             recepcionHora: "18:30 Hrs",
             recepcionMapa: "https://maps.google.com",
             musicaUrl: "music/musica.mp3",
-            listaPasesInvitados: "Camila, 1\nMarisol islas, 2\nRicardo Jesús Velázquez Islas, 1\nRicardo Velázquez Escamilla, 1\nFamilia Martínez Baez, 4\nFamilia Islas Resendíz, 5"
+            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -818,6 +806,10 @@
             
             if (!verifyId) return;
 
+            // Extraemos los parámetros dinámicos del código QR para verificación sin depender del almacenamiento local
+            const urlName = urlParams.get('name');
+            const urlPasses = urlParams.get('passes');
+
             const modal = document.getElementById('qr-verification-overlay');
             const iconContainer = document.getElementById('verification-icon-container');
             const badge = document.getElementById('verification-badge');
@@ -825,12 +817,29 @@
             const details = document.getElementById('verification-details');
             const errorMsg = document.getElementById('verification-error-msg');
 
-            const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
-            const match = listaConfirmados.find(inv => inv.ticketId === verifyId);
-
             modal.classList.remove('hidden');
 
-            if (match) {
+            let finalName = "";
+            let finalPasses = 0;
+            let isValid = false;
+
+            // Si el QR tiene los datos embebidos en la URL, los renderizamos de inmediato (Funciona en celulares de recepcionistas)
+            if (urlName && urlPasses) {
+                finalName = decodeURIComponent(urlName);
+                finalPasses = parseInt(urlPasses) || 1;
+                isValid = true;
+            } else {
+                // Fallback para verificar de forma local
+                const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+                const match = listaConfirmados.find(inv => inv.ticketId === verifyId);
+                if (match) {
+                    finalName = match.nombre;
+                    finalPasses = match.pases;
+                    isValid = true;
+                }
+            }
+
+            if (isValid) {
                 // Boleto Válido y Encontrado
                 iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-emerald-50 text-emerald-500 border border-emerald-100 animate-pulse";
                 iconContainer.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
@@ -838,9 +847,9 @@
                 badge.innerText = "Acceso Autorizado";
                 title.innerText = "¡Boleto Auténtico!";
                 
-                document.getElementById('v-guest-name').innerText = match.nombre;
-                document.getElementById('v-guest-passes').innerText = `${match.pases} Pase${match.pases > 1 ? 's' : ''}`;
-                document.getElementById('v-ticket-id').innerText = match.ticketId;
+                document.getElementById('v-guest-name').innerText = finalName;
+                document.getElementById('v-guest-passes').innerText = `${finalPasses} Pase${finalPasses > 1 ? 's' : ''}`;
+                document.getElementById('v-ticket-id').innerText = verifyId;
 
                 details.classList.remove('hidden');
                 errorMsg.classList.add('hidden');
@@ -1432,7 +1441,8 @@
 
                     // --- GENERAR CÓDIGO QR ESCANEABLE EN EL CANVAS ---
                     const baseUri = window.location.origin + window.location.pathname;
-                    const verifyUrl = `${baseUri}?verify=${miConfirmacion.ticketId}`;
+                    // Integramos el nombre e información de los pases en el enlace del QR
+                    const verifyUrl = `${baseUri}?verify=${miConfirmacion.ticketId}&name=${encodeURIComponent(miConfirmacion.nombre)}&passes=${miConfirmacion.pases}`;
                     new QRious({
                         element: document.getElementById('ticket-qr-canvas'),
                         value: verifyUrl,

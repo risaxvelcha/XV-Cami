@@ -641,7 +641,13 @@
                         <p class="text-xs text-stone-500 hidden sm:block">Monitorea y gestiona las confirmaciones en tiempo real.</p>
                     </div>
                 </div>
-                <button onclick="toggleModal('dashboard-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex items-center space-x-3">
+                    <button onclick="exportarExcel()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-emerald-600/20" title="Descargar base de invitados completa">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span class="hidden sm:inline">Exportar Excel</span>
+                    </button>
+                    <button onclick="toggleModal('dashboard-modal')" class="text-stone-400 hover:text-stone-600 text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
 
             <div class="grid grid-cols-3 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
@@ -1686,6 +1692,94 @@ Te comparto los detalles del pase que confirmaste para que los tengas a la mano:
                     mostrarToast("Registro eliminado con éxito.", "fa-solid fa-trash-can text-rose-500");
                 }
             );
+        }
+
+        function exportarExcel() {
+            const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            const confirmationMap = {};
+            
+            listaConfirmados.forEach(c => {
+                confirmationMap[normalizarTexto(c.nombre)] = c;
+            });
+            
+            const combinedList = [];
+            
+            // 1. Mapear datos de la base de datos maestra
+            Object.keys(parsedGuestDatabase).forEach(key => {
+                const masterGuest = parsedGuestDatabase[key];
+                const conf = confirmationMap[key];
+                
+                if (conf) {
+                    combinedList.push({
+                        nombre: masterGuest.nombre,
+                        telefono: conf.telefono,
+                        status: conf.asiste ? 'Confirmado' : 'Declinado',
+                        pases: conf.pases,
+                        pasesMax: masterGuest.pases,
+                        mensaje: conf.mensaje,
+                        fechaRegistro: conf.fechaRegistro
+                    });
+                } else {
+                    combinedList.push({
+                        nombre: masterGuest.nombre,
+                        telefono: '-',
+                        status: 'Pendiente',
+                        pases: 0,
+                        pasesMax: masterGuest.pases,
+                        mensaje: '-',
+                        fechaRegistro: '-'
+                    });
+                }
+            });
+            
+            // 2. Mapear registros extras o manuales
+            listaConfirmados.forEach(c => {
+                const key = normalizarTexto(c.nombre);
+                if (!parsedGuestDatabase[key]) {
+                    combinedList.push({
+                        nombre: c.nombre,
+                        telefono: c.telefono,
+                        status: c.asiste ? 'Confirmado' : 'Declinado',
+                        pases: c.pases,
+                        pasesMax: c.pases,
+                        mensaje: c.mensaje,
+                        fechaRegistro: c.fechaRegistro
+                    });
+                }
+            });
+
+            if (combinedList.length === 0) {
+                mostrarToast("No hay datos de invitados para exportar.", "fa-solid fa-circle-exclamation text-amber-500");
+                return;
+            }
+
+            // Generar contenido CSV con el prefijo BOM UTF-8 para visualización correcta de tildes y eñes en Excel
+            let csvContent = "\uFEFF"; 
+            csvContent += "Nombre;Teléfono;Estado;Pases Confirmados;Pases Máximos Asignados;Mensaje/Dedicatoria;Fecha de Registro\n";
+
+            combinedList.forEach(i => {
+                const nombre = `"${(i.nombre || '').replace(/"/g, '""')}"`;
+                const telefono = `"${(i.telefono || '').replace(/"/g, '""')}"`;
+                const status = `"${(i.status || '').replace(/"/g, '""')}"`;
+                const pases = i.pases;
+                const pasesMax = i.pasesMax;
+                const mensaje = `"${(i.mensaje || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+                const fecha = `"${(i.fechaRegistro || '').replace(/"/g, '""')}"`;
+
+                csvContent += `${nombre};${telefono};${status};${pases};${pasesMax};${mensaje};${fecha}\n`;
+            });
+
+            // Descarga de archivo automática
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Lista_Invitados_Camila_Shaddai_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            mostrarToast("¡Lista de invitados descargada en Excel!", "fa-solid fa-file-arrow-down text-emerald-500");
         }
 
         // Convertidor inteligente para sanitizar enlaces directos de Google Drive

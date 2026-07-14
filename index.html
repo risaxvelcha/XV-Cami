@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- html2canvas para generación segura de pases en imagen -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Motor ligero de generación de Códigos QR escaneables en Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -89,6 +91,53 @@
 
     <!-- Audio Elemento de Música -->
     <audio id="bg-music" loop></audio>
+
+    <!-- PANTALLA EXCLUSIVA DE VERIFICACIÓN DE BOLETOS POR QR -->
+    <div id="qr-verification-overlay" class="fixed inset-0 bg-stone-900/95 backdrop-blur-md z-[150] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-6 border border-stone-100 animate-fade-in">
+            <div id="verification-icon-container" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                <!-- Se cargará dinámicamente el icono de éxito o error -->
+            </div>
+            
+            <div class="space-y-2">
+                <span id="verification-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"></span>
+                <h3 class="font-serif text-2xl text-stone-800 pt-2 font-bold" id="verification-title">Verificación de Pase</h3>
+                <div class="w-12 h-[2px] bg-stone-200 mx-auto"></div>
+            </div>
+
+            <!-- Datos del Invitado Autenticado -->
+            <div id="verification-details" class="bg-stone-50 border border-stone-200/60 rounded-2xl p-4 text-left text-xs space-y-3 font-medium text-stone-700 hidden">
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Invitado</span>
+                    <span id="v-guest-name" class="font-bold text-stone-900 text-sm"></span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Pases Confirmados</span>
+                        <span id="v-guest-passes" class="font-extrabold text-cement-600 text-sm"></span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Estatus</span>
+                        <span class="text-emerald-600 font-bold"><i class="fa-solid fa-check-circle mr-1"></i>Válido</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">ID de Seguridad Único</span>
+                    <span id="v-ticket-id" class="font-mono text-stone-500 font-bold tracking-wider"></span>
+                </div>
+            </div>
+
+            <p id="verification-error-msg" class="text-sm text-stone-500 hidden leading-relaxed">
+                Este código de pase no coincide con ningún registro confirmado en la base de datos del evento. Por favor, solicita ayuda al personal organizador.
+            </p>
+
+            <div class="pt-2">
+                <button onclick="cerrarVerificacionQR()" class="w-full py-3 bg-stone-800 hover:bg-stone-900 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
+                    <i class="fa-solid fa-circle-xmark mr-2"></i>Cerrar Verificador
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- REPRODUCTOR DE MÚSICA FLOTANTE -->
     <div class="fixed bottom-6 left-6 z-50 flex items-center space-x-3 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-full shadow-xl border border-cement-200/65">
@@ -412,15 +461,15 @@
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-stone-100 text-center space-y-2">
-                <div class="inline-block p-1 bg-stone-50 rounded border border-stone-200">
-                    <div class="flex space-x-0.5 h-8 items-center px-3">
-                        <div class="w-1 bg-stone-800 h-full"></div>
-                        <div class="w-0.5 bg-stone-800 h-full"></div>
-                        <div class="w-1.5 bg-stone-800 h-full"></div>
-                        <div class="w-0.5 bg-stone-800 h-full"></div>
-                        <div class="w-1 bg-stone-800 h-full"></div>
-                        <div class="w-2.5 bg-stone-800 h-full"></div>
+            <!-- ESPACIO DEL CÓDIGO QR REAL -->
+            <div class="pt-4 border-t border-stone-100 text-center space-y-3 flex flex-col items-center justify-center">
+                <canvas id="ticket-qr-canvas" class="p-1 bg-white border border-stone-200 rounded-xl" style="width: 120px; height: 120px;"></canvas>
+                <p id="ticket-random-id" class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #000000</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIÁLOGO MODAL CONFIRMACIÓN PERSONALIZADO -->
                         <div class="w-0.5 bg-stone-800 h-full"></div>
                         <div class="w-1 bg-stone-800 h-full"></div>
                         <div class="w-1.5 bg-stone-800 h-full"></div>
@@ -759,7 +808,62 @@
             verificarAsistenciaPrevia();
             configurarEventosDialogo();
             vincularIniciadorSecretoFooter();
+            verificarEscaneoQR(); // Detecta si se escaneó un código QR de pase
         };
+
+        // --- SISTEMA DE VERIFICACIÓN DE BOLETOS QR EN TIEMPO REAL ---
+        function verificarEscaneoQR() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const verifyId = urlParams.get('verify');
+            
+            if (!verifyId) return;
+
+            const modal = document.getElementById('qr-verification-overlay');
+            const iconContainer = document.getElementById('verification-icon-container');
+            const badge = document.getElementById('verification-badge');
+            const title = document.getElementById('verification-title');
+            const details = document.getElementById('verification-details');
+            const errorMsg = document.getElementById('verification-error-msg');
+
+            const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            const match = listaConfirmados.find(inv => inv.ticketId === verifyId);
+
+            modal.classList.remove('hidden');
+
+            if (match) {
+                // Boleto Válido y Encontrado
+                iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-emerald-50 text-emerald-500 border border-emerald-100 animate-pulse";
+                iconContainer.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100";
+                badge.innerText = "Acceso Autorizado";
+                title.innerText = "¡Boleto Auténtico!";
+                
+                document.getElementById('v-guest-name').innerText = match.nombre;
+                document.getElementById('v-guest-passes').innerText = `${match.pases} Pase${match.pases > 1 ? 's' : ''}`;
+                document.getElementById('v-ticket-id').innerText = match.ticketId;
+
+                details.classList.remove('hidden');
+                errorMsg.classList.add('hidden');
+            } else {
+                // Boleto Inválido o Falso
+                iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-rose-50 text-rose-500 border border-rose-100";
+                iconContainer.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100";
+                badge.innerText = "Pase Inválido";
+                title.innerText = "Error de Autenticidad";
+
+                details.classList.add('hidden');
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function cerrarVerificacionQR() {
+            document.getElementById('qr-verification-overlay').classList.add('hidden');
+            // Limpia la URL eliminando el parámetro de verificación
+            const baseUri = window.location.origin + window.location.pathname;
+            const isAdmin = localStorage.getItem('xv_is_admin') === 'true';
+            window.history.replaceState({}, document.title, baseUri + (isAdmin ? "?admin=true" : ""));
+        }
 
         // Detector automático de fallas de fotos
         function handleImageError(imgElement, index) {
@@ -1299,14 +1403,14 @@
                                 </div>
 
                                 <p class="text-stone-600 text-sm leading-relaxed max-w-sm mx-auto">
-                                    Hola <strong>${miConfirmacion.nombre}</strong>, tu pase digital ha sido procesado de forma oficial y segura.
+                                    Hola <strong>${miConfirmacion.nombre}</strong>, tu pase digital ha sido procesado de forma oficial y segura con código QR único para el ingreso.
                                 </p>
 
                                 <!-- CONTENEDOR DONDE SE CARGA LA CAPTURA PNG -->
                                 <div id="ticket-image-container" class="max-w-sm mx-auto bg-stone-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center min-h-[180px]">
                                     <div class="text-center p-6 text-stone-400 text-xs">
                                         <i class="fa-solid fa-arrows-spin animate-spin text-2xl text-cement-500 mb-2 block"></i>
-                                        Cargando Imagen del Boleto Oficial...
+                                        Compilando Boleto de Seguridad...
                                     </div>
                                 </div>
 
@@ -1324,7 +1428,17 @@
                     document.getElementById('ticket-guest-passes').innerText = `${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}`;
                     document.getElementById('ticket-event-date').innerText = fechaLarga;
                     document.getElementById('ticket-event-venue').innerText = appConfig.recepcionLugar;
-                    document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${Math.floor(100000 + Math.random() * 900000)}`;
+                    document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${miConfirmacion.ticketId}`;
+
+                    // --- GENERAR CÓDIGO QR ESCANEABLE EN EL CANVAS ---
+                    const baseUri = window.location.origin + window.location.pathname;
+                    const verifyUrl = `${baseUri}?verify=${miConfirmacion.ticketId}`;
+                    new QRious({
+                        element: document.getElementById('ticket-qr-canvas'),
+                        value: verifyUrl,
+                        size: 150,
+                        level: 'H'
+                    });
 
                     generarCapturaDeBoleto(miConfirmacion.nombre, miConfirmacion.pases, miConfirmacion.telefono, fechaLarga);
 
@@ -1350,11 +1464,11 @@
                     imageTarget.innerHTML = `
                         <div class="space-y-4 p-4 bg-white rounded-2xl border border-stone-100 shadow-sm">
                             <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-shield-halved text-sm"></i> Imagen de Seguridad Generada (No modificable)
+                                <i class="fa-solid fa-shield-halved text-sm"></i> Imagen de Seguridad Escaneable (No Modificable)
                             </p>
                             <img src="${pngUrl}" class="w-full rounded-xl shadow-md border border-stone-100" alt="Boleto Acceso Digital">
                             <p class="text-[10px] text-stone-400 leading-normal">
-                                💡 Mantén presionada la imagen para guardarla directo en tu celular, o haz clic en "Descargar Imagen" abajo.
+                                💡 Guarda la imagen en tu dispositivo o haz clic en "Descargar Imagen". Preséntala al ingresar al evento para su escaneo.
                             </p>
                             <div class="flex flex-col sm:flex-row gap-2.5 justify-center pt-2">
                                 <a href="${pngUrl}" download="Boleto_${nombre.replace(/ /g, '_')}.png" class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-stone-800 hover:bg-stone-900 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow">
@@ -1401,9 +1515,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
   📌 *Estatus:* Confirmado con Imagen de Seguridad ✓
 •------------------------------------------•
 
-⚠️ _Por favor, descarga la imagen generada en la página web de la invitación y tenla a la mano al llegar para agilizar tu acceso._ 
-
-¡Nos dará una inmensa alegría celebrar juntos este mágico día! ✨`;
+⚠️ _Por favor, descarga la imagen de tu pase con código QR generada en la página de la invitación y llévala contigo para agilizar tu escaneo al ingresar._`;
 
             const enlaceWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoLimpio + "&text=" + encodeURIComponent(textoBoleto);
             window.open(enlaceWhatsApp, '_blank');
@@ -1427,7 +1539,11 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         localStorage.setItem('xv_invitados', JSON.stringify(invs));
                     }
                     localStorage.removeItem('xv_mi_confirmacion');
-                    location.reload();
+                    
+                    // Sincronizar en tiempo real el dashboard sin recargar la página entera
+                    cargarInvitadosSimulados();
+                    aplicarConfiguracionEnVista();
+                    location.reload(); // Recarga para limpiar el estado de visualización del RSVP
                 }
             );
         }
@@ -1483,18 +1599,24 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 return;
             }
 
+            // --- GENERAR UN TICKET ID PERSISTENTE Y ÚNICO ---
+            const randSuffix = Math.floor(1000 + Math.random() * 9000); // 4 dígitos aleatorios
+            const cleanShortName = selectedKey.replace(/[^a-z]/g, '').substr(0, 4).toUpperCase();
+            const uniqueTicketId = `${cleanShortName}-${randSuffix}`;
+
             const invData = {
                 nombre: match ? match.nombre : selectNombre.options[selectNombre.selectedIndex].text,
                 telefono: numeroTelefono,
                 asiste: asisteCheck,
                 pases: asisteCheck ? parseInt(document.getElementById('rsvp-guests').value) : 0,
                 mensaje: asisteCheck ? mensaje : "",
-                fechaRegistro: new Date().toLocaleString()
+                fechaRegistro: new Date().toLocaleString(),
+                ticketId: uniqueTicketId // ID de boleto único guardado
             };
 
             const btnEnviar = document.getElementById('btn-enviar-rsvp');
             btnEnviar.disabled = true;
-            btnEnviar.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Procesando...';
+            btnEnviar.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Generando Pase de Seguridad...';
 
             // Guardar confirmación en localStorage local
             localStorage.setItem('xv_mi_confirmacion', JSON.stringify(invData));
@@ -1502,7 +1624,12 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             setTimeout(() => {
                 guardarLocalSimulado(invData);
                 mostrarToast("¡Asistencia confirmada de forma segura!", "fa-solid fa-heart text-pink-500");
-                location.reload();
+                
+                // Actualización instantánea reactiva del Dashboard sin interrumpir la experiencia
+                const invitados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+                procesarYMostrarInvitados(invitados);
+                
+                verificarAsistenciaPrevia();
             }, 1000);
         }
 
@@ -1511,7 +1638,9 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             invs = invs.filter(i => i.nombre.toLowerCase() !== data.nombre.toLowerCase());
             invs.push(data);
             localStorage.setItem('xv_invitados', JSON.stringify(invs));
-            cargarInvitadosSimulados();
+            
+            // Sincronizar reactivamente el tablero en tiempo real
+            procesarYMostrarInvitados(invs);
         }
 
         // --- DASHBOARD DE INVITADOS CON VISUALIZACIÓN COMPLETA (PENDIENTES + CONFIRMADOS) ---
@@ -1541,7 +1670,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         pasesMax: masterGuest.pases,
                         mensaje: conf.mensaje,
                         status: conf.asiste ? 'confirmado' : 'declinado',
-                        fechaRegistro: conf.fechaRegistro
+                        fechaRegistro: conf.fechaRegistro,
+                        ticketId: conf.ticketId || 'S/N'
                     });
                 } else {
                     combinedList.push({
@@ -1552,7 +1682,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         pasesMax: masterGuest.pases,
                         mensaje: '-',
                         status: 'pendiente',
-                        fechaRegistro: '-'
+                        fechaRegistro: '-',
+                        ticketId: 'PENDIENTE'
                     });
                 }
             });
@@ -1569,7 +1700,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         pasesMax: c.pases,
                         mensaje: c.mensaje,
                         status: c.asiste ? 'confirmado' : 'declinado',
-                        fechaRegistro: c.fechaRegistro
+                        fechaRegistro: c.fechaRegistro,
+                        ticketId: c.ticketId || 'S/N'
                     });
                 }
             });
@@ -1602,9 +1734,9 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 if (i.status === 'confirmado') {
                     tAsisten++;
                     tPases += (i.pases || 0);
-                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span>`;
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold flex flex-col items-center justify-center max-w-[110px]"><span class="font-extrabold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span><span class="text-[8px] font-mono font-bold text-stone-400 mt-0.5">ID: ${i.ticketId}</span></span>`;
                     actionBtn = `
-                        <button onclick="enviarRecordatorioUnaSemana('${i.nombre}', '${i.telefono}', ${i.pases})" class="text-emerald-600 hover:text-emerald-700 transition-colors p-1" title="Enviar recordatorio de 1 semana"><i class="fa-brands fa-whatsapp text-base"></i></button>
+                        <button onclick="enviarRecordatorioUnaSemana('${i.nombre}', '${i.telefono}', ${i.pases}, '${i.ticketId}')" class="text-emerald-600 hover:text-emerald-700 transition-colors p-1" title="Enviar recordatorio de 1 semana"><i class="fa-brands fa-whatsapp text-base"></i></button>
                         <button onclick="eliminarInvitado('${i.nombre}')" class="text-stone-400 hover:text-rose-600 transition-colors p-1" title="Eliminar/Restablecer"><i class="fa-regular fa-trash-can"></i></button>
                     `;
                 } else if (i.status === 'declinado') {
@@ -1634,8 +1766,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             document.getElementById('count-badge').innerText = listaConfirmados.length;
         }
 
-        // Mensaje de recordatorio dinámico enviado una semana antes del evento
-        function enviarRecordatorioUnaSemana(nombre, telefono, pases) {
+        // Mensaje de recordatorio dinámico enviado una semana antes del evento con código QR único
+        function enviarRecordatorioUnaSemana(nombre, telefono, pases, ticketId) {
             let telLimpio = telefono.replace(/[^0-9]/g, '');
             if (telLimpio.length === 10) {
                 telLimpio = "52" + telLimpio;
@@ -1649,7 +1781,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
 
 Hola *${nombreNombre(nombre)}*, ¡ya falta muy poco para celebrar juntos! Te recordamos que estamos a exactamente *una semana* de mis XV Años. 
 
-Te comparto los detalles del pase que confirmaste para que los tengas a la mano:
+Te comparto los detalles del pase con código QR único que confirmaste para que agilices tu acceso:
 
 🎟 *DETALLES DE TU ACCESO:*
 •------------------------------------------•
@@ -1660,9 +1792,10 @@ Te comparto los detalles del pase que confirmaste para que los tengas a la mano:
   📅 *Fecha:* ${fechaLarga}
   🕒 *Recepción:* ${appConfig.recepcionHora}
   📍 *Lugar:* ${appConfig.recepcionLugar}
+  🔒 *ID DE SEGURIDAD:* #${ticketId}
 •------------------------------------------•
 
-⚠️ _Por favor, no olvides llevar descargada la imagen de tu pase que generaste en la página de la invitación para agilizar tu acceso en la entrada del salón._
+⚠️ _Por favor, no olvides llevar descargada la imagen de tu pase con código QR que generaste en la página de la invitación para escanearlo de inmediato al ingresar al salón._
 
 ¡Te agradecemos inmensamente y esperamos con muchísima ilusión verte en esta mágica noche! ✨`;
 
@@ -1676,7 +1809,8 @@ Te comparto los detalles del pase que confirmaste para que los tengas a la mano:
                 `¿Deseas dar de baja el registro de "${nombre}"? Su nombre volverá a habilitarse en el buscador de pases.`,
                 function() {
                     let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
-                    localStorage.setItem('xv_invitados', JSON.stringify(invs.filter(i => i.nombre.toLowerCase() !== nombre.toLowerCase())));
+                    const actualizados = invs.filter(i => i.nombre.toLowerCase() !== nombre.toLowerCase());
+                    localStorage.setItem('xv_invitados', JSON.stringify(actualizados));
                     
                     // Si el administrador elimina a la persona que está usando este mismo navegador actualmente
                     const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
@@ -1687,7 +1821,8 @@ Te comparto los detalles del pase que confirmaste para que los tengas a la mano:
                         }
                     }
 
-                    cargarInvitadosSimulados();
+                    // Sincronizar en tiempo real el dashboard al eliminar de la tabla
+                    procesarYMostrarInvitados(actualizados);
                     aplicarConfiguracionEnVista();
                     mostrarToast("Registro eliminado con éxito.", "fa-solid fa-trash-can text-rose-500");
                 }

@@ -173,7 +173,7 @@
                 <i class="fa-solid fa-gear"></i>
                 <span class="hidden sm:inline">Configurar</span>
             </button>
-            <button onclick="toggleModal('dashboard-modal')" class="px-3 py-1.5 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-cement-600/20">
+            <button onclick="abrirDashboard()" class="px-3 py-1.5 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-cement-600/20">
                 <i class="fa-solid fa-list-check"></i>
                 <span>Invitados (<span id="count-badge">0</span>)</span>
             </button>
@@ -726,7 +726,12 @@
         </div>
     </div>
 
-    <script>
+    <!-- Integración con Firebase para Sincronización Real-Time -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // --- CONFIGURACIÓN GLOBAL ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyD-EXAMPLE-URL/exec";
 
@@ -779,12 +784,77 @@
             { bass: 196.00, trebles: [493.88, 587.33, 739.99] }  // Acorde Gmaj7
         ];
 
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'xv-camila-shaddai';
+        const rawFirebaseConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db = null;
+        let auth = null;
+        let userAuth = null;
+
+        async function initFirebaseSync() {
+            if (!rawFirebaseConfig) {
+                console.log("No firebase configuration found. Running in localized storage state.");
+                return;
+            }
+            try {
+                const config = JSON.parse(rawFirebaseConfig);
+                const app = initializeApp(config);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Autenticación según las reglas estrictas (Custom Token o Anónimo)
+                if (initialAuthToken) {
+                    userAuth = await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    userAuth = await signInAnonymously(auth);
+                }
+
+                if (userAuth) {
+                    conectarEscuchasTiempoReal();
+                }
+            } catch (err) {
+                console.error("No se pudo establecer la sincronización de pases en tiempo real:", err);
+            }
+        }
+
+        function conectarEscuchasTiempoReal() {
+            if (!db) return;
+
+            // Escucha en tiempo real para pases e invitados
+            const pathInvitados = collection(db, 'artifacts', appId, 'public', 'data', 'invitados');
+            onSnapshot(pathInvitados, (snapshot) => {
+                const listaConfirmados = [];
+                snapshot.forEach(doc => {
+                    listaConfirmados.push({ id: doc.id, ...doc.data() });
+                });
+                
+                localStorage.setItem('xv_invitados', JSON.stringify(listaConfirmados));
+                procesarYMostrarInvitados(listaConfirmados);
+                cargarListaNombresDesplegable();
+            }, (error) => {
+                console.warn("Error en la escucha en tiempo real de invitados:", error);
+            });
+
+            // Escucha en tiempo real para configuración remota
+            const pathConfigDoc = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'main');
+            onSnapshot(pathConfigDoc, (snapshot) => {
+                if (snapshot.exists()) {
+                    appConfig = snapshot.data();
+                    localStorage.setItem('xv_config', JSON.stringify(appConfig));
+                    aplicarConfiguracionEnVista();
+                }
+            }, (error) => {
+                console.warn("Error en la escucha en tiempo real de configuraciones:", error);
+            });
+        }
+
         if (localStorage.getItem('xv_config')) {
             try { appConfig = JSON.parse(localStorage.getItem('xv_config')); } catch (e) { appConfig = { ...DEFAULT_CONFIG }; }
         }
 
         // --- INICIALIZACIÓN ---
-        window.onload = function() {
+        window.onload = async function() {
             crearPetalosDecorativos();
             aplicarConfiguracionEnVista();
             verificarUrlYGuardarEnlaceAdmin();
@@ -796,7 +866,10 @@
             verificarAsistenciaPrevia();
             configurarEventosDialogo();
             vincularIniciadorSecretoFooter();
-            verificarEscaneoQR(); // Detecta si se escaneó un código QR de pase
+            verificarEscaneoQR(); 
+
+            // Inicializamos Firebase en la nube
+            await initFirebaseSync();
         };
 
         // --- SISTEMA DE VERIFICACIÓN DE BOLETOS QR EN TIEMPO REAL ---
@@ -806,7 +879,6 @@
             
             if (!verifyId) return;
 
-            // Extraemos los parámetros dinámicos del código QR para verificación sin depender del almacenamiento local
             const urlName = urlParams.get('name');
             const urlPasses = urlParams.get('passes');
 
@@ -823,13 +895,11 @@
             let finalPasses = 0;
             let isValid = false;
 
-            // Si el QR tiene los datos embebidos en la URL, los renderizamos de inmediato (Funciona en celulares de recepcionistas)
             if (urlName && urlPasses) {
                 finalName = decodeURIComponent(urlName);
                 finalPasses = parseInt(urlPasses) || 1;
                 isValid = true;
             } else {
-                // Fallback para verificar de forma local
                 const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
                 const match = listaConfirmados.find(inv => inv.ticketId === verifyId);
                 if (match) {
@@ -840,7 +910,6 @@
             }
 
             if (isValid) {
-                // Boleto Válido y Encontrado
                 iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-emerald-50 text-emerald-500 border border-emerald-100 animate-pulse";
                 iconContainer.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
                 badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100";
@@ -854,7 +923,6 @@
                 details.classList.remove('hidden');
                 errorMsg.classList.add('hidden');
             } else {
-                // Boleto Inválido o Falso
                 iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-rose-50 text-rose-500 border border-rose-100";
                 iconContainer.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
                 badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100";
@@ -868,17 +936,15 @@
 
         function cerrarVerificacionQR() {
             document.getElementById('qr-verification-overlay').classList.add('hidden');
-            // Limpia la URL eliminando el parámetro de verificación
             const baseUri = window.location.origin + window.location.pathname;
             const isAdmin = localStorage.getItem('xv_is_admin') === 'true';
             window.history.replaceState({}, document.title, baseUri + (isAdmin ? "?admin=true" : ""));
         }
 
-        // Detector automático de fallas de fotos
         function handleImageError(imgElement, index) {
             console.warn(`Error al cargar la foto index ${index}. Activando foto elegante de respaldo.`);
             imgElement.src = FALLBACK_FOTOS[index];
-            imgElement.onerror = null; // Evita ciclos infinitos si falla Unsplash
+            imgElement.onerror = null; 
         }
 
         function configurarEventosDialogo() {
@@ -921,7 +987,6 @@
                 adminControlsNav.classList.add('hidden');
             }
 
-            // Inyectamos el enlace administrador directo en el campo de texto del modal de configuración
             const baseUri = window.location.origin + window.location.pathname;
             document.getElementById('cfg-admin-link').value = `${baseUri}?admin=true`;
             document.getElementById('share-link-input').value = baseUri;
@@ -1008,7 +1073,6 @@
 
             selectNombre.innerHTML = '<option value="">Selecciona tu nombre de la lista...</option>';
 
-            // Filtrar y excluir de la lista los invitados que ya han confirmado asistencia
             const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
             const nombresYaRegistrados = new Set(listaConfirmados.map(inv => normalizarTexto(inv.nombre)));
 
@@ -1375,12 +1439,18 @@
             let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
             if (!invitados) {
                 invitados = [
-                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString() },
-                    { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString() }
+                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CARL-1234" },
+                    { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString(), ticketId: "ADRI-5678" }
                 ];
                 localStorage.setItem('xv_invitados', JSON.stringify(invitados));
             }
             procesarYMostrarInvitados(invitados);
+        }
+
+        function abrirDashboard() {
+            const invitados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            procesarYMostrarInvitados(invitados);
+            toggleModal('dashboard-modal');
         }
 
         // --- SISTEMA RSVP Y COMPILADOR DE BOLETOS DIGITALES ---
@@ -1390,17 +1460,14 @@
                 try {
                     const miConfirmacion = JSON.parse(miConfirmacionStr);
                     
-                    // Formatear fecha del evento
                     const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
                     const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
                     const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
 
-                    // Ocultar el formulario de RSVP y mostrar la tarjeta de estado de confirmación
                     const rsvpSection = document.getElementById('rsvp-section');
                     if (rsvpSection) {
                         rsvpSection.innerHTML = `
                             <div class="max-w-xl mx-auto bg-stone-50 border-2 border-stone-200/50 rounded-3xl p-6 md:p-10 shadow-2xl relative z-10 text-center space-y-6 animate-fade-in">
-                                <!-- Cabecera de Éxito -->
                                 <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
                                     <i class="fa-solid fa-circle-check"></i>
                                 </div>
@@ -1415,7 +1482,6 @@
                                     Hola <strong>${miConfirmacion.nombre}</strong>, tu pase digital ha sido procesado de forma oficial y segura con código QR único para el ingreso.
                                 </p>
 
-                                <!-- CONTENEDOR DONDE SE CARGA LA CAPTURA PNG -->
                                 <div id="ticket-image-container" class="max-w-sm mx-auto bg-stone-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center min-h-[180px]">
                                     <div class="text-center p-6 text-stone-400 text-xs">
                                         <i class="fa-solid fa-arrows-spin animate-spin text-2xl text-cement-500 mb-2 block"></i>
@@ -1432,16 +1498,13 @@
                         `;
                     }
 
-                    // Sincronizar datos con el boleto HTML invisible listo para tomar la captura
                     document.getElementById('ticket-guest-name').innerText = miConfirmacion.nombre;
                     document.getElementById('ticket-guest-passes').innerText = `${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}`;
                     document.getElementById('ticket-event-date').innerText = fechaLarga;
                     document.getElementById('ticket-event-venue').innerText = appConfig.recepcionLugar;
                     document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${miConfirmacion.ticketId}`;
 
-                    // --- GENERAR CÓDIGO QR ESCANEABLE EN EL CANVAS ---
                     const baseUri = window.location.origin + window.location.pathname;
-                    // Integramos el nombre e información de los pases en el enlace del QR
                     const verifyUrl = `${baseUri}?verify=${miConfirmacion.ticketId}&name=${encodeURIComponent(miConfirmacion.nombre)}&passes=${miConfirmacion.pases}`;
                     new QRious({
                         element: document.getElementById('ticket-qr-canvas'),
@@ -1465,7 +1528,7 @@
                 if (!ticketSource || !imageTarget) return;
 
                 html2canvas(ticketSource, {
-                    scale: 2, // Mayor densidad de pixeles para nitidez en móviles
+                    scale: 2, 
                     useCORS: true,
                     backgroundColor: '#ffffff'
                 }).then(canvas => {
@@ -1539,21 +1602,31 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             solicitarConfirmacionPersonalizada(
                 "¿Modificar asistencia?",
                 "Si cancelas o modificas tu asistencia, tu nombre volverá a estar disponible en la lista desplegable del RSVP.",
-                function() {
+                async function() {
                     const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
                     if (miConfirmacionStr) {
                         const miConfirmacion = JSON.parse(miConfirmacionStr);
-                        // Eliminar de la base local simulada
+                        
+                        // Eliminar de base local
                         let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
                         invs = invs.filter(i => normalizarTexto(i.nombre) !== normalizarTexto(miConfirmacion.nombre));
                         localStorage.setItem('xv_invitados', JSON.stringify(invs));
+
+                        // Eliminar de Firestore
+                        if (db) {
+                            try {
+                                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'invitados', normalizarTexto(miConfirmacion.nombre));
+                                await deleteDoc(docRef);
+                            } catch (e) {
+                                console.error("Error eliminando registro en la nube:", e);
+                            }
+                        }
                     }
                     localStorage.removeItem('xv_mi_confirmacion');
                     
-                    // Sincronizar en tiempo real el dashboard sin recargar la página entera
                     cargarInvitadosSimulados();
                     aplicarConfiguracionEnVista();
-                    location.reload(); // Recarga para limpiar el estado de visualización del RSVP
+                    location.reload(); 
                 }
             );
         }
@@ -1578,8 +1651,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             }
         }
 
-        // --- ENVIAR Y GUARDAR RSVP ---
-        function guardarConfirmacion(event) {
+        async function guardarConfirmacion(event) {
             event.preventDefault();
             
             const selectNombre = document.getElementById('rsvp-name');
@@ -1609,8 +1681,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 return;
             }
 
-            // --- GENERAR UN TICKET ID PERSISTENTE Y ÚNICO ---
-            const randSuffix = Math.floor(1000 + Math.random() * 9000); // 4 dígitos aleatorios
+            const randSuffix = Math.floor(1000 + Math.random() * 9000); 
             const cleanShortName = selectedKey.replace(/[^a-z]/g, '').substr(0, 4).toUpperCase();
             const uniqueTicketId = `${cleanShortName}-${randSuffix}`;
 
@@ -1621,21 +1692,30 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 pases: asisteCheck ? parseInt(document.getElementById('rsvp-guests').value) : 0,
                 mensaje: asisteCheck ? mensaje : "",
                 fechaRegistro: new Date().toLocaleString(),
-                ticketId: uniqueTicketId // ID de boleto único guardado
+                ticketId: uniqueTicketId 
             };
 
             const btnEnviar = document.getElementById('btn-enviar-rsvp');
             btnEnviar.disabled = true;
             btnEnviar.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Generando Pase de Seguridad...';
 
-            // Guardar confirmación en localStorage local
             localStorage.setItem('xv_mi_confirmacion', JSON.stringify(invData));
 
+            // Intentamos guardar en la nube en tiempo real
+            if (db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'invitados', selectedKey);
+                    await setDoc(docRef, invData);
+                } catch (e) {
+                    console.error("No se pudo sincronizar el pase en tiempo real en la nube:", e);
+                }
+            }
+
+            // Flujo Offline Fallback de respaldo reactivo
             setTimeout(() => {
                 guardarLocalSimulado(invData);
                 mostrarToast("¡Asistencia confirmada de forma segura!", "fa-solid fa-heart text-pink-500");
                 
-                // Actualización instantánea reactiva del Dashboard sin interrumpir la experiencia
                 const invitados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
                 procesarYMostrarInvitados(invitados);
                 
@@ -1648,8 +1728,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             invs = invs.filter(i => i.nombre.toLowerCase() !== data.nombre.toLowerCase());
             invs.push(data);
             localStorage.setItem('xv_invitados', JSON.stringify(invs));
-            
-            // Sincronizar reactivamente el tablero en tiempo real
             procesarYMostrarInvitados(invs);
         }
 
@@ -1658,7 +1736,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             const tb = document.getElementById('guest-table-body');
             if (!tb) return;
             
-            // Combinar la base de datos maestra de invitados con las confirmaciones recibidas
             const combinedList = [];
             const confirmationMap = {};
             
@@ -1666,7 +1743,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 confirmationMap[normalizarTexto(c.nombre)] = c;
             });
             
-            // 1. Agregar todos los invitados de la lista maestra
             Object.keys(parsedGuestDatabase).forEach(key => {
                 const masterGuest = parsedGuestDatabase[key];
                 const conf = confirmationMap[key];
@@ -1698,7 +1774,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 }
             });
             
-            // 2. Agregar registros huérfanos que no coincidan de forma estricta (por si acaso)
             listaConfirmados.forEach(c => {
                 const key = normalizarTexto(c.nombre);
                 if (!parsedGuestDatabase[key]) {
@@ -1725,7 +1800,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 return;
             }
 
-            // Ordenamiento lógico: Primero confirmados, luego declinados y finalmente los pendientes
             combinedList.sort((a, b) => {
                 const order = { 'confirmado': 1, 'declinado': 2, 'pendiente': 3 };
                 if (order[a.status] !== order[b.status]) {
@@ -1817,12 +1891,20 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             solicitarConfirmacionPersonalizada(
                 "¿Eliminar confirmación?",
                 `¿Deseas dar de baja el registro de "${nombre}"? Su nombre volverá a habilitarse en el buscador de pases.`,
-                function() {
+                async function() {
                     let invs = JSON.parse(localStorage.getItem('xv_invitados')) || [];
                     const actualizados = invs.filter(i => i.nombre.toLowerCase() !== nombre.toLowerCase());
                     localStorage.setItem('xv_invitados', JSON.stringify(actualizados));
                     
-                    // Si el administrador elimina a la persona que está usando este mismo navegador actualmente
+                    if (db) {
+                        try {
+                            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'invitados', normalizarTexto(nombre));
+                            await deleteDoc(docRef);
+                        } catch (e) {
+                            console.error("No se pudo eliminar el registro de la nube:", e);
+                        }
+                    }
+
                     const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
                     if (miConfirmacionStr) {
                         const miConfirmacion = JSON.parse(miConfirmacionStr);
@@ -1831,7 +1913,6 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                         }
                     }
 
-                    // Sincronizar en tiempo real el dashboard al eliminar de la tabla
                     procesarYMostrarInvitados(actualizados);
                     aplicarConfiguracionEnVista();
                     mostrarToast("Registro eliminado con éxito.", "fa-solid fa-trash-can text-rose-500");
@@ -1849,7 +1930,6 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             
             const combinedList = [];
             
-            // 1. Mapear datos de la base de datos maestra
             Object.keys(parsedGuestDatabase).forEach(key => {
                 const masterGuest = parsedGuestDatabase[key];
                 const conf = confirmationMap[key];
@@ -1877,7 +1957,6 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                 }
             });
             
-            // 2. Mapear registros extras o manuales
             listaConfirmados.forEach(c => {
                 const key = normalizarTexto(c.nombre);
                 if (!parsedGuestDatabase[key]) {
@@ -1898,7 +1977,6 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                 return;
             }
 
-            // Generar contenido CSV con el prefijo BOM UTF-8 para visualización correcta de tildes y eñes en Excel
             let csvContent = "\uFEFF"; 
             csvContent += "Nombre;Teléfono;Estado;Pases Confirmados;Pases Máximos Asignados;Mensaje/Dedicatoria;Fecha de Registro\n";
 
@@ -1914,7 +1992,6 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                 csvContent += `${nombre};${telefono};${status};${pases};${pasesMax};${mensaje};${fecha}\n`;
             });
 
-            // Descarga de archivo automática
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -1927,7 +2004,6 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             mostrarToast("¡Lista de invitados descargada en Excel!", "fa-solid fa-file-arrow-down text-emerald-500");
         }
 
-        // Convertidor inteligente para sanitizar enlaces directos de Google Drive
         function sanitizeUrl(url, type = 'image') {
             if (!url) return '';
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -1956,7 +2032,7 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             return url;
         }
 
-        function guardarConfiguracion(event) {
+        async function guardarConfiguracion(event) {
             event.preventDefault();
             appConfig.nombre = document.getElementById('cfg-nombre').value.trim();
             
@@ -1985,6 +2061,16 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             appConfig.musicaUrl = musSel === 'custom' ? sanitizeUrl(customMusicUrl, 'audio') : musSel;
 
             localStorage.setItem('xv_config', JSON.stringify(appConfig));
+
+            if (db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'main');
+                    await setDoc(docRef, appConfig);
+                } catch (e) {
+                    console.error("No se pudo sincronizar la configuración en la nube:", e);
+                }
+            }
+
             aplicarConfiguracionEnVista();
             toggleModal('admin-modal');
             mostrarToast("¡Invitación y pases actualizados!", "fa-solid fa-cloud-arrow-up text-cement-500");
@@ -1994,9 +2080,19 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             solicitarConfirmacionPersonalizada(
                 "¿Restablecer valores?",
                 "Se cargarán los valores de demostración de Camila Shaddai. Tus confirmaciones se mantendrán intactas.",
-                function() {
+                async function() {
                     appConfig = { ...DEFAULT_CONFIG };
                     localStorage.setItem('xv_config', JSON.stringify(appConfig));
+
+                    if (db) {
+                        try {
+                            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'config', 'main');
+                            await setDoc(docRef, appConfig);
+                        } catch (e) {
+                            console.error("No se pudo restablecer en la nube:", e);
+                        }
+                    }
+
                     aplicarConfiguracionEnVista();
                     mostrarToast("Restaurado con éxito.", "fa-solid fa-arrow-rotate-left text-blue-500");
                 }
@@ -2025,6 +2121,28 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             t.classList.add('translate-y-0', 'opacity-100');
             setTimeout(() => { t.classList.remove('translate-y-0', 'opacity-100'); t.classList.add('translate-y-20', 'opacity-0'); }, 4000);
         }
+
+        window.toggleMúsica = toggleMúsica;
+        window.abrirDashboard = abrirDashboard;
+        window.eliminarInvitado = eliminarInvitado;
+        window.cancelarAsistencia = cancelarAsistencia;
+        window.copiarEnlace = copiarEnlace;
+        window.compartirWhatsApp = compartirWhatsApp;
+        window.copiarEnlaceAdmin = copiarEnlaceAdmin;
+        window.verificarPasswordAdmin = verificarPasswordAdmin;
+        window.cerrarPasswordModal = cerrarPasswordModal;
+        window.restablecerPreestablecido = restablecerPreestablecido;
+        window.guardarConfiguracion = guardarConfiguracion;
+        window.guardarConfirmacion = guardarConfirmacion;
+        window.exportarExcel = exportarExcel;
+        window.toggleModal = toggleModal;
+        window.seleccionarInvitadoDesplegable = seleccionarInvitadoDesplegable;
+        window.actualizarEstadoAsistencia = actualizarEstadoAsistencia;
+        window.toggleCustomMusicInput = toggleCustomMusicInput;
+        window.cerrarVerificacionQR = cerrarVerificacionQR;
+        window.enviarRecordatorioUnaSemana = enviarRecordatorioUnaSemana;
+        window.enviarBoletoPorWhatsApp = enviarBoletoPorWhatsApp;
+        window.handleImageError = handleImageError;
     </script>
 </body>
 </html>

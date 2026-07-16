@@ -93,10 +93,10 @@
     <audio id="bg-music" loop></audio>
 
     <!-- PANTALLA EXCLUSIVA DE VERIFICACIÓN DE BOLETOS POR QR -->
-    <div id="qr-verification-overlay" class="fixed inset-0 bg-stone-900/95 backdrop-blur-md z-[150] flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-6 border border-stone-100 animate-fade-in">
+    <div id="qr-verification-overlay" class="fixed inset-0 bg-stone-950/95 backdrop-blur-md z-[150] flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-6 border border-stone-100">
             <div id="verification-icon-container" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
-                <!-- Se cargará dinámicamente el icono de éxito o error -->
+                <!-- Sello de verificación exitosa o errónea -->
             </div>
             
             <div class="space-y-2">
@@ -134,6 +134,31 @@
             <div class="pt-2">
                 <button onclick="cerrarVerificacionQR()" class="w-full py-3 bg-stone-800 hover:bg-stone-900 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
                     <i class="fa-solid fa-circle-xmark mr-2"></i>Cerrar Verificador
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA EXCLUSIVA DE VISTA DE TICKET ONLINE (QR REDIRECT) -->
+    <div id="ticket-view-overlay" class="fixed inset-0 bg-stone-100 z-[140] flex flex-col items-center justify-start overflow-y-auto p-4 pt-10 hidden">
+        <div class="max-w-sm w-full space-y-6 mb-10">
+            <div class="text-center space-y-2">
+                <h3 class="font-serif text-3xl text-stone-800">Tu Boleto de Acceso</h3>
+                <p class="text-xs text-stone-500">Presenta este pase digital en la entrada del evento.</p>
+            </div>
+
+            <div id="ticket-view-card-placeholder" class="bg-white rounded-3xl shadow-xl overflow-hidden border border-stone-200 p-6 space-y-4">
+                <!-- Se inyectará el contenido del ticket de forma idéntica -->
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button onclick="capturarYDescargarTicket()" class="w-full py-3 bg-stone-900 hover:bg-stone-950 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Descargar Imagen del Boleto</span>
+                </button>
+                <button onclick="volverALaInvitacion()" class="w-full py-3 bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Ver Invitación Completa</span>
                 </button>
             </div>
         </div>
@@ -192,7 +217,6 @@
             <div class="relative inline-block my-4">
                 <div class="w-72 h-72 md:w-[32rem] md:h-[32rem] rounded-full mx-auto p-3.5 bg-gradient-to-r from-cement-400 via-white to-cement-600 shadow-2xl relative transition-all duration-500">
                     <div class="w-full h-full rounded-full overflow-hidden bg-stone-100 border-4 border-white relative group">
-                        <!-- Imagen carrusel con detectores robustos contra errores de carga local -->
                         <img id="festejada-foto-0" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100 group-hover:scale-105" alt="Quinceañera Foto 1" onerror="handleImageError(this, 0)">
                         <img id="festejada-foto-1" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 2" onerror="handleImageError(this, 1)">
                         <img id="festejada-foto-2" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0 group-hover:scale-105" alt="Quinceañera Foto 3" onerror="handleImageError(this, 2)">
@@ -282,7 +306,7 @@
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-ceremonia" href="https://maps.app.goo.gl/KPv8GY6oE6urXJ186" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-ceremonia" href="https://maps.app.goo.gl/KPv8GY6oE6urXJ186"_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -347,7 +371,7 @@
             </div>
 
             <form id="rsvp-form" onsubmit="guardarConfirmacion(event)" class="space-y-6">
-                <!-- Nombre del Invitado (Campo desplegable dinámico alfabético) -->
+                <!-- Nombre del Invitado -->
                 <div class="space-y-1.5">
                     <label for="rsvp-name" class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Busca tu Nombre en la Lista</label>
                     <div class="relative">
@@ -755,8 +779,8 @@
             ceremoniaLugar: "Salón de Eventos \"Isssss Club\"",
             ceremoniaDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
             ceremoniaHora: "17:00 Hrs",
-            ceremoniaMapa: "https://maps.app.goo.gl/KPv8GY6oE6urXJ186",
-            recepcionLugar: "Salón de Eventos \"El Campanario\"",
+            ceremoniaMapa: "https://maps.google.com",
+            recepcionLugar: "Salón de Eventos \"Isssss Club\"",
             recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
             recepcionHora: "17:30 Hrs",
             recepcionMapa: "https://maps.app.goo.gl/KPv8GY6oE6urXJ186",
@@ -1439,7 +1463,7 @@
             let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
             if (!invitados) {
                 invitados = [
-                    { nombre: "Tío Carlos ", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CARL-1234" },
+                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CARL-1234" },
                     { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString(), ticketId: "ADRI-5678" }
                 ];
                 localStorage.setItem('xv_invitados', JSON.stringify(invitados));
@@ -1456,6 +1480,85 @@
         // --- SISTEMA RSVP Y COMPILADOR DE BOLETOS DIGITALES ---
         function verificarAsistenciaPrevia() {
             const miConfirmacionStr = localStorage.getItem('xv_mi_confirmacion');
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewTicket = urlParams.get('ticket') === 'true';
+
+            // --- FLUJO A: VISTA EXCLUSIVA DE TICKET POR QR LINK ---
+            if (viewTicket) {
+                const tName = urlParams.get('name') ? decodeURIComponent(urlParams.get('name')) : 'Invitado de Honor';
+                const tPasses = urlParams.get('passes') ? parseInt(urlParams.get('passes')) : 1;
+                const tVerifyId = urlParams.get('verify') || 'TICK-NEW';
+                const tPhone = urlParams.get('phone') || '';
+
+                document.getElementById('ticket-view-overlay').classList.remove('hidden');
+                
+                const tDateStr = new Date(appConfig.fecha + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+                
+                // Sello de verificación en el boleto
+                const hasVerifyParam = urlParams.get('verify') !== null;
+                const verifyBadgeHTML = hasVerifyParam ? `
+                    <div class="mb-4 bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center text-emerald-800 text-xs font-bold animate-pulse">
+                        <i class="fa-solid fa-circle-check text-base mr-1"></i> BOLETO AUTÉNTICO - ACCESO AUTORIZADO
+                    </div>
+                ` : '';
+
+                document.getElementById('ticket-view-card-placeholder').innerHTML = `
+                    ${verifyBadgeHTML}
+                    <div class="text-center pb-4 border-b border-stone-100 flex flex-col items-center">
+                        <p class="font-cursive text-4xl text-cement-600 mb-2 leading-relaxed" style="font-family: 'Alex Brush', cursive;">Camila Shaddai</p>
+                        <div class="px-3 py-1 bg-cement-50 border border-cement-200 rounded-full">
+                            <p class="text-[9px] uppercase tracking-widest text-cement-700 font-bold">Pase de Acceso Oficial</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4 text-stone-700 text-xs pt-2">
+                        <div>
+                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Invitado Registrado</span>
+                            <span class="font-bold text-stone-900 text-base">${tName}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Pases Confirmados</span>
+                                <span class="font-extrabold text-cement-600 text-lg">${tPasses} Pase${tPasses > 1 ? 's' : ''}</span>
+                            </div>
+                            <div>
+                                <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Estatus</span>
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold inline-block border border-emerald-100">
+                                    <i class="fa-solid fa-check mr-1"></i>Confirmado
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Fecha del Evento</span>
+                            <span class="text-xs font-semibold text-stone-800">${tDateStr}</span>
+                        </div>
+                        <div>
+                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Lugar de Recepción</span>
+                            <span class="text-xs text-stone-800 font-medium">${appConfig.recepcionLugar}</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-stone-100 text-center space-y-3 flex flex-col items-center justify-center">
+                        <canvas id="view-ticket-qr-canvas" class="p-1 bg-white border border-stone-200 rounded-xl" style="width: 120px; height: 120px;"></canvas>
+                        <p class="text-[8px] font-mono text-stone-400 tracking-widest uppercase">ID-TICKET: #${tVerifyId}</p>
+                    </div>
+                `;
+
+                // Renderizar el QR dentro del pase de la vista exclusiva
+                setTimeout(() => {
+                    const currentUrl = window.location.href;
+                    new QRious({
+                        element: document.getElementById('view-ticket-qr-canvas'),
+                        value: currentUrl,
+                        size: 150,
+                        level: 'H'
+                    });
+                }, 100);
+
+                return;
+            }
+
+            // --- FLUJO B: COMPORTAMIENTO REGULAR DENTRO DE LA INVITACIÓN ---
             if (miConfirmacionStr) {
                 try {
                     const miConfirmacion = JSON.parse(miConfirmacionStr);
@@ -1467,7 +1570,7 @@
                     const rsvpSection = document.getElementById('rsvp-section');
                     if (rsvpSection) {
                         rsvpSection.innerHTML = `
-                            <div class="max-w-xl mx-auto bg-stone-50 border-2 border-stone-200/50 rounded-3xl p-6 md:p-10 shadow-2xl relative z-10 text-center space-y-6 animate-fade-in">
+                            <div class="max-w-xl mx-auto bg-stone-50 border-2 border-stone-200/50 rounded-3xl p-6 md:p-10 shadow-2xl relative z-10 text-center space-y-6">
                                 <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner">
                                     <i class="fa-solid fa-circle-check"></i>
                                 </div>
@@ -1479,14 +1582,14 @@
                                 </div>
 
                                 <p class="text-stone-600 text-sm leading-relaxed max-w-sm mx-auto">
-                                    Hola <strong>${miConfirmacion.nombre}</strong>, tu pase digital ha sido procesado de forma oficial y segura con código QR único para el ingreso.
+                                    Hola <strong>${miConfirmacion.nombre}</strong>, tu pase digital ha sido procesado de forma oficial y segura. Haz clic abajo para abrir o descargar la imagen de tu pase con código QR escaneable de acceso al salón.
                                 </p>
 
-                                <div id="ticket-image-container" class="max-w-sm mx-auto bg-stone-100 rounded-2xl overflow-hidden shadow-inner flex items-center justify-center min-h-[180px]">
-                                    <div class="text-center p-6 text-stone-400 text-xs">
-                                        <i class="fa-solid fa-arrows-spin animate-spin text-2xl text-cement-500 mb-2 block"></i>
-                                        Compilando Boleto de Seguridad...
-                                    </div>
+                                <div class="flex flex-col gap-2 max-w-xs mx-auto">
+                                    <button onclick="irAVistaExclusivaBoleto('${encodeURIComponent(miConfirmacion.nombre)}', ${miConfirmacion.pases}, '${miConfirmacion.ticketId}', '${encodeURIComponent(miConfirmacion.telefono)}')" class="py-3 bg-stone-900 hover:bg-stone-950 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center space-x-2">
+                                        <i class="fa-solid fa-qrcode text-sm"></i>
+                                        <span>Ver Mi Boleto Oficial (QR)</span>
+                                    </button>
                                 </div>
 
                                 <div class="pt-4 border-t border-stone-200/50">
@@ -1498,22 +1601,23 @@
                         `;
                     }
 
+                    // Pre-render de datos por si acaso
                     document.getElementById('ticket-guest-name').innerText = miConfirmacion.nombre;
                     document.getElementById('ticket-guest-passes').innerText = `${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}`;
                     document.getElementById('ticket-event-date').innerText = fechaLarga;
                     document.getElementById('ticket-event-venue').innerText = appConfig.recepcionLugar;
                     document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${miConfirmacion.ticketId}`;
 
+                    // Generar QR de verificación con todos los datos en la URL
                     const baseUri = window.location.origin + window.location.pathname;
-                    const verifyUrl = `${baseUri}?verify=${miConfirmacion.ticketId}&name=${encodeURIComponent(miConfirmacion.nombre)}&passes=${miConfirmacion.pases}`;
+                    const ticketVerificationLink = `${baseUri}?ticket=true&verify=${miConfirmacion.ticketId}&name=${encodeURIComponent(miConfirmacion.nombre)}&passes=${miConfirmacion.pases}&phone=${encodeURIComponent(miConfirmacion.telefono)}`;
+                    
                     new QRious({
                         element: document.getElementById('ticket-qr-canvas'),
-                        value: verifyUrl,
+                        value: ticketVerificationLink,
                         size: 150,
                         level: 'H'
                     });
-
-                    generarCapturaDeBoleto(miConfirmacion.nombre, miConfirmacion.pases, miConfirmacion.telefono, fechaLarga);
 
                 } catch (e) {
                     console.error("Error al procesar boleto:", e);
@@ -1521,57 +1625,48 @@
             }
         }
 
-        function generarCapturaDeBoleto(nombre, pases, telefono, fechaEvento) {
-            setTimeout(() => {
-                const ticketSource = document.getElementById('digital-ticket');
-                const imageTarget = document.getElementById('ticket-image-container');
-                if (!ticketSource || !imageTarget) return;
+        function capturarYDescargarTicket() {
+            const card = document.getElementById('ticket-view-card-placeholder');
+            if (!card) return;
 
-                html2canvas(ticketSource, {
-                    scale: 2, 
-                    useCORS: true,
-                    backgroundColor: '#ffffff'
-                }).then(canvas => {
-                    const pngUrl = canvas.toDataURL('image/png');
-                    
-                    imageTarget.innerHTML = `
-                        <div class="space-y-4 p-4 bg-white rounded-2xl border border-stone-100 shadow-sm">
-                            <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-shield-halved text-sm"></i> Imagen de Seguridad Escaneable (No Modificable)
-                            </p>
-                            <img src="${pngUrl}" class="w-full rounded-xl shadow-md border border-stone-100" alt="Boleto Acceso Digital">
-                            <p class="text-[10px] text-stone-400 leading-normal">
-                                💡 Guarda la imagen en tu dispositivo o haz clic en "Descargar Imagen". Preséntala al ingresar al evento para su escaneo.
-                            </p>
-                            <div class="flex flex-col sm:flex-row gap-2.5 justify-center pt-2">
-                                <a href="${pngUrl}" download="Boleto_${nombre.replace(/ /g, '_')}.png" class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-stone-800 hover:bg-stone-900 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow">
-                                    <i class="fa-solid fa-download text-sm"></i>
-                                    <span>Descargar Imagen</span>
-                                </a>
-                                <button onclick="enviarBoletoPorWhatsApp('${nombre}', ${pases}, '${telefono}', '${fechaEvento}')" class="inline-flex items-center justify-center space-x-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-full tracking-wide uppercase transition-all shadow">
-                                    <i class="fa-brands fa-whatsapp text-sm"></i>
-                                    <span>Enviar a WhatsApp</span>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).catch(err => {
-                    console.error("Error al renderizar el canvas:", err);
-                    imageTarget.innerHTML = `
-                        <div class="p-6 text-stone-500">
-                            <p class="text-sm font-semibold text-rose-500"><i class="fa-solid fa-circle-exclamation mr-1"></i> No se pudo auto-compilar la imagen.</p>
-                            <p class="text-xs mt-1">Sugerencia: Toma una captura de pantalla a tus datos de confirmación para presentarlos en la entrada.</p>
-                        </div>
-                    `;
-                });
-            }, 600);
+            html2canvas(card, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const pngUrl = canvas.toDataURL('image/png');
+                const link = document.createElement("a");
+                link.href = pngUrl;
+                link.download = `Boleto_XV_Camila_Shaddai.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                mostrarToast("¡Imagen descargada con éxito!", "fa-solid fa-file-arrow-down text-emerald-500");
+            }).catch(err => {
+                console.error("Error capturando el boleto:", err);
+                mostrarToast("No se pudo compilar la imagen. Por favor toma captura de pantalla.", "fa-solid fa-exclamation text-rose-500");
+            });
         }
 
-        function enviarBoletoPorWhatsApp(nombreInvitado, pases, numeroTelefono, fechaEvento) {
+        function irAVistaExclusivaBoleto(name, passes, verifyId, phone) {
+            const baseUri = window.location.origin + window.location.pathname;
+            window.location.href = `${baseUri}?ticket=true&verify=${verifyId}&name=${name}&passes=${passes}&phone=${phone}`;
+        }
+
+        function volverALaInvitacion() {
+            const baseUri = window.location.origin + window.location.pathname;
+            window.location.href = baseUri;
+        }
+
+        function enviarBoletoPorWhatsApp(nombreInvitado, pases, numeroTelefono, ticketId, fechaEvento) {
             let telefonoLimpio = numeroTelefono.replace(/[^0-9]/g, '');
             if (telefonoLimpio.length === 10) {
                 telefonoLimpio = "52" + telefonoLimpio;
             }
+
+            const baseUri = window.location.origin + window.location.pathname;
+            // El enlace QR y el enlace de WhatsApp apuntan exactamente al mismo ticket
+            const linkVisualizacionTicket = `${baseUri}?ticket=true&verify=${ticketId}&name=${encodeURIComponent(nombreInvitado)}&passes=${pases}&phone=${encodeURIComponent(numeroTelefono)}`;
 
             const textoBoleto = `✨ *CONFIRMACIÓN DE ASISTENCIA REGISTRADA* 🌸
 
@@ -1585,10 +1680,11 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
   🎟 *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
   📅 *Fecha:* ${fechaEvento}
   📍 *Recepción:* ${appConfig.recepcionLugar}
-  📌 *Estatus:* Confirmado con Imagen de Seguridad ✓
+  📌 *Estatus:* Confirmado ✓
 •------------------------------------------•
 
-⚠️ _Por favor, descarga la imagen de tu pase con código QR generada en la página de la invitación y llévala contigo para agilizar tu escaneo al ingresar._`;
+⚠️ _Haz clic en el enlace de abajo para abrir y descargar la imagen de tu boleto con el código QR oficial de acceso al salón:_
+👉 ${linkVisualizacionTicket}`;
 
             const enlaceWhatsApp = "https://api.whatsapp.com/send?phone=" + telefonoLimpio + "&text=" + encodeURIComponent(textoBoleto);
             window.open(enlaceWhatsApp, '_blank');
@@ -1711,15 +1807,18 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 }
             }
 
-            // Flujo Offline Fallback de respaldo reactivo
+            // Flujo Local de respaldo reactivo instantáneo
+            guardarLocalSimulado(invData);
+            
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
+            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+
+            // Redirigir y disparar WhatsApp automáticamente
             setTimeout(() => {
-                guardarLocalSimulado(invData);
+                enviarBoletoPorWhatsApp(invData.nombre, invData.pases, invData.telefono, uniqueTicketId, fechaLarga);
                 mostrarToast("¡Asistencia confirmada de forma segura!", "fa-solid fa-heart text-pink-500");
-                
-                const invitados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
-                procesarYMostrarInvitados(invitados);
-                
-                verificarAsistenciaPrevia();
+                location.reload();
             }, 1000);
         }
 
@@ -1728,7 +1827,6 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             invs = invs.filter(i => i.nombre.toLowerCase() !== data.nombre.toLowerCase());
             invs.push(data);
             localStorage.setItem('xv_invitados', JSON.stringify(invs));
-            procesarYMostrarInvitados(invs);
         }
 
         // --- DASHBOARD DE INVITADOS CON VISUALIZACIÓN COMPLETA (PENDIENTES + CONFIRMADOS) ---
@@ -1861,6 +1959,10 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
             const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
 
+            const baseUri = window.location.origin + window.location.pathname;
+            // Recordatorio de 1 semana incluye el enlace directo al mismo boleto con QR interactivo
+            const linkVisualizacionTicket = `${baseUri}?ticket=true&verify=${ticketId}&name=${encodeURIComponent(nombre)}&passes=${pases}&phone=${encodeURIComponent(telefono)}`;
+
             const textoRecordatorio = `✨ *RECORDATORIO DE ASISTENCIA OFICIAL* 🌸
 
 Hola *${nombreNombre(nombre)}*, ¡ya falta muy poco para celebrar juntos! Te recordamos que estamos a exactamente *una semana* de mis XV Años. 
@@ -1879,7 +1981,8 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
   🔒 *ID DE SEGURIDAD:* #${ticketId}
 •------------------------------------------•
 
-⚠️ _Por favor, no olvides llevar descargada la imagen de tu pase con código QR que generaste en la página de la invitación para escanearlo de inmediato al ingresar al salón._
+⚠️ _Haz clic en el enlace de abajo para abrir y descargar la imagen de tu boleto con el código QR oficial de acceso al salón:_
+👉 ${linkVisualizacionTicket}
 
 ¡Te agradecemos inmensamente y esperamos con muchísima ilusión verte en esta mágica noche! ✨`;
 
@@ -2122,6 +2225,7 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             setTimeout(() => { t.classList.remove('translate-y-0', 'opacity-100'); t.classList.add('translate-y-20', 'opacity-0'); }, 4000);
         }
 
+        // --- EXPORTAR AL ENTORNO GLOBAL WINDOW ---
         window.toggleMúsica = toggleMúsica;
         window.abrirDashboard = abrirDashboard;
         window.eliminarInvitado = eliminarInvitado;
@@ -2143,6 +2247,9 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
         window.enviarRecordatorioUnaSemana = enviarRecordatorioUnaSemana;
         window.enviarBoletoPorWhatsApp = enviarBoletoPorWhatsApp;
         window.handleImageError = handleImageError;
+        window.irAVistaExclusivaBoleto = irAVistaExclusivaBoleto;
+        window.volverALaInvitacion = volverALaInvitacion;
+        window.capturarYDescargarTicket = capturarYDescargarTicket;
     </script>
 </body>
 </html>

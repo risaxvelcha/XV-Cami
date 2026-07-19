@@ -231,7 +231,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -300,13 +300,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">Momento de Bendición</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "El Campanario"</p>
-                        <p id="display-ceremonia-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "Isssss CLub"</p>
+                        <p id="display-ceremonia-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-ceremonia-hora">17:00 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-ceremonia" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-ceremonia" href="https://share.google/OTmJU896y1j6DgrRg" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -782,19 +782,19 @@
                 "images/foto2.jpg",
                 "images/foto3.jpg"
             ],
-            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre.",
             fecha: "2026-08-29",
             hora: "17:00 Horas",
-            ceremoniaLugar: "Salón de Eventos \"El Campanario\"",
-            ceremoniaDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            ceremoniaLugar: "Salón de Eventos \"Isssss CLub\"",
+            ceremoniaDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
             ceremoniaHora: "17:00 Hrs",
-            ceremoniaMapa: "https://maps.google.com",
-            recepcionLugar: "Salón de Eventos \"El Campanario\"",
-            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            ceremoniaMapa: "https://share.google/OTmJU896y1j6DgrRg",
+            recepcionLugar: "Salón de Eventos \"Isssss Club\"",
+            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
             recepcionHora: "18:30 Hrs",
-            recepcionMapa: "https://maps.google.com",
+            recepcionMapa: "https://share.google/OTmJU896y1j6DgrRg",
             musicaUrl: "music/musica.mp3",
-            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
+            listaPasesInvitados: "Camila Shaddai, 1\nRicardo Jesús, 1\nMarisol Islas Barrera, 1\nRicardo Velázquez Escamilla, 2\nFamilia Islas Resendiz, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -1516,8 +1516,8 @@
             let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
             if (!invitados) {
                 invitados = [
-                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, pasesAdultos: 2, pasesNinos: 2, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CARL-1234" },
-                    { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, pasesAdultos: 1, pasesNinos: 0, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString(), ticketId: "ADRI-5678" }
+                    { nombre: "Camila Shaddai", telefono: "7721656716", asiste: true, pases: 1, pasesAdultos: 1, pasesNinos: 0, mensaje: "¡Gracias por ser parte de este momento mágico!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CAML-3008" },
+                    { nombre: "Marisol Islas Barrera", telefono: "7731279316", asiste: true, pases: 1, pasesAdultos: 1, pasesNinos: 0, mensaje: "Mi vida, de toda cosa Guardada, guarda tu Corazón, TE AMO.", fechaRegistro: new Date().toLocaleDateString(), ticketId: "ADRI-5678" }
                 ];
                 localStorage.setItem('xv_invitados', JSON.stringify(invitados));
             }

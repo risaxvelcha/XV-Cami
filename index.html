@@ -114,7 +114,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Pases Confirmados</span>
-                        <span id="v-guest-passes" class="font-extrabold text-cement-600 text-sm"></span>
+                        <span id="v-guest-passes" class="font-extrabold text-cement-600 text-xs"></span>
                     </div>
                     <div>
                         <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Estatus</span>
@@ -231,7 +231,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -300,13 +300,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">Momento de Bendición</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "Isssss Club"</p>
-                        <p id="display-ceremonia-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-ceremonia-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-ceremonia-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-ceremonia-hora">17:00 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-ceremonia" href="https://maps.app.goo.gl/KPv8GY6oE6urXJ186"_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-ceremonia" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -325,13 +325,13 @@
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">¡A Celebrar en Grande!</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "Isssss Club"</p>
-                        <p id="display-recepcion-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-recepcion-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-recepcion-hora">18:30 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-recepcion" href="https://maps.app.goo.gl/KPv8GY6oE6urXJ186" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-recepcion" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -341,7 +341,7 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE 
+    <!-- COMPARTIR ENLACE -->
     <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
@@ -358,7 +358,7 @@
                 </button>
             </div>
         </div>
-    </section>-->
+    </section>
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
@@ -416,21 +416,30 @@
                     </div>
                 </div>
 
+                <!-- SECCIÓN ADULTOS / NIÑOS CORREGIDA -->
                 <div id="seccion-acompanantes" class="space-y-4 transition-all duration-300" style="display: none;">
-                    <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Cantidad de pases requeridos</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
-                                <i class="fa-solid fa-users"></i>
-                            </span>
-                            <select id="rsvp-guests" class="w-full pl-10 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
-                                <option value="1">1 Pase de entrada</option>
-                                <option value="2">2 Pases de entrada</option>
-                                <option value="3">3 Pases de entrada</option>
-                                <option value="4">4 Pases de entrada</option>
-                                <option value="5">5 Pases de entrada</option>
-                                <option value="6">6 Pases de entrada</option>
-                            </select>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Adultos</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                                    <i class="fa-solid fa-user-tie"></i>
+                                </span>
+                                <select id="rsvp-adults" onchange="ajustarSelectsPases()" class="w-full pl-9 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                                    <!-- Se poblará dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">Niños</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-stone-400">
+                                    <i class="fa-solid fa-child"></i>
+                                </span>
+                                <select id="rsvp-children" onchange="ajustarSelectsPases()" class="w-full pl-9 pr-4 py-3 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-cement-400/50 focus:border-cement-500 transition-all bg-stone-50 text-stone-800 text-sm">
+                                    <!-- Se poblará dinámicamente -->
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -466,7 +475,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Pases Confirmados</span>
-                        <span id="ticket-guest-passes" class="font-extrabold text-cement-600 text-lg">0 Pases</span>
+                        <span id="ticket-guest-passes" class="font-extrabold text-cement-600 text-xs leading-tight block">Adultos: 0<br>Niños: 0</span>
                     </div>
                     <div>
                         <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Estatus</span>
@@ -718,7 +727,7 @@
                 </div>
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
                     <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Total Pases</span>
-                    <span id="dash-total-pases" class="text-xl sm:text-2xl font-bold text-cement-600">0</span>
+                    <span id="dash-total-pases" class="text-base sm:text-lg font-bold text-cement-600 leading-tight">0</span>
                 </div>
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
                     <span class="block text-[9px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Declinaron</span>
@@ -773,19 +782,19 @@
                 "images/foto2.jpg",
                 "images/foto3.jpg"
             ],
-            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre.",
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
             fecha: "2026-08-29",
             hora: "17:00 Horas",
-            ceremoniaLugar: "Salón de Eventos \"Isssss Club\"",
-            ceremoniaDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
+            ceremoniaLugar: "Salón de Eventos \"El Campanario\"",
+            ceremoniaDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
             ceremoniaHora: "17:00 Hrs",
             ceremoniaMapa: "https://maps.google.com",
-            recepcionLugar: "Salón de Eventos \"Isssss Club\"",
-            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
-            recepcionHora: "17:30 Hrs",
-            recepcionMapa: "https://maps.app.goo.gl/KPv8GY6oE6urXJ186",
+            recepcionLugar: "Salón de Eventos \"El Campanario\"",
+            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            recepcionHora: "18:30 Hrs",
+            recepcionMapa: "https://maps.google.com",
             musicaUrl: "music/musica.mp3",
-            listaPasesInvitados: "Camila Shaddai, 1\nRicardo Jesús, 1\nMarisol Islas Barrera, 2\nFamilia Martínez Baez, 4\nFamilia Islas Resendiz, 5\nFamilia Velázquez Ramírez, 4\nAbuelita Felipa, 1\nAbuelita María Antonia (Lilia), 1, Tía Dulce María Velázquez Escamilla, 3"
+            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -904,7 +913,8 @@
             if (!verifyId) return;
 
             const urlName = urlParams.get('name');
-            const urlPasses = urlParams.get('passes');
+            const urlAdults = urlParams.get('adults');
+            const urlChildren = urlParams.get('children');
 
             const modal = document.getElementById('qr-verification-overlay');
             const iconContainer = document.getElementById('verification-icon-container');
@@ -916,19 +926,22 @@
             modal.classList.remove('hidden');
 
             let finalName = "";
-            let finalPasses = 0;
+            let finalAdults = 0;
+            let finalChildren = 0;
             let isValid = false;
 
-            if (urlName && urlPasses) {
+            if (urlName && (urlAdults !== null || urlChildren !== null)) {
                 finalName = decodeURIComponent(urlName);
-                finalPasses = parseInt(urlPasses) || 1;
+                finalAdults = parseInt(urlAdults) || 0;
+                finalChildren = parseInt(urlChildren) || 0;
                 isValid = true;
             } else {
                 const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
                 const match = listaConfirmados.find(inv => inv.ticketId === verifyId);
                 if (match) {
                     finalName = match.nombre;
-                    finalPasses = match.pases;
+                    finalAdults = match.pasesAdultos || match.pases || 0;
+                    finalChildren = match.pasesNinos || 0;
                     isValid = true;
                 }
             }
@@ -941,7 +954,7 @@
                 title.innerText = "¡Boleto Auténtico!";
                 
                 document.getElementById('v-guest-name').innerText = finalName;
-                document.getElementById('v-guest-passes').innerText = `${finalPasses} Pase${finalPasses > 1 ? 's' : ''}`;
+                document.getElementById('v-guest-passes').innerHTML = `<span class="block">Adultos: ${finalAdults}</span><span class="block">Niños: ${finalChildren}</span>`;
                 document.getElementById('v-ticket-id').innerText = verifyId;
 
                 details.classList.remove('hidden');
@@ -1157,20 +1170,60 @@
         }
 
         function reconstruirSelectPases(numMaximo) {
-            const select = document.getElementById('rsvp-guests');
-            if (!select) return;
-            const preselectedVal = select.value;
-            select.innerHTML = "";
+            const selectAdults = document.getElementById('rsvp-adults');
+            const selectChildren = document.getElementById('rsvp-children');
+            if (!selectAdults || !selectChildren) return;
+
+            const prevAdults = parseInt(selectAdults.value) || 1;
+            selectAdults.innerHTML = "";
             for (let i = 1; i <= numMaximo; i++) {
                 const opt = document.createElement('option');
                 opt.value = i;
-                opt.innerText = `${i} Pase${i > 1 ? 's' : ''} de entrada`;
-                select.appendChild(opt);
+                opt.innerText = `${i} Adulto${i > 1 ? 's' : ''}`;
+                selectAdults.appendChild(opt);
             }
-            if (preselectedVal && parseInt(preselectedVal) <= numMaximo) {
-                select.value = preselectedVal;
+
+            if (prevAdults <= numMaximo) {
+                selectAdults.value = prevAdults;
             } else {
-                select.value = numMaximo;
+                selectAdults.value = 1;
+            }
+
+            ajustarSelectsPases(numMaximo);
+        }
+
+        function ajustarSelectsPases(forcedMax = null) {
+            const selectAdults = document.getElementById('rsvp-adults');
+            const selectChildren = document.getElementById('rsvp-children');
+            if (!selectAdults || !selectChildren) return;
+
+            let pasesMax = 6;
+            const selectNombre = document.getElementById('rsvp-name');
+            const selectedKey = selectNombre.value;
+            if (selectedKey && parsedGuestDatabase[selectedKey]) {
+                pasesMax = parsedGuestDatabase[selectedKey].pases;
+            }
+            if (forcedMax !== null) {
+                pasesMax = forcedMax;
+            }
+
+            const selectedAdults = parseInt(selectAdults.value) || 1;
+            const maxChildrenAllowed = pasesMax - selectedAdults;
+
+            const prevChildren = parseInt(selectChildren.value) || 0;
+
+            selectChildren.innerHTML = "";
+            for (let i = 0; i <= maxChildrenAllowed; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `${i} Niño${i !== 1 ? 's' : ''}`;
+                selectChildren.appendChild(opt);
+            }
+
+            if (prevChildren <= maxChildrenAllowed) {
+                selectChildren.value = prevChildren;
+            } else {
+                selectChildren.value = 0;
             }
         }
 
@@ -1463,8 +1516,8 @@
             let invitados = JSON.parse(localStorage.getItem('xv_invitados'));
             if (!invitados) {
                 invitados = [
-                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CARL-1234" },
-                    { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString(), ticketId: "ADRI-5678" }
+                    { nombre: "Tío Carlos Martínez", telefono: "5512345678", asiste: true, pases: 4, pasesAdultos: 2, pasesNinos: 2, mensaje: "¡Muchas felicidades sobrina querida!", fechaRegistro: new Date().toLocaleDateString(), ticketId: "CARL-1234" },
+                    { nombre: "Adriana Solís", telefono: "5587654321", asiste: true, pases: 1, pasesAdultos: 1, pasesNinos: 0, mensaje: "No puedo esperar para bailar contigo.", fechaRegistro: new Date().toLocaleDateString(), ticketId: "ADRI-5678" }
                 ];
                 localStorage.setItem('xv_invitados', JSON.stringify(invitados));
             }
@@ -1486,7 +1539,8 @@
             // --- FLUJO A: VISTA EXCLUSIVA DE TICKET POR QR LINK ---
             if (viewTicket) {
                 const tName = urlParams.get('name') ? decodeURIComponent(urlParams.get('name')) : 'Invitado de Honor';
-                const tPasses = urlParams.get('passes') ? parseInt(urlParams.get('passes')) : 1;
+                const tAdults = urlParams.get('adults') ? parseInt(urlParams.get('adults')) : 1;
+                const tChildren = urlParams.get('children') ? parseInt(urlParams.get('children')) : 0;
                 const tVerifyId = urlParams.get('verify') || 'TICK-NEW';
                 const tPhone = urlParams.get('phone') || '';
 
@@ -1519,7 +1573,7 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Pases Confirmados</span>
-                                <span class="font-extrabold text-cement-600 text-lg">${tPasses} Pase${tPasses > 1 ? 's' : ''}</span>
+                                <span class="font-extrabold text-cement-600 text-[13px] leading-tight block">Adultos: ${tAdults}<br>Niños: ${tChildren}</span>
                             </div>
                             <div>
                                 <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block mb-0.5">Estatus</span>
@@ -1562,6 +1616,8 @@
             if (miConfirmacionStr) {
                 try {
                     const miConfirmacion = JSON.parse(miConfirmacionStr);
+                    const ad = miConfirmacion.pasesAdultos || miConfirmacion.pases || 0;
+                    const ch = miConfirmacion.pasesNinos || 0;
                     
                     const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
                     const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
@@ -1586,7 +1642,7 @@
                                 </p>
 
                                 <div class="flex flex-col gap-2 max-w-xs mx-auto">
-                                    <button onclick="irAVistaExclusivaBoleto('${encodeURIComponent(miConfirmacion.nombre)}', ${miConfirmacion.pases}, '${miConfirmacion.ticketId}', '${encodeURIComponent(miConfirmacion.telefono)}')" class="py-3 bg-stone-900 hover:bg-stone-950 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center space-x-2">
+                                    <button onclick="irAVistaExclusivaBoleto('${encodeURIComponent(miConfirmacion.nombre)}', ${ad}, ${ch}, '${miConfirmacion.ticketId}', '${encodeURIComponent(miConfirmacion.telefono)}')" class="py-3 bg-stone-900 hover:bg-stone-950 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow flex items-center justify-center space-x-2">
                                         <i class="fa-solid fa-qrcode text-sm"></i>
                                         <span>Ver Mi Boleto Oficial (QR)</span>
                                     </button>
@@ -1603,14 +1659,14 @@
 
                     // Pre-render de datos por si acaso
                     document.getElementById('ticket-guest-name').innerText = miConfirmacion.nombre;
-                    document.getElementById('ticket-guest-passes').innerText = `${miConfirmacion.pases} Pase${miConfirmacion.pases > 1 ? 's' : ''}`;
+                    document.getElementById('ticket-guest-passes').innerHTML = `Adultos: ${ad}<br>Niños: ${ch}`;
                     document.getElementById('ticket-event-date').innerText = fechaLarga;
                     document.getElementById('ticket-event-venue').innerText = appConfig.recepcionLugar;
                     document.getElementById('ticket-random-id').innerText = `ID-TICKET: #${miConfirmacion.ticketId}`;
 
                     // Generar QR de verificación con todos los datos en la URL
                     const baseUri = window.location.origin + window.location.pathname;
-                    const ticketVerificationLink = `${baseUri}?ticket=true&verify=${miConfirmacion.ticketId}&name=${encodeURIComponent(miConfirmacion.nombre)}&passes=${miConfirmacion.pases}&phone=${encodeURIComponent(miConfirmacion.telefono)}`;
+                    const ticketVerificationLink = `${baseUri}?ticket=true&verify=${miConfirmacion.ticketId}&name=${encodeURIComponent(miConfirmacion.nombre)}&adults=${ad}&children=${ch}&phone=${encodeURIComponent(miConfirmacion.telefono)}`;
                     
                     new QRious({
                         element: document.getElementById('ticket-qr-canvas'),
@@ -1648,9 +1704,9 @@
             });
         }
 
-        function irAVistaExclusivaBoleto(name, passes, verifyId, phone) {
+        function irAVistaExclusivaBoleto(name, adults, children, verifyId, phone) {
             const baseUri = window.location.origin + window.location.pathname;
-            window.location.href = `${baseUri}?ticket=true&verify=${verifyId}&name=${name}&passes=${passes}&phone=${phone}`;
+            window.location.href = `${baseUri}?ticket=true&verify=${verifyId}&name=${name}&adults=${adults}&children=${children}&phone=${phone}`;
         }
 
         function volverALaInvitacion() {
@@ -1658,15 +1714,15 @@
             window.location.href = baseUri;
         }
 
-        function enviarBoletoPorWhatsApp(nombreInvitado, pases, numeroTelefono, ticketId, fechaEvento) {
+        function enviarBoletoPorWhatsApp(nombreInvitado, adults, children, numeroTelefono, ticketId, fechaEvento) {
             let telefonoLimpio = numeroTelefono.replace(/[^0-9]/g, '');
             if (telefonoLimpio.length === 10) {
                 telefonoLimpio = "52" + telefonoLimpio;
             }
 
             const baseUri = window.location.origin + window.location.pathname;
-            // El enlace QR y el enlace de WhatsApp apuntan exactamente al mismo ticket
-            const linkVisualizacionTicket = `${baseUri}?ticket=true&verify=${ticketId}&name=${encodeURIComponent(nombreInvitado)}&passes=${pases}&phone=${encodeURIComponent(numeroTelefono)}`;
+            const totalP = adults + children;
+            const linkVisualizacionTicket = `${baseUri}?ticket=true&verify=${ticketId}&name=${encodeURIComponent(nombreInvitado)}&adults=${adults}&children=${children}&phone=${encodeURIComponent(numeroTelefono)}`;
 
             const textoBoleto = `✨ *CONFIRMACIÓN DE ASISTENCIA REGISTRADA* 🌸
 
@@ -1677,7 +1733,9 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
   🌸 *XV Años de Camila Shaddai* 🌸
   
   👤 *Invitado:* ${nombreInvitado}
-  🎟 *Pases Confirmados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  🎟 *Pases Confirmados:* [ *${totalP} Pase${totalP > 1 ? 's' : ''}* ]
+     └ 🧑 Adultos: *${adults}*
+     └ 🧒 Niños: *${children}*
   📅 *Fecha:* ${fechaEvento}
   📍 *Recepción:* ${appConfig.recepcionLugar}
   📌 *Estatus:* Confirmado ✓
@@ -1781,11 +1839,17 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             const cleanShortName = selectedKey.replace(/[^a-z]/g, '').substr(0, 4).toUpperCase();
             const uniqueTicketId = `${cleanShortName}-${randSuffix}`;
 
+            const pasesAdultos = parseInt(document.getElementById('rsvp-adults').value) || 0;
+            const pasesNinos = parseInt(document.getElementById('rsvp-children').value) || 0;
+            const totalPases = asisteCheck ? (pasesAdultos + pasesNinos) : 0;
+
             const invData = {
                 nombre: match ? match.nombre : selectNombre.options[selectNombre.selectedIndex].text,
                 telefono: numeroTelefono,
                 asiste: asisteCheck,
-                pases: asisteCheck ? parseInt(document.getElementById('rsvp-guests').value) : 0,
+                pases: totalPases,
+                pasesAdultos: asisteCheck ? pasesAdultos : 0,
+                pasesNinos: asisteCheck ? pasesNinos : 0,
                 mensaje: asisteCheck ? mensaje : "",
                 fechaRegistro: new Date().toLocaleString(),
                 ticketId: uniqueTicketId 
@@ -1816,7 +1880,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
 
             // Redirigir y disparar WhatsApp automáticamente
             setTimeout(() => {
-                enviarBoletoPorWhatsApp(invData.nombre, invData.pases, invData.telefono, uniqueTicketId, fechaLarga);
+                enviarBoletoPorWhatsApp(invData.nombre, invData.pasesAdultos, invData.pasesNinos, invData.telefono, uniqueTicketId, fechaLarga);
                 mostrarToast("¡Asistencia confirmada de forma segura!", "fa-solid fa-heart text-pink-500");
                 location.reload();
             }, 1000);
@@ -1851,6 +1915,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         telefono: conf.telefono,
                         asiste: conf.asiste,
                         pases: conf.pases,
+                        pasesAdultos: conf.pasesAdultos || conf.pases || 0,
+                        pasesNinos: conf.pasesNinos || 0,
                         pasesMax: masterGuest.pases,
                         mensaje: conf.mensaje,
                         status: conf.asiste ? 'confirmado' : 'declinado',
@@ -1863,6 +1929,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         telefono: '-',
                         asiste: null,
                         pases: 0,
+                        pasesAdultos: 0,
+                        pasesNinos: 0,
                         pasesMax: masterGuest.pases,
                         mensaje: '-',
                         status: 'pendiente',
@@ -1880,6 +1948,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         telefono: c.telefono,
                         asiste: c.asiste,
                         pases: c.pases,
+                        pasesAdultos: c.pasesAdultos || c.pases || 0,
+                        pasesNinos: c.pasesNinos || 0,
                         pasesMax: c.pases,
                         mensaje: c.mensaje,
                         status: c.asiste ? 'confirmado' : 'declinado',
@@ -1906,7 +1976,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 return a.nombre.localeCompare(b.nombre);
             });
 
-            let tAsisten = 0, tDeclinan = 0, tPases = 0;
+            let tAsisten = 0, tDeclinan = 0, tPases = 0, tAdults = 0, tKids = 0;
             tb.innerHTML = "";
 
             combinedList.forEach(i => {
@@ -1916,9 +1986,11 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 if (i.status === 'confirmado') {
                     tAsisten++;
                     tPases += (i.pases || 0);
+                    tAdults += (i.pasesAdultos || 0);
+                    tKids += (i.pasesNinos || 0);
                     statusBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold flex flex-col items-center justify-center max-w-[110px]"><span class="font-extrabold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span><span class="text-[8px] font-mono font-bold text-stone-400 mt-0.5">ID: ${i.ticketId}</span></span>`;
                     actionBtn = `
-                        <button onclick="enviarRecordatorioUnaSemana('${i.nombre}', '${i.telefono}', ${i.pases}, '${i.ticketId}')" class="text-emerald-600 hover:text-emerald-700 transition-colors p-1" title="Enviar recordatorio de 1 semana"><i class="fa-brands fa-whatsapp text-base"></i></button>
+                        <button onclick="enviarRecordatorioUnaSemana('${i.nombre}', '${i.telefono}', ${i.pasesAdultos}, ${i.pasesNinos}, '${i.ticketId}')" class="text-emerald-600 hover:text-emerald-700 transition-colors p-1" title="Enviar recordatorio de 1 semana"><i class="fa-brands fa-whatsapp text-base"></i></button>
                         <button onclick="eliminarInvitado('${i.nombre}')" class="text-stone-400 hover:text-rose-600 transition-colors p-1" title="Eliminar/Restablecer"><i class="fa-regular fa-trash-can"></i></button>
                     `;
                 } else if (i.status === 'declinado') {
@@ -1930,11 +2002,18 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                     actionBtn = `<span class="text-[10px] text-stone-400 italic">Esperando...</span>`;
                 }
 
+                let pasesDisplay = "";
+                if (i.status === 'confirmado') {
+                    pasesDisplay = `<span class="font-bold text-cement-600">${i.pases} de ${i.pasesMax}</span><br><span class="text-[9px] text-stone-500 block leading-none mt-0.5">(Ad: ${i.pasesAdultos} | Ni: ${i.pasesNinos})</span>`;
+                } else {
+                    pasesDisplay = `- (Max: ${i.pasesMax})`;
+                }
+
                 tb.innerHTML += `<tr class="hover:bg-stone-50 transition-colors">
                     <td class="px-4 py-3 font-semibold text-stone-800">${i.nombre}</td>
                     <td class="px-4 py-3 text-stone-500 font-mono text-xs font-semibold">${i.telefono}</td>
                     <td class="px-4 py-3">${statusBadge}</td>
-                    <td class="px-4 py-3 font-bold text-cement-600">${i.status === 'confirmado' ? `${i.pases} de ${i.pasesMax}` : `- (Max: ${i.pasesMax})`}</td>
+                    <td class="px-4 py-3">${pasesDisplay}</td>
                     <td class="px-4 py-3 text-stone-500 italic max-w-[150px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
                     <td class="px-4 py-4 text-right flex gap-1.5 justify-end">
                         ${actionBtn}
@@ -1943,13 +2022,13 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             });
 
             document.getElementById('dash-total-confirmados').innerText = tAsisten;
-            document.getElementById('dash-total-pases').innerText = tPases;
+            document.getElementById('dash-total-pases').innerHTML = `${tPases} <span class="text-[10px] text-stone-500 block font-normal">(Ad: ${tAdults} | Ni: ${tKids})</span>`;
             document.getElementById('dash-total-declinaron').innerText = tDeclinan;
             document.getElementById('count-badge').innerText = listaConfirmados.length;
         }
 
         // Mensaje de recordatorio dinámico enviado una semana antes del evento con código QR único
-        function enviarRecordatorioUnaSemana(nombre, telefono, pases, ticketId) {
+        function enviarRecordatorioUnaSemana(nombre, telefono, adults, children, ticketId) {
             let telLimpio = telefono.replace(/[^0-9]/g, '');
             if (telLimpio.length === 10) {
                 telLimpio = "52" + telLimpio;
@@ -1960,8 +2039,8 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
 
             const baseUri = window.location.origin + window.location.pathname;
-            // Recordatorio de 1 semana incluye el enlace directo al mismo boleto con QR interactivo
-            const linkVisualizacionTicket = `${baseUri}?ticket=true&verify=${ticketId}&name=${encodeURIComponent(nombre)}&passes=${pases}&phone=${encodeURIComponent(telefono)}`;
+            const totalP = adults + children;
+            const linkVisualizacionTicket = `${baseUri}?ticket=true&verify=${ticketId}&name=${encodeURIComponent(nombre)}&adults=${adults}&children=${children}&phone=${encodeURIComponent(telefono)}`;
 
             const textoRecordatorio = `✨ *RECORDATORIO DE ASISTENCIA OFICIAL* 🌸
 
@@ -1974,7 +2053,9 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
   🌸 *XV Años de Camila Shaddai* 🌸
   
   👤 *Invitado:* ${nombre}
-  🎟 *Pases Reservados:* [ *${pases} Pase${pases > 1 ? 's' : ''}* ]
+  🎟 *Pases Reservados:* [ *${totalP} Pase${totalP > 1 ? 's' : ''}* ]
+     └ 🧑 Adultos: *${adults}*
+     └ 🧒 Niños: *${children}*
   📅 *Fecha:* ${fechaLarga}
   🕒 *Recepción:* ${appConfig.recepcionHora}
   📍 *Lugar:* ${appConfig.recepcionLugar}
@@ -2043,6 +2124,8 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                         telefono: conf.telefono,
                         status: conf.asiste ? 'Confirmado' : 'Declinado',
                         pases: conf.pases,
+                        pasesAdultos: conf.pasesAdultos || conf.pases || 0,
+                        pasesNinos: conf.pasesNinos || 0,
                         pasesMax: masterGuest.pases,
                         mensaje: conf.mensaje,
                         fechaRegistro: conf.fechaRegistro
@@ -2053,6 +2136,8 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                         telefono: '-',
                         status: 'Pendiente',
                         pases: 0,
+                        pasesAdultos: 0,
+                        pasesNinos: 0,
                         pasesMax: masterGuest.pases,
                         mensaje: '-',
                         fechaRegistro: '-'
@@ -2068,6 +2153,8 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
                         telefono: c.telefono,
                         status: c.asiste ? 'Confirmado' : 'Declinado',
                         pases: c.pases,
+                        pasesAdultos: c.pasesAdultos || c.pases || 0,
+                        pasesNinos: c.pasesNinos || 0,
                         pasesMax: c.pases,
                         mensaje: c.mensaje,
                         fechaRegistro: c.fechaRegistro
@@ -2081,18 +2168,20 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             }
 
             let csvContent = "\uFEFF"; 
-            csvContent += "Nombre;Teléfono;Estado;Pases Confirmados;Pases Máximos Asignados;Mensaje/Dedicatoria;Fecha de Registro\n";
+            csvContent += "Nombre;Teléfono;Estado;Pases Confirmados;Pases Adultos;Pases Niños;Pases Máximos Asignados;Mensaje/Dedicatoria;Fecha de Registro\n";
 
             combinedList.forEach(i => {
                 const nombre = `"${(i.nombre || '').replace(/"/g, '""')}"`;
                 const telefono = `"${(i.telefono || '').replace(/"/g, '""')}"`;
                 const status = `"${(i.status || '').replace(/"/g, '""')}"`;
                 const pases = i.pases;
+                const pasesAdultos = i.pasesAdultos || 0;
+                const pasesNinos = i.pasesNinos || 0;
                 const pasesMax = i.pasesMax;
                 const mensaje = `"${(i.mensaje || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`;
                 const fecha = `"${(i.fechaRegistro || '').replace(/"/g, '""')}"`;
 
-                csvContent += `${nombre};${telefono};${status};${pases};${pasesMax};${mensaje};${fecha}\n`;
+                csvContent += `${nombre};${telefono};${status};${pases};${pasesAdultos};${pasesNinos};${pasesMax};${mensaje};${fecha}\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -2241,6 +2330,7 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
         window.exportarExcel = exportarExcel;
         window.toggleModal = toggleModal;
         window.seleccionarInvitadoDesplegable = seleccionarInvitadoDesplegable;
+        window.ajustarSelectsPases = ajustarSelectsPases;
         window.actualizarEstadoAsistencia = actualizarEstadoAsistencia;
         window.toggleCustomMusicInput = toggleCustomMusicInput;
         window.cerrarVerificacionQR = cerrarVerificacionQR;

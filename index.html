@@ -231,7 +231,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -316,7 +316,7 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE -->
+    <!-- COMPARTIR ENLACE 
     <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
@@ -333,7 +333,7 @@
                 </button>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
@@ -802,15 +802,15 @@
                 "images/foto2.jpg",
                 "images/foto3.jpg"
             ],
-            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre.",
             fecha: "2026-08-29",
             hora: "17:00 Horas",
-            recepcionLugar: "Salón de Eventos \"El Campanario\"",
-            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
-            recepcionHora: "18:30 Hrs",
-            recepcionMapa: "https://maps.google.com",
+            recepcionLugar: "Salón de Eventos \"Isssss CLub\"",
+            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
+            recepcionHora: "17:00 Hrs",
+            recepcionMapa: "https://maps.app.goo.gl/3qNMWujrVhFrTTK19",
             musicaUrl: "music/musica.mp3",
-            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
+            listaPasesInvitados: "Camila Shaddai, 1\nRicardo Jesús, 1\nMarisol Islas Barrera, 2\nRicardo Velázquez Escamilla, 1\nFamilia Martínez Barez, 4\nFamilia Islas Resendíz, 5\nFamilia Chávez Islas, 4\nFamilia Velázquez Ramírez, 4\nFamilia Garcia Velázquez, 6"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -2396,7 +2396,7 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            mostrarToast("¡Lista de invitados descargada en Excel!", "fa-solid fa-file-arrow-down text-emerald-500");
+            mostrarToast("¡Lista de invitados descargable!", "fa-solid fa-file-arrow-down text-emerald-500");
         }
 
         function sanitizeUrl(url, type = 'image') {

@@ -156,6 +156,10 @@
                     <i class="fa-solid fa-download"></i>
                     <span>Descargar Imagen del Boleto</span>
                 </button>
+                <button id="btn-compartir-ticket-wa" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center space-x-2">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Enviar Pase por WhatsApp</span>
+                </button>
                 <button onclick="volverALaInvitacion()" class="w-full py-3 bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-arrow-left"></i>
                     <span>Ver Invitación Completa</span>
@@ -202,6 +206,10 @@
                 <i class="fa-solid fa-list-check"></i>
                 <span>Invitados (<span id="count-badge">0</span>)</span>
             </button>
+            <button onclick="salirModoAdmin()" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 border border-rose-200/55" title="Salir de Modo Administrador">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden md:inline">Salir</span>
+            </button>
         </div>
     </nav>
 
@@ -231,7 +239,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -316,7 +324,7 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE 
+    <!-- COMPARTIR ENLACE -->
     <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
@@ -333,7 +341,7 @@
                 </button>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
@@ -703,7 +711,7 @@
                         </div>
                         <div class="space-y-1.5">
                             <label class="block text-xs font-semibold text-stone-600">Mapa URL</label>
-                            <input type="text" id="cfg-recepcion-mapa" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm">
+                            <input type="text" id="cfg-recepcion-mapa" class="w-full px-3 py-2 rounded-lg border border-stone-300 text-sm">
                         </div>
                     </div>
                 </div>
@@ -802,15 +810,15 @@
                 "images/foto2.jpg",
                 "images/foto3.jpg"
             ],
-            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre.",
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
             fecha: "2026-08-29",
             hora: "17:00 Horas",
-            recepcionLugar: "Salón de Eventos \"Isssss CLub\"",
-            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
-            recepcionHora: "17:00 Hrs",
-            recepcionMapa: "https://maps.app.goo.gl/3qNMWujrVhFrTTK19",
+            recepcionLugar: "Salón de Eventos \"El Campanario\"",
+            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            recepcionHora: "18:30 Hrs",
+            recepcionMapa: "https://maps.google.com",
             musicaUrl: "music/musica.mp3",
-            listaPasesInvitados: "Camila Shaddai, 1\nRicardo Jesús, 1\nMarisol Islas Barrera, 2\nRicardo Velázquez Escamilla, 1\nFamilia Martínez Barez, 4\nFamilia Islas Resendíz, 5\nFamilia Chávez Islas, 4\nFamilia Velázquez Ramírez, 4\nFamilia Garcia Velázquez, 6"
+            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -900,6 +908,29 @@
 
         if (localStorage.getItem('xv_config')) {
             try { appConfig = JSON.parse(localStorage.getItem('xv_config')); } catch (e) { appConfig = { ...DEFAULT_CONFIG }; }
+        }
+
+        // --- SISTEMA DE FORMATEO DE FECHAS ULTRA COMPATIBLE (Inmune a fallos en iOS Safari) ---
+        function obtenerFechaLargaSegura(fechaStr) {
+            try {
+                if (!fechaStr) fechaStr = "2026-08-29";
+                const partes = fechaStr.split('-');
+                if (partes.length === 3) {
+                    const y = parseInt(partes[0], 10);
+                    const m = parseInt(partes[1], 10) - 1; // Los meses en JS inician en 0
+                    const d = parseInt(partes[2], 10);
+                    const fecha = new Date(Date.UTC(y, m, d));
+                    const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+                    const formatted = fecha.toLocaleDateString('es-ES', opciones);
+                    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+                }
+                const fecha = new Date(fechaStr.replace(/-/g, '/'));
+                const formatted = fecha.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+            } catch (e) {
+                console.error("Error al formatear fecha:", e);
+                return "Sábado, 29 de Agosto de 2026";
+            }
         }
 
         // --- INICIALIZACIÓN ---
@@ -1043,6 +1074,23 @@
             const baseUri = window.location.origin + window.location.pathname;
             document.getElementById('cfg-admin-link').value = `${baseUri}?admin=true`;
             document.getElementById('share-link-input').value = baseUri;
+        }
+
+        function salirModoAdmin() {
+            solicitarConfirmacionPersonalizada(
+                "¿Salir del Modo Administrador?",
+                "Se cerrará la sesión de administración y se ocultarán las herramientas de configuración e invitados del panel superior.",
+                function() {
+                    localStorage.removeItem('xv_is_admin');
+                    const baseUri = window.location.origin + window.location.pathname;
+                    window.history.replaceState({}, document.title, baseUri);
+                    document.getElementById('admin-controls-nav').classList.add('hidden');
+                    mostrarToast("Sesión administrativa cerrada", "fa-solid fa-right-from-bracket text-stone-500");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 400);
+                }
+            );
         }
 
         function vincularIniciadorSecretoFooter() {
@@ -1387,26 +1435,20 @@
             
             let targetDate;
             try {
-                // Si la fecha está vacía o inválida, asignamos la fecha por defecto
                 if (!fechaDestinoStr) {
                     fechaDestinoStr = "2026-08-29";
                 }
-                
-                // Dividimos la fecha manualmente (YYYY-MM-DD) para evitar problemas de parseo en iOS/Safari
                 const partes = fechaDestinoStr.split('-');
                 if (partes.length === 3) {
                     const y = parseInt(partes[0], 10);
-                    const m = parseInt(partes[1], 10) - 1; // Los meses en JavaScript inician en 0 (Enero)
+                    const m = parseInt(partes[1], 10) - 1; 
                     const d = parseInt(partes[2], 10);
-                    // Creamos la fecha local apuntando a las 17:00 Hrs del evento
                     targetDate = new Date(y, m, d, 17, 0, 0).getTime();
                 } else {
-                    // Fallback estándar reemplazando guiones por diagonales
                     targetDate = new Date(fechaDestinoStr.replace(/-/g, '/')).getTime();
                 }
             } catch (e) {
-                console.error("Error al parsear la fecha de cuenta regresiva en el dispositivo:", e);
-                // Fecha de respaldo segura (29 de Agosto de 2026)
+                console.error("Error al parsear la fecha de cuenta regresiva:", e);
                 targetDate = new Date(2026, 7, 29, 17, 0, 0).getTime();
             }
 
@@ -1414,7 +1456,6 @@
                 const now = new Date().getTime();
                 const difference = targetDate - now;
 
-                // Si la fecha ya pasó o es inválida, se muestra en ceros de forma segura
                 if (isNaN(difference) || difference <= 0) {
                     document.getElementById('countdown-days').innerText = "00";
                     document.getElementById('countdown-hours').innerText = "00";
@@ -1429,7 +1470,7 @@
                 document.getElementById('countdown-minutes').innerText = String(Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
                 document.getElementById('countdown-seconds').innerText = String(Math.floor((difference % (1000 * 60)) / 1000)).padStart(2, '0');
             }
-            actualizarContador();
+            actualuarContador();
             countdownTimerId = setInterval(actualizarContador, 1000);
         }
 
@@ -1505,10 +1546,8 @@
             parseGuestDatabase(rawPasesList);
             cargarListaNombresDesplegable();
 
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
-            document.getElementById('display-fecha-larga').innerText = fechaLarga.charAt(0).toUpperCase() + fechaLarga.slice(1);
+            const fechaLarga = obtenerFechaLargaSegura(appConfig.fecha);
+            document.getElementById('display-fecha-larga').innerText = fechaLarga;
             document.getElementById('display-hora-principal').innerText = `A partir de las ${appConfig.hora}`;
 
             document.getElementById('display-recepcion-lugar').innerText = appConfig.recepcionLugar;
@@ -1578,7 +1617,7 @@
 
                 document.getElementById('ticket-view-overlay').classList.remove('hidden');
                 
-                const tDateStr = new Date(appConfig.fecha + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+                const tDateStr = obtenerFechaLargaSegura(appConfig.fecha);
                 
                 // Sello de verificación en el boleto
                 const hasVerifyParam = urlParams.get('verify') !== null;
@@ -1641,6 +1680,14 @@
                     });
                 }, 100);
 
+                // Configurar botón de compartir por WhatsApp en la vista exclusiva
+                const btnCompartirWA = document.getElementById('btn-compartir-ticket-wa');
+                if (btnCompartirWA) {
+                    btnCompartirWA.onclick = function() {
+                        enviarBoletoPorWhatsApp(tName, tAdults, tChildren, tPhone, tVerifyId, tDateStr);
+                    };
+                }
+
                 return;
             }
 
@@ -1651,9 +1698,7 @@
                     const ad = miConfirmacion.pasesAdultos || miConfirmacion.pases || 0;
                     const ch = miConfirmacion.pasesNinos || 0;
                     
-                    const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-                    const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-                    const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+                    const fechaLarga = obtenerFechaLargaSegura(appConfig.fecha);
 
                     const rsvpSection = document.getElementById('rsvp-section');
                     if (rsvpSection) {
@@ -1906,15 +1951,10 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             // Flujo Local de respaldo reactivo instantáneo
             guardarLocalSimulado(invData);
             
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
-
-            // Redirigir y disparar WhatsApp automáticamente
+            // Redirigir a vista exclusiva de boleto para que puedan descargar la imagen o compartirla
             setTimeout(() => {
-                enviarBoletoPorWhatsApp(invData.nombre, invData.pasesAdultos, invData.pasesNinos, invData.telefono, uniqueTicketId, fechaLarga);
                 mostrarToast("¡Asistencia confirmada de forma segura!", "fa-solid fa-heart text-pink-500");
-                location.reload();
+                irAVistaExclusivaBoleto(invData.nombre, invData.pasesAdultos, invData.pasesNinos, uniqueTicketId, invData.telefono);
             }, 1000);
         }
 
@@ -2237,9 +2277,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 telLimpio = "52" + telLimpio;
             }
 
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-            const fechaParseada = new Date(appConfig.fecha + 'T00:00:00');
-            const fechaLarga = fechaParseada.toLocaleDateString('es-ES', opcionesFecha);
+            const fechaLarga = obtenerFechaLargaSegura(appConfig.fecha);
 
             const baseUri = window.location.origin + window.location.pathname;
             const totalP = adults + children;
@@ -2396,7 +2434,7 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            mostrarToast("¡Lista de invitados descargable!", "fa-solid fa-file-arrow-down text-emerald-500");
+            mostrarToast("¡Lista de invitados descargada en Excel!", "fa-solid fa-file-arrow-down text-emerald-500");
         }
 
         function sanitizeUrl(url, type = 'image') {
@@ -2539,6 +2577,7 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
         window.irAVistaExclusivaBoleto = irAVistaExclusivaBoleto;
         window.volverALaInvitacion = volverALaInvitacion;
         window.capturarYDescargarTicket = capturarYDescargarTicket;
+        window.salirModoAdmin = salirModoAdmin;
     </script>
 </body>
 </html>

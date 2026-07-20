@@ -231,7 +231,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -296,17 +296,17 @@
                         <i class="fa-solid fa-cake-candles"></i>
                     </div>
                     <div class="text-center space-y-2">
-                        <h3 class="font-serif text-2xl text-stone-800 font-semibold">Recepción</h3>
+                        <h3 class="font-serif text-2xl text-stone-800 font-semibold">Gran Recepción</h3>
                         <p class="text-xs uppercase tracking-widest text-cement-600 font-semibold">¡A Celebrar en Grande!</p>
                     </div>
                     <div class="border-t border-b border-stone-200/60 py-4 text-center space-y-2 text-stone-600">
-                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "Isssss Club"</p>
-                        <p id="display-recepcion-dir" class="text-sm">Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.</p>
+                        <p class="font-semibold text-stone-800" id="display-recepcion-lugar">Salón de Eventos "El Campanario"</p>
+                        <p id="display-recepcion-dir" class="text-sm">Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.</p>
                         <p class="text-sm font-semibold text-cement-700 mt-2"><i class="fa-regular fa-clock mr-1"></i> <span id="display-recepcion-hora">18:30 Hrs</span></p>
                     </div>
                 </div>
                 <div class="text-center pt-4">
-                    <a id="btn-mapa-recepcion" href="https://maps.app.goo.gl/3qNMWujrVhFrTTK19" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
+                    <a id="btn-mapa-recepcion" href="https://maps.google.com" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 bg-cement-600 hover:bg-cement-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all shadow-md w-full justify-center">
                         <i class="fa-solid fa-map-location-dot"></i>
                         <span>Ver Ubicación en Mapa</span>
                     </a>
@@ -333,7 +333,7 @@
                 </button>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
@@ -802,15 +802,15 @@
                 "images/foto2.jpg",
                 "images/foto3.jpg"
             ],
-            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y recuerdos inolvidables. Quiero que formes parte de este mágico momento que guardaré en mi corazón para siempre.",
+            mensaje: "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que formes parte de esta mágica noche que guardaré en mi corazón para siempre.",
             fecha: "2026-08-29",
             hora: "17:00 Horas",
-            recepcionLugar: "Salón de Eventos \"Isssss Club\"",
-            recepcionDir: "Zaragoza 67, San Primitivo, Tlahuelilpan, Hgo.",
-            recepcionHora: "17:00 Hrs",
-            recepcionMapa: "https://maps.app.goo.gl/3qNMWujrVhFrTTK19",
+            recepcionLugar: "Salón de Eventos \"El Campanario\"",
+            recepcionDir: "Vía Dorada Lote 4, Zona Plateada, Pachuca, Hgo.",
+            recepcionHora: "18:30 Hrs",
+            recepcionMapa: "https://maps.google.com",
             musicaUrl: "music/musica.mp3",
-            listaPasesInvitados: "Camila Shaddai, 1\nMarisol Islas Barrera, 2\nRicardo Jesús, 1\nRicardo Velázquez Escamilla, 1\nFamilia Martínez Baez, 4\nFamilia Islas Resendíz, 5\nFamilia Chávez Islas, 4"
+            listaPasesInvitados: "Tío Carlos Martínez, 4\nAdriana Solís, 1\nFamilia Ruiz Gómez, 3\nJuan Pérez, 2\nFamilia Martínez Pérez, 5"
         };
 
         let appConfig = { ...DEFAULT_CONFIG };
@@ -1384,13 +1384,38 @@
         // --- EFECTOS VISUALES Y CONTADOR ---
         function iniciarCuentaRegresiva(fechaDestinoStr) {
             if (countdownTimerId) clearInterval(countdownTimerId);
-            const targetDate = new Date(`${fechaDestinoStr}T18:00:00`).getTime();
+            
+            let targetDate;
+            try {
+                // Si la fecha está vacía o inválida, asignamos la fecha por defecto
+                if (!fechaDestinoStr) {
+                    fechaDestinoStr = "2026-08-29";
+                }
+                
+                // Dividimos la fecha manualmente (YYYY-MM-DD) para evitar problemas de parseo en iOS/Safari
+                const partes = fechaDestinoStr.split('-');
+                if (partes.length === 3) {
+                    const y = parseInt(partes[0], 10);
+                    const m = parseInt(partes[1], 10) - 1; // Los meses en JavaScript inician en 0 (Enero)
+                    const d = parseInt(partes[2], 10);
+                    // Creamos la fecha local apuntando a las 17:00 Hrs del evento
+                    targetDate = new Date(y, m, d, 17, 0, 0).getTime();
+                } else {
+                    // Fallback estándar reemplazando guiones por diagonales
+                    targetDate = new Date(fechaDestinoStr.replace(/-/g, '/')).getTime();
+                }
+            } catch (e) {
+                console.error("Error al parsear la fecha de cuenta regresiva en el dispositivo:", e);
+                // Fecha de respaldo segura (29 de Agosto de 2026)
+                targetDate = new Date(2026, 7, 29, 17, 0, 0).getTime();
+            }
 
             function actualizarContador() {
                 const now = new Date().getTime();
                 const difference = targetDate - now;
 
-                if (difference <= 0) {
+                // Si la fecha ya pasó o es inválida, se muestra en ceros de forma segura
+                if (isNaN(difference) || difference <= 0) {
                     document.getElementById('countdown-days').innerText = "00";
                     document.getElementById('countdown-hours').innerText = "00";
                     document.getElementById('countdown-minutes').innerText = "00";

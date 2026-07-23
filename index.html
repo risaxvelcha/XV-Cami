@@ -573,6 +573,36 @@
                     </div>
                 </div>
 
+                <!-- Sección Sincronización en la Nube (Multi-dispositivo) -->
+                <div class="bg-cement-50 border border-cement-200 rounded-2xl p-4 space-y-3 text-stone-700">
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs font-bold text-cement-800 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-cloud"></i> Sincronización en la Nube
+                        </p>
+                        <span id="cfg-firebase-status" class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-stone-200 text-stone-600">
+                            <i class="fa-solid fa-circle-notch mr-1"></i> Verificando...
+                        </span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed font-medium">
+                        Conecta una base de datos gratuita de Firebase para que las confirmaciones de tus invitados se sincronicen <strong>en tiempo real en todos tus dispositivos</strong> (celular, tablet, PC). Sin esto, cada dispositivo solo ve sus propios datos guardados localmente.
+                    </p>
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-stone-600">Pega aquí tu configuración de Firebase (objeto firebaseConfig en formato JSON)</label>
+                        <textarea id="cfg-firebase-config" rows="4" class="w-full px-3 py-2 rounded-lg border border-cement-300 text-[11px] font-mono resize-y bg-white" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..."}'></textarea>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="guardarConfigFirebase()" class="w-1/2 py-2 bg-cement-600 hover:bg-cement-700 text-white font-semibold rounded-lg text-[10px] uppercase tracking-wider transition-all shadow-sm">
+                            <i class="fa-solid fa-plug mr-1"></i> Conectar y Sincronizar
+                        </button>
+                        <button type="button" onclick="desconectarFirebase()" class="w-1/2 py-2 border border-cement-300 text-cement-700 hover:bg-cement-100 font-semibold rounded-lg text-[10px] uppercase tracking-wider transition-all">
+                            Desconectar
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-stone-500 leading-relaxed">
+                        ¿No tienes una base de datos aún? Créala gratis en <a href="https://console.firebase.google.com" target="_blank" class="underline font-semibold text-cement-700">console.firebase.google.com</a> → crea un proyecto → activa <strong>Firestore Database</strong> (modo prueba) → Configuración del proyecto → copia el objeto de configuración de tu app web y pégalo arriba.
+                    </p>
+                </div>
+
                 <!-- Sección Festejada -->
                 <div class="space-y-3">
                     <h4 class="text-xs font-bold uppercase tracking-widest text-cement-600 border-b border-stone-100 pb-1">Festejada</h4>
@@ -723,6 +753,9 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-3">
+                    <span id="dash-firebase-status" class="hidden sm:inline-flex px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-stone-200 text-stone-600 items-center gap-1">
+                        <i class="fa-solid fa-circle-notch"></i> Verificando...
+                    </span>
                     <button onclick="exportarExcel()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-emerald-600/20" title="Descargar base de invitados completa">
                         <i class="fa-solid fa-file-excel"></i>
                         <span class="hidden sm:inline">Exportar Excel</span>
@@ -901,19 +934,33 @@
         ];
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'xv-camila-shaddai';
-        const rawFirebaseConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let db = null;
         let auth = null;
         let userAuth = null;
 
+        // --- RESOLUCIÓN DE CONFIGURACIÓN DE FIREBASE ---
+        // Prioridad: 1) Configuración guardada por el administrador en el panel (localStorage)
+        //            2) Variable global de entorno (si existe, por ejemplo en Google AI Studio/Canvas)
+        function obtenerConfigFirebase() {
+            const storedConfig = localStorage.getItem('xv_firebase_user_config');
+            if (storedConfig) return storedConfig;
+            return typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+        }
+
         // --- INICIALIZACIÓN DE FIREBASE ---
         async function initFirebaseSync() {
+            const rawFirebaseConfig = obtenerConfigFirebase();
+
             if (!rawFirebaseConfig) {
                 console.log("Sincronización híbrida de pases offline activada.");
+                actualizarEstadoConexionUI('local');
                 return;
             }
+
+            actualizarEstadoConexionUI('conectando');
+
             try {
                 const config = JSON.parse(rawFirebaseConfig);
                 const app = initializeApp(config);
@@ -928,10 +975,73 @@
 
                 if (userAuth) {
                     conectarEscuchasTiempoReal();
+                    actualizarEstadoConexionUI('conectado');
                 }
             } catch (err) {
                 console.error("No se pudo conectar la base de datos remota:", err);
+                db = null;
+                actualizarEstadoConexionUI('error');
             }
+        }
+
+        // --- INDICADOR VISUAL DE ESTADO DE SINCRONIZACIÓN ---
+        function actualizarEstadoConexionUI(estado) {
+            const estilos = {
+                conectando: { texto: 'Conectando...', clases: 'bg-amber-100 text-amber-700', icono: 'fa-circle-notch fa-spin' },
+                conectado: { texto: 'Sincronizado en la nube', clases: 'bg-emerald-100 text-emerald-700', icono: 'fa-cloud-arrow-up' },
+                local: { texto: 'Modo local (sin sincronizar)', clases: 'bg-stone-200 text-stone-600', icono: 'fa-house-signal' },
+                error: { texto: 'Error de conexión', clases: 'bg-red-100 text-red-700', icono: 'fa-triangle-exclamation' },
+            };
+            const info = estilos[estado] || estilos.local;
+
+            [document.getElementById('cfg-firebase-status'), document.getElementById('dash-firebase-status')].forEach(el => {
+                if (!el) return;
+                el.className = el.id === 'dash-firebase-status'
+                    ? `hidden sm:inline-flex px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider items-center gap-1 ${info.clases}`
+                    : `px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${info.clases}`;
+                el.innerHTML = `<i class="fa-solid ${info.icono} mr-1"></i> ${info.texto}`;
+            });
+        }
+
+        // --- GUARDAR CONFIGURACIÓN DE FIREBASE DESDE EL PANEL DE ADMIN ---
+        async function guardarConfigFirebase() {
+            const input = document.getElementById('cfg-firebase-config').value.trim();
+
+            if (!input) {
+                mostrarToast("Pega primero tu configuración de Firebase.", "fa-solid fa-triangle-exclamation text-amber-500");
+                return;
+            }
+
+            let parsed;
+            try {
+                parsed = JSON.parse(input);
+                if (!parsed.apiKey || !parsed.projectId) throw new Error("Faltan campos obligatorios");
+            } catch (e) {
+                mostrarToast("El JSON de configuración no es válido. Revísalo e inténtalo de nuevo.", "fa-solid fa-circle-xmark text-red-500");
+                return;
+            }
+
+            localStorage.setItem('xv_firebase_user_config', JSON.stringify(parsed));
+            mostrarToast("Conectando a tu base de datos en la nube...", "fa-solid fa-cloud text-cement-500");
+            await initFirebaseSync();
+
+            if (db) {
+                mostrarToast("¡Sincronización en la nube activada con éxito!", "fa-solid fa-cloud-arrow-up text-emerald-500");
+            }
+        }
+
+        function desconectarFirebase() {
+            solicitarConfirmacionPersonalizada(
+                "¿Desconectar sincronización en la nube?",
+                "Este dispositivo dejará de sincronizar en tiempo real. Los datos ya guardados en la nube no se eliminan.",
+                function() {
+                    localStorage.removeItem('xv_firebase_user_config');
+                    db = null;
+                    document.getElementById('cfg-firebase-config').value = "";
+                    actualizarEstadoConexionUI('local');
+                    mostrarToast("Sincronización en la nube desactivada.", "fa-solid fa-cloud-arrow-down text-stone-500");
+                }
+            );
         }
 
         function conectarEscuchasTiempoReal() {
@@ -1533,6 +1643,9 @@
                     }
                 }
             }
+
+            const storedFirebaseCfg = localStorage.getItem('xv_firebase_user_config');
+            if (storedFirebaseCfg) document.getElementById('cfg-firebase-config').value = storedFirebaseCfg;
 
             document.getElementById('cfg-nombre').value = appConfig.nombre;
             document.getElementById('cfg-foto-0').value = appConfig.fotos[0] || '';
@@ -2641,6 +2754,8 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
         window.procesarCargaMasiva = procesarCargaMasiva;
         window.abrirEditarInvitado = abrirEditarInvitado;
         window.guardarEdicionInvitado = guardarEdicionInvitado;
+        window.guardarConfigFirebase = guardarConfigFirebase;
+        window.desconectarFirebase = desconectarFirebase;
     </script>
 </body>
 </html>

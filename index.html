@@ -248,7 +248,7 @@
 
             <div class="max-w-xl mx-auto">
                 <p id="festejada-mensaje" class="font-serif italic text-stone-600 leading-relaxed text-sm md:text-lg">
-                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que forman parte de este mágico momento que guardaré en mi corazón para siempre."
+                    "Hoy celebro el inicio de una hermosa etapa, llena de ilusiones, sueños y momentos inolvidables. Quiero que forman parte de esta mágica noche que guardaré en mi corazón para siempre."
                 </p>
             </div>
 
@@ -333,7 +333,7 @@
         </div>
     </section>
 
-    <!-- COMPARTIR ENLACE 
+    <!-- COMPARTIR ENLACE -->
     <section class="py-12 bg-stone-100 border-t border-b border-stone-200/40 text-center px-4">
         <div class="max-w-2xl mx-auto space-y-4">
             <h3 class="font-serif text-xl text-stone-800">¿Deseas compartir esta invitación digital?</h3>
@@ -350,7 +350,7 @@
                 </button>
             </div>
         </div>
-    </section> -->
+    </section>
 
     <!-- CONFIRMACIÓN DE ASISTENCIA (RSVP) -->
     <section id="rsvp-section" class="py-20 px-4 bg-gradient-to-t from-stone-50 to-cement-50/20 relative">
@@ -584,10 +584,10 @@
                         </span>
                     </div>
                     <p class="text-[11px] leading-relaxed font-medium">
-                        Conecta una base de datos gratuita de Firebase para que las confirmaciones de tus invitados se sincronicen <strong>en tiempo real en todos tus dispositivos</strong> (celular, tablet, PC). Sin esto, cada dispositivo solo ve sus propios datos guardados localmente.
+                        Esta invitación ya está conectada por defecto a tu base de datos de Firebase, así que <strong>todos tus invitados y tú se sincronizan automáticamente en tiempo real</strong> sin que nadie tenga que configurar nada. El cuadro de abajo es solo una opción avanzada, útil únicamente si algún día quieres apuntar temporalmente este dispositivo a otro proyecto de Firebase distinto.
                     </p>
                     <div class="space-y-1.5">
-                        <label class="block text-xs font-semibold text-stone-600">Pega aquí tu configuración de Firebase (objeto firebaseConfig en formato JSON)</label>
+                        <label class="block text-xs font-semibold text-stone-600">Avanzado: apuntar este dispositivo a otra base de datos (opcional)</label>
                         <textarea id="cfg-firebase-config" rows="4" class="w-full px-3 py-2 rounded-lg border border-cement-300 text-[11px] font-mono resize-y bg-white" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "storageBucket": "...", "messagingSenderId": "...", "appId": "..."}'></textarea>
                     </div>
                     <div class="flex gap-2">
@@ -595,11 +595,11 @@
                             <i class="fa-solid fa-plug mr-1"></i> Conectar y Sincronizar
                         </button>
                         <button type="button" onclick="desconectarFirebase()" class="w-1/2 py-2 border border-cement-300 text-cement-700 hover:bg-cement-100 font-semibold rounded-lg text-[10px] uppercase tracking-wider transition-all">
-                            Desconectar
+                            Volver a la base por defecto
                         </button>
                     </div>
                     <p class="text-[10px] text-stone-500 leading-relaxed">
-                        ¿No tienes una base de datos aún? Créala gratis en <a href="https://console.firebase.google.com" target="_blank" class="underline font-semibold text-cement-700">console.firebase.google.com</a> → crea un proyecto → activa <strong>Firestore Database</strong> (modo prueba) → Configuración del proyecto → copia el objeto de configuración de tu app web y pégalo arriba.
+                        No necesitas tocar esto para que la sincronización funcione — ya está activa de fábrica en este archivo.
                     </p>
                 </div>
 
@@ -940,12 +940,28 @@
         let auth = null;
         let userAuth = null;
 
+        // --- CONFIGURACIÓN DE FIREBASE INCRUSTADA POR DEFECTO ---
+        // Esto permite que CUALQUIER persona que abra el link de la invitación
+        // se conecte automáticamente a la base de datos en la nube, sin tener
+        // que pegar nada manualmente (solo el administrador ve el panel de config).
+        const DEFAULT_FIREBASE_CONFIG = {
+            "apiKey": "AIzaSyBvt2xS-KtpJMBU7JyWXQt03pi0YNfYMLs",
+            "authDomain": "xv-camila-shaddai.firebaseapp.com",
+            "projectId": "xv-camila-shaddai",
+            "storageBucket": "xv-camila-shaddai.firebasestorage.app",
+            "messagingSenderId": "547212143587",
+            "appId": "1:547212143587:web:9ded922ffbcee49bc08ed6"
+        };
+
         // --- RESOLUCIÓN DE CONFIGURACIÓN DE FIREBASE ---
-        // Prioridad: 1) Configuración guardada por el administrador en el panel (localStorage)
-        //            2) Variable global de entorno (si existe, por ejemplo en Google AI Studio/Canvas)
+        // Prioridad: 1) Configuración guardada manualmente en este dispositivo (localStorage), útil solo si algún día
+        //               quieres apuntar temporalmente a otra base de datos distinta a la incrustada por defecto.
+        //            2) Configuración incrustada por defecto (DEFAULT_FIREBASE_CONFIG) - aplica para todos los invitados.
+        //            3) Variable global de entorno (si existe, por ejemplo en Google AI Studio/Canvas)
         function obtenerConfigFirebase() {
             const storedConfig = localStorage.getItem('xv_firebase_user_config');
             if (storedConfig) return storedConfig;
+            if (DEFAULT_FIREBASE_CONFIG && DEFAULT_FIREBASE_CONFIG.apiKey) return JSON.stringify(DEFAULT_FIREBASE_CONFIG);
             return typeof __firebase_config !== 'undefined' ? __firebase_config : null;
         }
 
@@ -1032,14 +1048,14 @@
 
         function desconectarFirebase() {
             solicitarConfirmacionPersonalizada(
-                "¿Desconectar sincronización en la nube?",
-                "Este dispositivo dejará de sincronizar en tiempo real. Los datos ya guardados en la nube no se eliminan.",
-                function() {
+                "¿Volver a la base de datos por defecto?",
+                "Este dispositivo dejará de usar la configuración avanzada y volverá a conectarse a la base de datos incrustada de fábrica en la invitación.",
+                async function() {
                     localStorage.removeItem('xv_firebase_user_config');
                     db = null;
                     document.getElementById('cfg-firebase-config').value = "";
-                    actualizarEstadoConexionUI('local');
-                    mostrarToast("Sincronización en la nube desactivada.", "fa-solid fa-cloud-arrow-down text-stone-500");
+                    await initFirebaseSync();
+                    mostrarToast("Se restauró la conexión a la base de datos por defecto.", "fa-solid fa-cloud-arrow-down text-stone-500");
                 }
             );
         }

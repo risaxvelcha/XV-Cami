@@ -17,6 +17,7 @@
     <!-- LIBRERÍAS CORE PARA ACCESO Y GENERACIÓN DE IMÁGENES/QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     
     <!-- CONFIGURACIÓN DE PALETA PREMIUM (Verde Cemento y Blush/Rosado Champagne) -->
     <script>
@@ -149,7 +150,63 @@
         </div>
     </div>
 
-    <!-- PANTALLA EXCLUSIVA DE VISTA DE TICKET ONLINE (QR REDIRECT) -->
+    <!-- MODO ESCANEO DE ACCESOS EN VIVO (CÁMARA) -->
+    <div id="scanner-modal" class="fixed inset-0 bg-stone-950 z-[160] flex flex-col hidden">
+        <div class="flex items-center justify-between p-4 border-b border-stone-800 text-white">
+            <div>
+                <h3 class="font-semibold text-base">Escáner de Accesos</h3>
+                <p class="text-[10px] text-stone-400">Apunta la cámara al código QR del boleto de cada invitado</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <i class="fa-solid fa-door-open mr-1"></i> <span id="scanner-session-count">0</span> ingresos hoy
+                </span>
+                <button onclick="cerrarModoEscaneo()" class="text-stone-400 hover:text-white text-lg p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 flex flex-col items-center gap-4">
+            <div id="qr-reader" class="w-full max-w-sm rounded-2xl overflow-hidden border-2 border-stone-700"></div>
+
+            <!-- Resultado del último escaneo -->
+            <div id="scanner-result-panel" class="w-full max-w-sm bg-white rounded-2xl p-5 text-center space-y-3 border border-stone-100 shadow-xl">
+                <div id="scanner-result-icon" class="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto bg-stone-100 text-stone-400">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+                <p id="scanner-result-title" class="font-serif text-lg text-stone-700 font-bold">Esperando escaneo...</p>
+                <p id="scanner-result-subtitle" class="text-xs text-stone-500 -mt-2"></p>
+                <div id="scanner-result-details" class="hidden bg-stone-50 border border-stone-200/65 rounded-xl p-3 text-left text-xs space-y-2 font-medium text-stone-700">
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Invitado</span>
+                        <span id="sr-guest-name" class="font-bold text-stone-900 text-sm"></span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Adultos</span>
+                            <span id="sr-guest-adults" class="font-extrabold text-cement-600 text-sm"></span>
+                        </div>
+                        <div>
+                            <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">Niños</span>
+                            <span id="sr-guest-children" class="font-extrabold text-blush-500 text-sm"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[9px] uppercase tracking-widest text-stone-400 font-bold block">ID de Boleto</span>
+                        <span id="sr-ticket-id" class="font-mono text-stone-500 font-bold tracking-wider"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Verificación manual de respaldo -->
+            <div class="w-full max-w-sm space-y-2 pt-2 border-t border-stone-800">
+                <p class="text-[10px] text-stone-500 text-center pt-3">¿La cámara no lee bien? Escribe el ID del boleto manualmente:</p>
+                <div class="flex gap-2">
+                    <input type="text" id="scanner-manual-id" placeholder="Ej: CARL-1234" class="flex-1 px-3 py-2 rounded-lg border border-stone-700 bg-stone-900 text-white text-xs font-mono focus:outline-none focus:border-cement-500">
+                    <button onclick="verificarIdManual()" class="px-4 py-2 bg-cement-600 hover:bg-cement-700 text-white rounded-lg text-xs font-bold uppercase">Verificar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="ticket-view-overlay" class="fixed inset-0 bg-stone-100 z-[140] flex flex-col items-center justify-start overflow-y-auto p-4 pt-10 hidden">
         <div class="max-w-sm w-full space-y-6 mb-10">
             <div class="text-center space-y-2">
@@ -756,6 +813,10 @@
                     <span id="dash-firebase-status" class="hidden sm:inline-flex px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-stone-200 text-stone-600 items-center gap-1">
                         <i class="fa-solid fa-circle-notch"></i> Verificando...
                     </span>
+                    <button onclick="abrirModoEscaneo()" class="px-3.5 py-2 bg-stone-900 hover:bg-stone-950 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-stone-900/20" title="Escanear boletos QR en la entrada">
+                        <i class="fa-solid fa-qrcode"></i>
+                        <span class="hidden sm:inline">Escanear Accesos</span>
+                    </button>
                     <button onclick="exportarExcel()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold tracking-wider uppercase transition-all flex items-center space-x-1.5 shadow-md shadow-emerald-600/20" title="Descargar base de invitados completa">
                         <i class="fa-solid fa-file-excel"></i>
                         <span class="hidden sm:inline">Exportar Excel</span>
@@ -765,7 +826,7 @@
             </div>
 
             <!-- Panel de Estadísticas / Métricas de Confirmación -->
-            <div class="grid grid-cols-5 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 md:gap-3 p-4 md:p-6 border-b border-stone-200 bg-stone-50/50">
                 <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
                     <span class="block text-[8px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Asistirán</span>
                     <span id="dash-total-confirmados" class="text-base sm:text-2xl font-bold text-emerald-600">0</span>
@@ -786,6 +847,10 @@
                     <span class="block text-[8px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">Pendientes</span>
                     <span id="dash-total-pendientes" class="text-base sm:text-2xl font-bold text-amber-600">0</span>
                 </div>
+                <div class="bg-white border border-stone-200/55 p-2 md:p-3 rounded-xl text-center shadow-sm">
+                    <span class="block text-[8px] md:text-[10px] uppercase font-bold tracking-wider text-stone-400">En el Evento</span>
+                    <span id="dash-total-ingresaron" class="text-base sm:text-2xl font-bold text-purple-600">0</span>
+                </div>
             </div>
 
             <div class="flex-1 overflow-y-auto p-4 md:p-6">
@@ -797,13 +862,14 @@
                                 <th class="px-4 py-3">Teléfono</th>
                                 <th class="px-4 py-3">Estado</th>
                                 <th class="px-4 py-3">Pases</th>
+                                <th class="px-4 py-3">Ingreso</th>
                                 <th class="px-4 py-3">Mensaje/Dedicatoria</th>
                                 <th class="px-4 py-3 text-right">Acción</th>
                             </tr>
                         </thead>
                         <tbody id="guest-table-body" class="divide-y divide-stone-100 text-stone-700 bg-white">
                             <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">Cargando invitados...</td>
+                                <td colspan="7" class="px-4 py-8 text-center text-stone-400 italic">Cargando invitados...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -883,7 +949,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, deleteDoc, updateDoc, collection, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- CONFIGURACIÓN DE RESPALDO Y VARIABLES ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyD-EXAMPLE-URL/exec";
@@ -1108,64 +1174,140 @@
             verificarAsistenciaPrevia();
             configurarEventosDialogo();
             vincularIniciadorSecretoFooter();
-            verificarEscaneoQR(); 
 
             await initFirebaseSync();
+            verificarEscaneoQR();
         };
 
-        // --- SISTEMA DE VERIFICACIÓN DE ACCESOS POR QR ---
-        function verificarEscaneoQR() {
+        // --- VALIDACIÓN REAL DE BOLETOS CONTRA LA BASE DE DATOS ---
+        // Nunca confía en los datos que vengan en la URL/QR: siempre consulta el registro
+        // verdadero por ticketId y, si corresponde, lo marca como usado para evitar duplicados.
+        async function validarTicketContraBaseDeDatos(ticketId, opts = {}) {
+            const marcarIngreso = opts.marcarIngreso !== false;
+
+            if (!ticketId || ticketId === 'PENDIENTE' || ticketId === 'S/N') {
+                return { valido: false, motivo: 'formato' };
+            }
+
+            if (db) {
+                try {
+                    const pathInvitados = collection(db, 'artifacts', appId, 'public', 'data', 'invitados');
+                    const q = query(pathInvitados, where('ticketId', '==', ticketId));
+                    const snap = await getDocs(q);
+
+                    if (snap.empty) return { valido: false, motivo: 'no_encontrado' };
+
+                    const docSnap = snap.docs[0];
+                    const data = docSnap.data();
+
+                    if (!data.asiste) return { valido: false, motivo: 'declinado', nombre: data.nombre };
+
+                    if (data.escaneado) {
+                        return {
+                            valido: true, yaRegistrado: true, nombre: data.nombre,
+                            adultos: data.pasesAdultos || data.pases || 0, ninos: data.pasesNinos || 0,
+                            ticketId: data.ticketId, horaIngreso: data.escaneadoEn
+                        };
+                    }
+
+                    if (marcarIngreso) {
+                        const horaActual = new Date().toISOString();
+                        await updateDoc(docSnap.ref, { escaneado: true, escaneadoEn: horaActual });
+                        return {
+                            valido: true, yaRegistrado: false, nombre: data.nombre,
+                            adultos: data.pasesAdultos || data.pases || 0, ninos: data.pasesNinos || 0,
+                            ticketId: data.ticketId, horaIngreso: horaActual
+                        };
+                    }
+
+                    return {
+                        valido: true, yaRegistrado: false, nombre: data.nombre,
+                        adultos: data.pasesAdultos || data.pases || 0, ninos: data.pasesNinos || 0,
+                        ticketId: data.ticketId
+                    };
+                } catch (err) {
+                    console.error("Error validando boleto contra la nube:", err);
+                    return { valido: false, motivo: 'error_conexion' };
+                }
+            }
+
+            // Sin conexión a la nube: se valida contra la última copia sincronizada en este dispositivo (modo de respaldo)
+            const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+            const match = listaConfirmados.find(inv => inv.ticketId === ticketId);
+            if (!match) return { valido: false, motivo: 'no_encontrado' };
+            if (!match.asiste) return { valido: false, motivo: 'declinado', nombre: match.nombre };
+            return {
+                valido: true, yaRegistrado: !!match.escaneado, nombre: match.nombre,
+                adultos: match.pasesAdultos || match.pases || 0, ninos: match.pasesNinos || 0,
+                ticketId: match.ticketId, horaIngreso: match.escaneadoEn, sinConexion: true
+            };
+        }
+
+        // --- SISTEMA DE VERIFICACIÓN DE ACCESOS POR QR (link directo, respaldo) ---
+        async function verificarEscaneoQR() {
             const urlParams = new URLSearchParams(window.location.search);
             const verifyId = urlParams.get('verify');
-            
+
             if (!verifyId) return;
 
-            const urlName = urlParams.get('name');
-            const urlAdults = urlParams.get('adults') || 0;
-            const urlChildren = urlParams.get('children') || 0;
-
             const modal = document.getElementById('qr-verification-overlay');
+            modal.classList.remove('hidden');
+            mostrarEstadoVerificacionCargando();
+
+            const resultado = await validarTicketContraBaseDeDatos(verifyId, { marcarIngreso: true });
+            pintarResultadoVerificacion(resultado);
+        }
+
+        function mostrarEstadoVerificacionCargando() {
+            const iconContainer = document.getElementById('verification-icon-container');
+            iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-stone-100 text-stone-400 border border-stone-200";
+            iconContainer.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+            document.getElementById('verification-badge').className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-stone-100 text-stone-500";
+            document.getElementById('verification-badge').innerText = "Verificando...";
+            document.getElementById('verification-title').innerText = "Consultando la base de datos";
+            document.getElementById('verification-details').classList.add('hidden');
+            document.getElementById('verification-error-msg').classList.add('hidden');
+        }
+
+        function textoErrorVerificacion(motivo) {
+            switch (motivo) {
+                case 'declinado': return "Este invitado había marcado que NO asistiría. Verifica su identidad manualmente antes de permitir el acceso.";
+                case 'error_conexion': return "No se pudo consultar la base de datos en este momento. Revisa tu conexión a internet e inténtalo de nuevo.";
+                case 'formato': return "El código escaneado no contiene un identificador de boleto válido.";
+                default: return "Este pase no coincide con ningún registro confirmado en la base de datos. Por favor, verifica al invitado de forma manual.";
+            }
+        }
+
+        function pintarResultadoVerificacion(r) {
             const iconContainer = document.getElementById('verification-icon-container');
             const badge = document.getElementById('verification-badge');
             const title = document.getElementById('verification-title');
             const details = document.getElementById('verification-details');
             const errorMsg = document.getElementById('verification-error-msg');
 
-            modal.classList.remove('hidden');
-
-            let finalName = "";
-            let finalAdults = 0;
-            let finalChildren = 0;
-            let isValid = false;
-
-            if (urlName) {
-                finalName = decodeURIComponent(urlName);
-                finalAdults = parseInt(urlAdults) || 1;
-                finalChildren = parseInt(urlChildren) || 0;
-                isValid = true;
-            } else {
-                const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
-                const match = listaConfirmados.find(inv => inv.ticketId === verifyId);
-                if (match) {
-                    finalName = match.nombre;
-                    finalAdults = match.pasesAdultos || match.pases || 0;
-                    finalChildren = match.pasesNinos || 0;
-                    isValid = true;
-                }
-            }
-
-            if (isValid) {
+            if (r.valido && !r.yaRegistrado) {
                 iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-emerald-50 text-emerald-500 border border-emerald-100 animate-pulse";
                 iconContainer.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
                 badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100";
                 badge.innerText = "Acceso Autorizado";
                 title.innerText = "¡Boleto Auténtico!";
-                
-                document.getElementById('v-guest-name').innerText = finalName;
-                document.getElementById('v-guest-adults').innerText = `${finalAdults} Adulto${finalAdults !== 1 ? 's' : ''}`;
-                document.getElementById('v-guest-children').innerText = `${finalChildren} Niño${finalChildren !== 1 ? 's' : ''}`;
-                document.getElementById('v-ticket-id').innerText = verifyId;
-
+                document.getElementById('v-guest-name').innerText = r.nombre || '-';
+                document.getElementById('v-guest-adults').innerText = `${r.adultos || 0} Adulto${(r.adultos || 0) !== 1 ? 's' : ''}`;
+                document.getElementById('v-guest-children').innerText = `${r.ninos || 0} Niño${(r.ninos || 0) !== 1 ? 's' : ''}`;
+                document.getElementById('v-ticket-id').innerText = r.ticketId || '-';
+                details.classList.remove('hidden');
+                errorMsg.classList.add('hidden');
+            } else if (r.valido && r.yaRegistrado) {
+                iconContainer.className = "w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner bg-amber-50 text-amber-500 border border-amber-100";
+                iconContainer.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-100";
+                badge.innerText = "Ya Registrado";
+                const hora = r.horaIngreso ? new Date(r.horaIngreso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '';
+                title.innerText = `⚠️ Este pase ya ingresó${hora ? ' a las ' + hora : ''}`;
+                document.getElementById('v-guest-name').innerText = r.nombre || '-';
+                document.getElementById('v-guest-adults').innerText = `${r.adultos || 0} Adulto${(r.adultos || 0) !== 1 ? 's' : ''}`;
+                document.getElementById('v-guest-children').innerText = `${r.ninos || 0} Niño${(r.ninos || 0) !== 1 ? 's' : ''}`;
+                document.getElementById('v-ticket-id').innerText = r.ticketId || '-';
                 details.classList.remove('hidden');
                 errorMsg.classList.add('hidden');
             } else {
@@ -1174,7 +1316,7 @@
                 badge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100";
                 badge.innerText = "Pase Inválido";
                 title.innerText = "Error de Autenticidad";
-
+                errorMsg.innerText = textoErrorVerificacion(r.motivo);
                 details.classList.add('hidden');
                 errorMsg.classList.remove('hidden');
             }
@@ -1185,6 +1327,142 @@
             const baseUri = window.location.origin + window.location.pathname;
             const isAdmin = localStorage.getItem('xv_is_admin') === 'true';
             window.history.replaceState({}, document.title, baseUri + (isAdmin ? "?admin=true" : ""));
+        }
+
+        // --- MODO ESCANEO DE ACCESOS EN VIVO (CÁMARA), PARA EL ENCARGADO DE LA ENTRADA ---
+        let html5QrScanner = null;
+        let escaneosSesion = 0;
+        let procesandoEscaneo = false;
+
+        function abrirModoEscaneo() {
+            document.getElementById('scanner-modal').classList.remove('hidden');
+            escaneosSesion = 0;
+            document.getElementById('scanner-session-count').innerText = "0";
+            resetearPanelResultadoEscaner();
+
+            if (typeof Html5Qrcode === 'undefined') {
+                mostrarToast("No se pudo cargar la librería de cámara. Revisa tu conexión a internet.", "fa-solid fa-triangle-exclamation text-amber-500");
+                return;
+            }
+
+            html5QrScanner = new Html5Qrcode("qr-reader");
+            const config = { fps: 10, qrbox: { width: 240, height: 240 } };
+
+            html5QrScanner.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => manejarEscaneoCamara(decodedText),
+                () => { /* frame sin QR detectado, se ignora silenciosamente */ }
+            ).catch(err => {
+                console.error("No se pudo iniciar la cámara:", err);
+                mostrarToast("No se pudo acceder a la cámara. Verifica los permisos del navegador.", "fa-solid fa-camera text-rose-500");
+            });
+        }
+
+        function cerrarModoEscaneo() {
+            if (html5QrScanner) {
+                html5QrScanner.stop().then(() => html5QrScanner.clear()).catch(() => {});
+                html5QrScanner = null;
+            }
+            document.getElementById('scanner-modal').classList.add('hidden');
+        }
+
+        function extraerTicketIdDeTexto(texto) {
+            try {
+                const url = new URL(texto);
+                const idDeUrl = url.searchParams.get('verify');
+                if (idDeUrl) return idDeUrl;
+            } catch (e) { /* no es una URL, puede ser un ID directo */ }
+            return texto.trim();
+        }
+
+        async function manejarEscaneoCamara(decodedText) {
+            if (procesandoEscaneo) return;
+            procesandoEscaneo = true;
+
+            const ticketId = extraerTicketIdDeTexto(decodedText);
+            mostrarPanelResultadoCargando();
+            const resultado = await validarTicketContraBaseDeDatos(ticketId, { marcarIngreso: true });
+            pintarResultadoEscaner(resultado);
+
+            if (resultado.valido && !resultado.yaRegistrado) {
+                escaneosSesion++;
+                document.getElementById('scanner-session-count').innerText = escaneosSesion;
+            }
+
+            // Pequeña pausa antes de aceptar el siguiente escaneo, para no procesar el mismo QR varias veces seguidas
+            setTimeout(() => { procesandoEscaneo = false; }, 2500);
+        }
+
+        async function verificarIdManual() {
+            const input = document.getElementById('scanner-manual-id');
+            const ticketId = input.value.trim();
+            if (!ticketId) return;
+
+            mostrarPanelResultadoCargando();
+            const resultado = await validarTicketContraBaseDeDatos(ticketId, { marcarIngreso: true });
+            pintarResultadoEscaner(resultado);
+
+            if (resultado.valido && !resultado.yaRegistrado) {
+                escaneosSesion++;
+                document.getElementById('scanner-session-count').innerText = escaneosSesion;
+            }
+            input.value = "";
+        }
+
+        function resetearPanelResultadoEscaner() {
+            document.getElementById('scanner-result-icon').className = "w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto bg-stone-100 text-stone-400";
+            document.getElementById('scanner-result-icon').innerHTML = `<i class="fa-solid fa-qrcode"></i>`;
+            document.getElementById('scanner-result-title').innerText = "Esperando escaneo...";
+            document.getElementById('scanner-result-subtitle').innerText = "";
+            document.getElementById('scanner-result-details').classList.add('hidden');
+        }
+
+        function mostrarPanelResultadoCargando() {
+            document.getElementById('scanner-result-icon').className = "w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto bg-stone-100 text-stone-400";
+            document.getElementById('scanner-result-icon').innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i>`;
+            document.getElementById('scanner-result-title').innerText = "Verificando en la base de datos...";
+            document.getElementById('scanner-result-subtitle').innerText = "";
+            document.getElementById('scanner-result-details').classList.add('hidden');
+        }
+
+        function pintarResultadoEscaner(r) {
+            const icon = document.getElementById('scanner-result-icon');
+            const titleEl = document.getElementById('scanner-result-title');
+            const subtitleEl = document.getElementById('scanner-result-subtitle');
+            const details = document.getElementById('scanner-result-details');
+
+            if (r.valido && !r.yaRegistrado) {
+                icon.className = "w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto bg-emerald-50 text-emerald-500 border border-emerald-100";
+                icon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+                titleEl.className = "font-serif text-lg text-emerald-700 font-bold";
+                titleEl.innerText = "✅ Acceso Autorizado";
+                subtitleEl.innerText = r.sinConexion ? "Validado con datos locales (sin conexión a la nube)" : "";
+                document.getElementById('sr-guest-name').innerText = r.nombre || '-';
+                document.getElementById('sr-guest-adults').innerText = `${r.adultos || 0}`;
+                document.getElementById('sr-guest-children').innerText = `${r.ninos || 0}`;
+                document.getElementById('sr-ticket-id').innerText = r.ticketId || '-';
+                details.classList.remove('hidden');
+            } else if (r.valido && r.yaRegistrado) {
+                icon.className = "w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto bg-amber-50 text-amber-500 border border-amber-100";
+                icon.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>`;
+                titleEl.className = "font-serif text-lg text-amber-700 font-bold";
+                const hora = r.horaIngreso ? new Date(r.horaIngreso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '';
+                titleEl.innerText = "⚠️ Ya Registrado";
+                subtitleEl.innerText = hora ? `Este pase ya ingresó a las ${hora}` : "Este pase ya había sido escaneado antes";
+                document.getElementById('sr-guest-name').innerText = r.nombre || '-';
+                document.getElementById('sr-guest-adults').innerText = `${r.adultos || 0}`;
+                document.getElementById('sr-guest-children').innerText = `${r.ninos || 0}`;
+                document.getElementById('sr-ticket-id').innerText = r.ticketId || '-';
+                details.classList.remove('hidden');
+            } else {
+                icon.className = "w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto bg-rose-50 text-rose-500 border border-rose-100";
+                icon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+                titleEl.className = "font-serif text-lg text-rose-700 font-bold";
+                titleEl.innerText = "❌ Pase Inválido";
+                subtitleEl.innerText = textoErrorVerificacion(r.motivo);
+                details.classList.add('hidden');
+            }
         }
 
         function handleImageError(imgElement, index) {
@@ -2130,7 +2408,9 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         mensaje: conf.mensaje,
                         status: conf.asiste ? 'confirmado' : 'declinado',
                         fechaRegistro: conf.fechaRegistro,
-                        ticketId: conf.ticketId || 'S/N'
+                        ticketId: conf.ticketId || 'S/N',
+                        escaneado: !!conf.escaneado,
+                        escaneadoEn: conf.escaneadoEn || null
                     });
                 } else {
                     combinedList.push({
@@ -2163,18 +2443,21 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                         mensaje: c.mensaje,
                         status: c.asiste ? 'confirmado' : 'declinado',
                         fechaRegistro: c.fechaRegistro,
-                        ticketId: c.ticketId || 'S/N'
+                        ticketId: c.ticketId || 'S/N',
+                        escaneado: !!c.escaneado,
+                        escaneadoEn: c.escaneadoEn || null
                     });
                 }
             });
 
             if (combinedList.length === 0) {
-                tb.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-stone-400 italic">No hay registros de confirmación aún.</td></tr>`;
+                tb.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-stone-400 italic">No hay registros de confirmación aún.</td></tr>`;
                 document.getElementById('dash-total-confirmados').innerText = "0";
                 document.getElementById('dash-total-adults').innerText = "0";
                 document.getElementById('dash-total-children').innerText = "0";
                 document.getElementById('dash-total-declinaron').innerText = "0";
                 document.getElementById('dash-total-pendientes').innerText = "0";
+                document.getElementById('dash-total-ingresaron').innerText = "0";
                 document.getElementById('count-badge').innerText = "0";
                 return;
             }
@@ -2187,7 +2470,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                 return a.nombre.localeCompare(b.nombre);
             });
 
-            let tAsisten = 0, tDeclinan = 0, tPendientes = 0, tAdults = 0, tKids = 0;
+            let tAsisten = 0, tDeclinan = 0, tPendientes = 0, tAdults = 0, tKids = 0, tIngresaron = 0;
             tb.innerHTML = "";
 
             combinedList.forEach(i => {
@@ -2198,6 +2481,7 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                     tAsisten++;
                     tAdults += (i.pasesAdultos || 0);
                     tKids += (i.pasesNinos || 0);
+                    if (i.escaneado) tIngresaron++;
                     statusBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] uppercase font-bold flex flex-col items-center justify-center max-w-[110px]"><span class="font-extrabold"><i class="fa-solid fa-check mr-1"></i> Asistirá</span><span class="text-[8px] font-mono font-bold text-stone-400 mt-0.5">ID: ${i.ticketId}</span></span>`;
                     actionBtn = `
                         <button onclick="abrirEditarInvitado('${i.nombre}')" class="text-blue-600 hover:text-blue-700 transition-colors p-1" title="Ajustar / Editar Registro"><i class="fa-solid fa-user-pen"></i></button>
@@ -2226,11 +2510,24 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
                     pasesDisplay = `- (Max: ${i.pasesMax})`;
                 }
 
+                let ingresoDisplay = "";
+                if (i.status === 'confirmado') {
+                    if (i.escaneado) {
+                        const hora = i.escaneadoEn ? new Date(i.escaneadoEn).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }) : '';
+                        ingresoDisplay = `<button onclick="alternarIngresoManual('${i.nombre}', false)" class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-100 text-[9px] uppercase font-bold hover:bg-purple-100 transition-colors" title="Clic para deshacer el ingreso"><i class="fa-solid fa-door-open mr-1"></i> Ingresó${hora ? ' ' + hora : ''}</button>`;
+                    } else {
+                        ingresoDisplay = `<button onclick="alternarIngresoManual('${i.nombre}', true)" class="px-2 py-0.5 rounded-full bg-stone-100 text-stone-400 border border-stone-200 text-[9px] uppercase font-bold hover:bg-stone-200 transition-colors" title="Marcar ingreso manualmente"><i class="fa-regular fa-circle mr-1"></i> Aún no llega</button>`;
+                    }
+                } else {
+                    ingresoDisplay = `<span class="text-stone-300 text-[10px]">-</span>`;
+                }
+
                 tb.innerHTML += `<tr class="hover:bg-stone-50 transition-colors text-xs">
                     <td class="px-4 py-3 font-semibold text-stone-800">${i.nombre}</td>
                     <td class="px-4 py-3 text-stone-500 font-mono text-xs font-semibold">${i.telefono}</td>
                     <td class="px-4 py-3">${statusBadge}</td>
                     <td class="px-4 py-3">${pasesDisplay}</td>
+                    <td class="px-4 py-3">${ingresoDisplay}</td>
                     <td class="px-4 py-3 text-stone-500 italic max-w-[150px] truncate text-xs" title="${i.mensaje}">${i.mensaje || '-'}</td>
                     <td class="px-4 py-4 text-right flex gap-1.5 justify-end">
                         ${actionBtn}
@@ -2243,7 +2540,35 @@ Hola *${nombreNombre(nombreInvitado)}*, te comparto los datos oficiales de tu co
             document.getElementById('dash-total-children').innerText = tKids;
             document.getElementById('dash-total-declinaron').innerText = tDeclinan;
             document.getElementById('dash-total-pendientes').innerText = tPendientes;
+            document.getElementById('dash-total-ingresaron').innerText = tIngresaron;
             document.getElementById('count-badge').innerText = listaConfirmados.length;
+        }
+
+        // --- MARCAR/DESMARCAR INGRESO MANUALMENTE DESDE EL PANEL (respaldo del escáner) ---
+        async function alternarIngresoManual(nombre, nuevoEstado) {
+            const key = normalizarTexto(nombre);
+            try {
+                if (db) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'invitados', key);
+                    await updateDoc(docRef, {
+                        escaneado: nuevoEstado,
+                        escaneadoEn: nuevoEstado ? new Date().toISOString() : null
+                    });
+                } else {
+                    const listaConfirmados = JSON.parse(localStorage.getItem('xv_invitados')) || [];
+                    const idx = listaConfirmados.findIndex(c => normalizarTexto(c.nombre) === key);
+                    if (idx > -1) {
+                        listaConfirmados[idx].escaneado = nuevoEstado;
+                        listaConfirmados[idx].escaneadoEn = nuevoEstado ? new Date().toISOString() : null;
+                        localStorage.setItem('xv_invitados', JSON.stringify(listaConfirmados));
+                        procesarYMostrarInvitados(listaConfirmados);
+                    }
+                }
+                mostrarToast(nuevoEstado ? `Ingreso de ${nombre} registrado manualmente.` : `Se deshizo el ingreso de ${nombre}.`, "fa-solid fa-door-open text-purple-500");
+            } catch (err) {
+                console.error("Error al actualizar ingreso manual:", err);
+                mostrarToast("No se pudo actualizar el estado de ingreso.", "fa-solid fa-circle-xmark text-red-500");
+            }
         }
 
         // --- SISTEMA DE EDICIÓN MANUAL DE INVITADOS PARA EL ADMINISTRADOR ---
@@ -2759,6 +3084,10 @@ Te comparto los detalles del pase con código QR único que confirmaste para que
         window.actualizarEstadoAsistencia = actualizarEstadoAsistencia;
         window.toggleCustomMusicInput = toggleCustomMusicInput;
         window.cerrarVerificacionQR = cerrarVerificacionQR;
+        window.abrirModoEscaneo = abrirModoEscaneo;
+        window.cerrarModoEscaneo = cerrarModoEscaneo;
+        window.verificarIdManual = verificarIdManual;
+        window.alternarIngresoManual = alternarIngresoManual;
         window.enviarRecordatorioUnaSemana = enviarRecordatorioUnaSemana;
         window.enviarBoletoPorWhatsApp = enviarBoletoPorWhatsApp;
         window.handleImageError = handleImageError;
